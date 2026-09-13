@@ -3,8 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
-use App\Models\ProjectCategory;
+use Blaze\AdminCore\Models\Project;
+use Blaze\AdminCore\Models\ProjectCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -105,5 +105,6 @@ class ProjectController extends Controller
         return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
     }
 }
+
 
 

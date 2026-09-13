@@ -17,7 +17,7 @@
             </div>
             <div>
                 <p class="text-xs text-muted-foreground font-medium uppercase tracking-wide">Projects</p>
-                <p class="text-2xl font-bold text-foreground leading-tight">{{ \App\Models\Project::count() }}</p>
+                <p class="text-2xl font-bold text-foreground leading-tight">{{ \Blaze\AdminCore\Models\Project::count() }}</p>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
             </div>
             <div>
                 <p class="text-xs text-muted-foreground font-medium uppercase tracking-wide">Services</p>
-                <p class="text-2xl font-bold text-foreground leading-tight">{{ \App\Models\Service::count() }}</p>
+                <p class="text-2xl font-bold text-foreground leading-tight">{{ \Blaze\AdminCore\Models\Service::count() }}</p>
             </div>
         </div>
 
@@ -91,4 +91,5 @@
         </div>
     </div>
 </x-layouts.admin>
+
 

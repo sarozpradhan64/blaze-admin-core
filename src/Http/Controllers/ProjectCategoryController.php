@@ -3,7 +3,7 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProjectCategory;
+use Blaze\AdminCore\Models\ProjectCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -67,5 +67,6 @@ class ProjectCategoryController extends Controller
         return redirect()->route('admin.project-categories.index')->with('success', 'Project Category deleted successfully.');
     }
 }
+
 
 

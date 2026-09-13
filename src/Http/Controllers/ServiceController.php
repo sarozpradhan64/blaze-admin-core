@@ -3,8 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Service;
-use App\Models\ServiceCategory;
+use Blaze\AdminCore\Models\Service;
+use Blaze\AdminCore\Models\ServiceCategory;
 use Blaze\AdminCore\Models\WebsiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -96,6 +96,7 @@ class ServiceController extends Controller
         return redirect()->route('admin.services.index')->with('success', 'Service deleted successfully.');
     }
 }
+
 
 
 

@@ -4,8 +4,8 @@ namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Enquiry;
-use App\Models\Service;
-use App\Models\Project;
+use Blaze\AdminCore\Models\Service;
+use Blaze\AdminCore\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -74,6 +74,7 @@ class EnquiryController extends Controller
         return redirect()->route('admin.enquiries.index')->with('success', 'Enquiry deleted.');
     }
 }
+
 
 
 

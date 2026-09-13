@@ -3,8 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Service;
-use App\Models\ServiceFeature;
+use Blaze\AdminCore\Models\Service;
+use Blaze\AdminCore\Models\ServiceFeature;
 use Illuminate\Http\Request;
 
 class ServiceFeatureController extends Controller
@@ -68,5 +68,6 @@ class ServiceFeatureController extends Controller
         return redirect()->route('admin.service-features.index')->with('success', 'Service feature deleted successfully.');
     }
 }
+
 
 

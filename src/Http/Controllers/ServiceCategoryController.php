@@ -3,7 +3,7 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServiceCategory;
+use Blaze\AdminCore\Models\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -69,5 +69,6 @@ class ServiceCategoryController extends Controller
         return redirect()->route('admin.service-categories.index')->with('success', 'Service Category deleted successfully.');
     }
 }
+
 
 

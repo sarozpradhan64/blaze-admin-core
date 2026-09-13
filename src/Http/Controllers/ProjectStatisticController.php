@@ -3,8 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
-use App\Models\ProjectStatistic;
+use Blaze\AdminCore\Models\Project;
+use Blaze\AdminCore\Models\ProjectStatistic;
 use Illuminate\Http\Request;
 
 class ProjectStatisticController extends Controller
@@ -62,5 +62,6 @@ class ProjectStatisticController extends Controller
         return back()->with('success', 'Statistic deleted successfully.');
     }
 }
+
 
 

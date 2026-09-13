@@ -3,8 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
-use App\Models\ProjectImage;
+use Blaze\AdminCore\Models\Project;
+use Blaze\AdminCore\Models\ProjectImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -81,5 +81,6 @@ class ProjectImageController extends Controller
         return back()->with('success', 'Image deleted successfully.');
     }
 }
+
 
 

@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 class ReorderController extends Controller
 {
     private static array $models = [
-        'services'            => \App\Models\Service::class,
-        'service-categories'  => \App\Models\ServiceCategory::class,
-        'service-features'    => \App\Models\ServiceFeature::class,
-        'projects'            => \App\Models\Project::class,
-        'project-categories'  => \App\Models\ProjectCategory::class,
-        'project-images'      => \App\Models\ProjectImage::class,
-        'project-videos'      => \App\Models\ProjectVideo::class,
-        'project-statistics'  => \App\Models\ProjectStatistic::class,
+        'services'            => \Blaze\AdminCore\Models\Service::class,
+        'service-categories'  => \Blaze\AdminCore\Models\ServiceCategory::class,
+        'service-features'    => \Blaze\AdminCore\Models\ServiceFeature::class,
+        'projects'            => \Blaze\AdminCore\Models\Project::class,
+        'project-categories'  => \Blaze\AdminCore\Models\ProjectCategory::class,
+        'project-images'      => \Blaze\AdminCore\Models\ProjectImage::class,
+        'project-videos'      => \Blaze\AdminCore\Models\ProjectVideo::class,
+        'project-statistics'  => \Blaze\AdminCore\Models\ProjectStatistic::class,
         'team-members'        => \Blaze\AdminCore\Models\TeamMember::class,
         'testimonials'        => \Blaze\AdminCore\Models\Testimonial::class,
         'gallery-albums'      => \Blaze\AdminCore\Models\GalleryAlbum::class,
@@ -35,6 +35,7 @@ class ReorderController extends Controller
         return response()->noContent();
     }
 }
+
 
 
 

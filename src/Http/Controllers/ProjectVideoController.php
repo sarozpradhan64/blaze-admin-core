@@ -3,8 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
-use App\Models\ProjectVideo;
+use Blaze\AdminCore\Models\Project;
+use Blaze\AdminCore\Models\ProjectVideo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -83,5 +83,6 @@ class ProjectVideoController extends Controller
         return back()->with('success', 'Video deleted successfully.');
     }
 }
+
 
 
