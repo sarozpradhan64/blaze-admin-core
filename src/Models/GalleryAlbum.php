@@ -18,3 +18,4 @@ class GalleryAlbum extends Model
 
 }
 
+

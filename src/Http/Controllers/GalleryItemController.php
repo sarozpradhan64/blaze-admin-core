@@ -78,3 +78,5 @@ class GalleryItemController extends Controller
     }
 }
 
+
+

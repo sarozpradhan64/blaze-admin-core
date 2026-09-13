@@ -14,3 +14,4 @@ class SpamLog extends Model
 
 }
 
+

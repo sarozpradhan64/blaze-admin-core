@@ -18,3 +18,4 @@ class SeoMetadata extends Model
 
 
 
+

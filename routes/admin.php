@@ -28,6 +28,18 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::put('settings/about', [WebsiteSettingController::class, 'updateAbout'])->name('settings.about.update');
         Route::put('settings/seo', [WebsiteSettingController::class, 'updateSeo'])->name('settings.seo.update');
 
+        // Admin Services
+        Route::resource('services', Blaze\AdminCore\Http\Controllers\ServiceController::class);
+        Route::resource('service-categories', Blaze\AdminCore\Http\Controllers\ServiceCategoryController::class);
+        Route::resource('service-features', Blaze\AdminCore\Http\Controllers\ServiceFeatureController::class);
+
+        // Admin Projects
+        Route::resource('projects', Blaze\AdminCore\Http\Controllers\ProjectController::class);
+        Route::resource('project-categories', Blaze\AdminCore\Http\Controllers\ProjectCategoryController::class);
+        Route::resource('project-images', Blaze\AdminCore\Http\Controllers\ProjectImageController::class);
+        Route::resource('project-videos', Blaze\AdminCore\Http\Controllers\ProjectVideoController::class);
+        Route::resource('project-statistics', Blaze\AdminCore\Http\Controllers\ProjectStatisticController::class);
+
         // Core shared resources
         Route::resource('contact-messages', Blaze\AdminCore\Http\Controllers\ContactMessageController::class)->except(['create', 'store', 'edit']);
         Route::resource('enquiries', Blaze\AdminCore\Http\Controllers\EnquiryController::class)->except(['create', 'store', 'edit']);
@@ -49,4 +61,5 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::post('reorder/{resource}', ReorderController::class)->name('reorder');
     });
 });
+
 

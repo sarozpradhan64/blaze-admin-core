@@ -16,3 +16,4 @@ class GalleryItem extends Model
 
 }
 
+
