@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Page extends Model
 {
-    use \App\Traits\HasSeo;
+    use \Blaze\AdminCore\Traits\HasSeo;
     use HasFactory;
 
     protected $table = 'pages';
@@ -21,4 +21,5 @@ class Page extends Model
     public function seoMetadata() { return $this->morphOne(SeoMetadata::class, 'seoable'); }
 
 }
+
 

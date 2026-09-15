@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GalleryItem extends Model
 {
-    use HasFactory, \App\Traits\HasSortOrder;
+    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
 
     protected $table = 'gallery_items';
     protected $guarded = [];
@@ -15,5 +15,6 @@ class GalleryItem extends Model
     public function album() { return $this->belongsTo(GalleryAlbum::class, 'gallery_album_id'); }
 
 }
+
 
 

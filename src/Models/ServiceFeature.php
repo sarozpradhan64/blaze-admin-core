@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceFeature extends Model
 {
-    use HasFactory, \App\Traits\HasSortOrder;
+    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
 
     protected $table = 'service_features';
     protected $guarded = [];
@@ -15,4 +15,5 @@ class ServiceFeature extends Model
     public function service() { return $this->belongsTo(Service::class); }
 
 }
+
 

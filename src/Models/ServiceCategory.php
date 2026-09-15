@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceCategory extends Model
 {
-    use \App\Traits\HasSeo, \App\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSeo, \Blaze\AdminCore\Traits\HasSortOrder;
     use HasFactory;
 
     protected $table = 'service_categories';
@@ -18,4 +18,5 @@ class ServiceCategory extends Model
     public function seoMetadata() { return $this->morphOne(SeoMetadata::class, 'seoable'); }
 
 }
+
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GalleryAlbum extends Model
 {
-    use HasFactory, \App\Traits\HasSortOrder;
+    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
 
     protected $table = 'gallery_albums';
     protected $guarded = [];
@@ -17,5 +17,6 @@ class GalleryAlbum extends Model
     public function seoMetadata() { return $this->morphOne(SeoMetadata::class, 'seoable'); }
 
 }
+
 
 

@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use \App\Traits\HasSeo;
-    use HasFactory, \App\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSeo;
+    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
 
     protected $table = 'projects';
     protected $guarded = [];
@@ -52,4 +52,5 @@ class Project extends Model
         return $this->morphOne(SeoMetadata::class, 'seoable');
     }
 }
+
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    use \App\Traits\HasSeo, \App\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSeo, \Blaze\AdminCore\Traits\HasSortOrder;
     use HasFactory;
 
     protected $table = 'services';
@@ -42,4 +42,5 @@ class Service extends Model
         return $this->morphOne(SeoMetadata::class, 'seoable');
     }
 }
+
 
