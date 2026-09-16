@@ -123,7 +123,7 @@
 
             {{-- SEO Panel (full width below the grid) --}}
             <div class="mt-6">
-                <x-admin.seo-fields :model="$service ?? null" :defaults="$seoDefaults ?? null" />
+                <x-admin::seo-fields :model="$service ?? null" :defaults="$seoDefaults ?? null" />
             </div>
 
             <div class="mt-6 flex justify-end gap-2">

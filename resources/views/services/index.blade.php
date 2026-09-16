@@ -30,11 +30,12 @@
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
                     </x-ui.table-row>
                 </x-ui.table-header>
-                <x-admin.sortable-tbody resource="services">
+                <x-admin::sortable-tbody resource="services">
                     @forelse($services as $service)
                         <x-ui.table-row data-id="{{ $service->id }}">
                             <x-ui.table-cell class="w-8">
-                                <button type="button" data-drag-handle class="cursor-grab text-muted-foreground hover:text-foreground">
+                                <button type="button" data-drag-handle
+                                    class="cursor-grab text-muted-foreground hover:text-foreground">
                                     <x-lucide-grip-vertical class="size-4" />
                                 </button>
                             </x-ui.table-cell>
@@ -46,19 +47,23 @@
                                 </x-ui.badge>
                             </x-ui.table-cell>
                             <x-ui.table-cell>
-                                @if($service->is_featured)
+                                @if ($service->is_featured)
                                     <x-lucide-check-circle class="size-4 text-primary" />
                                 @endif
                             </x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <x-ui.button variant="ghost" size="icon" href="{{ route('admin.services.edit', $service) }}">
+                                    <x-ui.button variant="ghost" size="icon"
+                                        href="{{ route('admin.services.edit', $service) }}">
                                         <x-lucide-edit class="size-4" />
                                     </x-ui.button>
-                                    <form action="{{ route('admin.services.destroy', $service) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                    <form action="{{ route('admin.services.destroy', $service) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure?');">
                                         @csrf
                                         @method('DELETE')
-                                        <x-ui.button variant="ghost" size="icon" class="text-destructive hover:text-destructive hover:bg-destructive/10" type="submit">
+                                        <x-ui.button variant="ghost" size="icon"
+                                            class="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            type="submit">
                                             <x-lucide-trash-2 class="size-4" />
                                         </x-ui.button>
                                     </form>
@@ -72,10 +77,10 @@
                             </x-ui.table-cell>
                         </x-ui.table-row>
                     @endforelse
-                </x-admin.sortable-tbody>
+                </x-admin::sortable-tbody>
             </x-ui.table>
         </x-ui.card-content>
-        @if($services->hasPages())
+        @if ($services->hasPages())
             <x-ui.card-footer class="border-t p-4">
                 {{ $services->links() }}
             </x-ui.card-footer>

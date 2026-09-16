@@ -2,6 +2,7 @@
 
 namespace Blaze\AdminCore\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AdminCoreServiceProvider extends ServiceProvider
@@ -28,12 +29,12 @@ class AdminCoreServiceProvider extends ServiceProvider
             $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'admin-core');
         }
 
+        if (is_dir(__DIR__ . '/../../resources/views/components/admin')) {
+            Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components/admin', 'admin');
+        }
+
         if (is_dir(__DIR__ . '/../../database/migrations')) {
             $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         }
     }
 }
-
-
-
-
