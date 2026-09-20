@@ -38,7 +38,7 @@
 
                     <x-ui.field>
                         <x-ui.field-label for="password">Password</x-ui.field-label>
-                        <x-ui.input id="password" name="password" type="password" autocomplete="current-password"
+                        <x-ui.password-input id="password" name="password" autocomplete="current-password"
                             :aria-invalid="$errors->has('password') ? 'true' : null" />
                         @error('password')
                             <x-ui.field-error>{{ $message }}</x-ui.field-error>

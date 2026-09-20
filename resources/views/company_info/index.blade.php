@@ -16,13 +16,13 @@
         </div>
     </div>
 
-    <x-ui.tabs :value="request('tab', 'contact')" class="w-full">
+    <x-ui.tabs value="{{ request('tab', 'contact') }}" class="w-full">
         <x-ui.tabs-list>
-            <x-ui.tabs-trigger value="contact" href="{{ route('admin.company-info.index') }}?tab=contact">
+            <x-ui.tabs-trigger value="contact">
                 <x-lucide-map-pin class="size-4 mr-1.5" />
                 Contact Information
             </x-ui.tabs-trigger>
-            <x-ui.tabs-trigger value="social-links" href="{{ route('admin.company-info.index') }}?tab=social-links">
+            <x-ui.tabs-trigger value="social-links">
                 <x-lucide-share-2 class="size-4 mr-1.5" />
                 Social Links
             </x-ui.tabs-trigger>

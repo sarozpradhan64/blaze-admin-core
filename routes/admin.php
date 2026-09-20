@@ -2,12 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Blaze\AdminCore\Http\Controllers\AuthController;
+use Blaze\AdminCore\Http\Controllers\ProfileController;
+use Blaze\AdminCore\Http\Controllers\UserController;
 use Blaze\AdminCore\Http\Controllers\WebsiteSettingController;
 use Blaze\AdminCore\Http\Controllers\SeoSettingController;
 use Blaze\AdminCore\Http\Controllers\ReorderController;
 
 Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
-    
+
     // Guest-only auth routes
     Route::middleware('guest')->group(function () {
         Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -28,6 +30,11 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::put('settings/about', [WebsiteSettingController::class, 'updateAbout'])->name('settings.about.update');
         Route::put('settings/seo', [WebsiteSettingController::class, 'updateSeo'])->name('settings.seo.update');
 
+        Route::resource('users', UserController::class)->except(['show']);
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
         // Admin Services
         Route::resource('services', Blaze\AdminCore\Http\Controllers\ServiceController::class);
         Route::resource('service-categories', Blaze\AdminCore\Http\Controllers\ServiceCategoryController::class);
@@ -40,6 +47,10 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::resource('project-videos', Blaze\AdminCore\Http\Controllers\ProjectVideoController::class);
         Route::resource('project-statistics', Blaze\AdminCore\Http\Controllers\ProjectStatisticController::class);
 
+        // Blog
+        Route::resource('blogs', Blaze\AdminCore\Http\Controllers\BlogController::class);
+        Route::resource('blog-categories', Blaze\AdminCore\Http\Controllers\BlogCategoryController::class);
+
         // Core shared resources
         Route::resource('contact-messages', Blaze\AdminCore\Http\Controllers\ContactMessageController::class)->except(['create', 'store', 'edit']);
         Route::resource('enquiries', Blaze\AdminCore\Http\Controllers\EnquiryController::class)->except(['create', 'store', 'edit']);
@@ -48,7 +59,7 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::resource('gallery-albums', Blaze\AdminCore\Http\Controllers\GalleryAlbumController::class);
         Route::resource('gallery-items', Blaze\AdminCore\Http\Controllers\GalleryItemController::class);
         Route::resource('downloads', Blaze\AdminCore\Http\Controllers\DownloadController::class);
-        
+
         // Company Info (Contact Information + Social Links)
         Route::get('company-info', [Blaze\AdminCore\Http\Controllers\CompanyInfoController::class, 'index'])->name('company-info.index');
         Route::put('company-info/contact', [Blaze\AdminCore\Http\Controllers\CompanyInfoController::class, 'updateContact'])->name('company-info.contact.update');
@@ -61,5 +72,3 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::post('reorder/{resource}', ReorderController::class)->name('reorder');
     });
 });
-
-

@@ -103,6 +103,22 @@
                                     Images</x-ui.sidebar-menu-sub-button></x-ui.sidebar-menu-sub-item>
                         </x-ui.sidebar-menu-sub>
                     </x-ui.sidebar-menu-item>
+                    @php $blogActive = request()->routeIs('admin.blogs.*') || request()->routeIs('admin.blog-categories.*'); @endphp
+                    <x-ui.sidebar-menu-item x-data="{ expanded: {{ $blogActive ? 'true' : 'false' }} }">
+                        <x-ui.sidebar-menu-button :active="$blogActive" @click.prevent="expanded = !expanded">
+                            <x-lucide-file-text /><span>Blog</span>
+                            <x-lucide-chevron-down class="ml-auto transition-transform"
+                                x-bind:class="{ 'rotate-180': expanded }" />
+                        </x-ui.sidebar-menu-button>
+                        <x-ui.sidebar-menu-sub x-show="expanded" x-collapse>
+                            <x-ui.sidebar-menu-sub-item><x-ui.sidebar-menu-sub-button
+                                    href="{{ route('admin.blogs.index') }}" :active="request()->routeIs('admin.blogs.*')">All
+                                    Posts</x-ui.sidebar-menu-sub-button></x-ui.sidebar-menu-sub-item>
+                            <x-ui.sidebar-menu-sub-item><x-ui.sidebar-menu-sub-button
+                                    href="{{ route('admin.blog-categories.index') }}"
+                                    :active="request()->routeIs('admin.blog-categories.*')">Categories</x-ui.sidebar-menu-sub-button></x-ui.sidebar-menu-sub-item>
+                        </x-ui.sidebar-menu-sub>
+                    </x-ui.sidebar-menu-item>
                     <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.downloads.index') }}"
                             :active="request()->routeIs('admin.downloads.*')"><x-lucide-download /><span>Downloads</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.company-info.index') }}"
@@ -115,14 +131,20 @@
         <x-ui.sidebar-group>
             <x-ui.sidebar-group-label>System</x-ui.sidebar-group-label>
             <x-ui.sidebar-group-content>
-                <x-ui.sidebar-menu><x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
-                            href="{{ route('admin.settings.index') }}"
-                            :active="request()->routeIs('admin.settings.*')"><x-lucide-settings /><span>Settings</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item></x-ui.sidebar-menu>
+                <x-ui.sidebar-menu>
+                    <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.users.index') }}"
+                            :active="request()->routeIs('admin.users.*')"><x-lucide-users /><span>Users</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                    <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.settings.index') }}"
+                            :active="request()->routeIs('admin.settings.*')"><x-lucide-settings /><span>Settings</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                </x-ui.sidebar-menu>
             </x-ui.sidebar-group-content>
         </x-ui.sidebar-group>
     </x-ui.sidebar-content>
     <x-ui.sidebar-footer>
         <x-ui.sidebar-menu>
+            <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.profile.edit') }}"
+                    :active="request()->routeIs('admin.profile.*')"><x-lucide-user-cog /><span>My
+                        Profile</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
             <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
                     href="{{ route('home') }}"><x-lucide-external-link /><span>View
                         Website</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
