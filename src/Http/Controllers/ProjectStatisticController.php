@@ -16,6 +16,7 @@ class ProjectStatisticController extends Controller
             $query->where('project_id', $request->project_id);
         }
         $statistics = $query->paginate(15);
+
         return view('admin-core::project_statistics.index', compact('statistics'));
     }
 
@@ -23,6 +24,7 @@ class ProjectStatisticController extends Controller
     {
         $projects = Project::all();
         $selectedProject = $request->get('project_id');
+
         return view('admin-core::project_statistics.form', compact('projects', 'selectedProject'));
     }
 
@@ -35,12 +37,14 @@ class ProjectStatisticController extends Controller
         ]);
 
         ProjectStatistic::create($validated);
+
         return redirect()->route('admin.project-statistics.index', ['project_id' => $validated['project_id']])->with('success', 'Statistic added successfully.');
     }
 
     public function edit(ProjectStatistic $projectStatistic)
     {
         $projects = Project::all();
+
         return view('admin-core::project_statistics.form', ['statistic' => $projectStatistic, 'projects' => $projects, 'selectedProject' => $projectStatistic->project_id]);
     }
 
@@ -53,15 +57,14 @@ class ProjectStatisticController extends Controller
         ]);
 
         $projectStatistic->update($validated);
+
         return redirect()->route('admin.project-statistics.index', ['project_id' => $validated['project_id']])->with('success', 'Statistic updated successfully.');
     }
 
     public function destroy(ProjectStatistic $projectStatistic)
     {
         $projectStatistic->delete();
+
         return back()->with('success', 'Statistic deleted successfully.');
     }
 }
-
-
-

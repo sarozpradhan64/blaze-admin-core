@@ -2,16 +2,19 @@
 
 namespace Blaze\AdminCore\Models;
 
+use Blaze\AdminCore\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use \Blaze\AdminCore\Traits\HasSeo;
-    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory;
+    use HasSeo;
 
     protected $table = 'projects';
+
     protected $guarded = [];
+
     protected $casts = [
         'status' => 'boolean',
         'is_featured' => 'boolean',
@@ -52,5 +55,3 @@ class Project extends Model
         return $this->morphOne(SeoMetadata::class, 'seoable');
     }
 }
-
-

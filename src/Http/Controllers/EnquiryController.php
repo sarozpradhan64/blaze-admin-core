@@ -3,10 +3,10 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Blaze\AdminCore\Models\Enquiry;
-use Blaze\AdminCore\Models\Service;
-use Blaze\AdminCore\Models\Project;
 use App\Models\User;
+use Blaze\AdminCore\Models\Enquiry;
+use Blaze\AdminCore\Models\Project;
+use Blaze\AdminCore\Models\Service;
 use Illuminate\Http\Request;
 
 class EnquiryController extends Controller
@@ -23,19 +23,19 @@ class EnquiryController extends Controller
         }
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%')
-                  ->orWhere('company', 'like', '%' . $request->search . '%');
+                $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
+                    ->orWhere('company', 'like', '%'.$request->search.'%');
             });
         }
 
         $enquiries = $query->paginate(15)->withQueryString();
 
         $stats = [
-            'total'       => Enquiry::count(),
-            'new'         => Enquiry::where('status', 'new')->count(),
+            'total' => Enquiry::count(),
+            'new' => Enquiry::where('status', 'new')->count(),
             'in_progress' => Enquiry::where('status', 'in_progress')->count(),
-            'urgent'      => Enquiry::where('priority', 'urgent')->count(),
+            'urgent' => Enquiry::where('priority', 'urgent')->count(),
         ];
 
         return view('admin-core::enquiries.index', compact('enquiries', 'stats'));
@@ -47,16 +47,17 @@ class EnquiryController extends Controller
         $users = User::all();
         $services = Service::all();
         $projects = Project::all();
+
         return view('admin-core::enquiries.show', compact('enquiry', 'users', 'services', 'projects'));
     }
 
     public function update(Request $request, Enquiry $enquiry)
     {
         $validated = $request->validate([
-            'status'       => 'required|in:new,in_progress,contacted,converted,closed,spam',
-            'priority'     => 'required|in:low,normal,high,urgent',
-            'assigned_to'  => 'nullable|exists:users,id',
-            'admin_notes'  => 'nullable|string',
+            'status' => 'required|in:new,in_progress,contacted,converted,closed,spam',
+            'priority' => 'required|in:low,normal,high,urgent',
+            'assigned_to' => 'nullable|exists:users,id',
+            'admin_notes' => 'nullable|string',
         ]);
 
         if ($enquiry->status !== 'replied' && $validated['status'] === 'contacted') {
@@ -71,10 +72,7 @@ class EnquiryController extends Controller
     public function destroy(Enquiry $enquiry)
     {
         $enquiry->delete();
+
         return redirect()->route('admin.enquiries.index')->with('success', 'Enquiry deleted.');
     }
 }
-
-
-
-

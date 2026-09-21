@@ -12,12 +12,13 @@ class ServiceFeatureController extends Controller
     public function index(Request $request)
     {
         $query = ServiceFeature::with('service')->orderBy('service_id')->orderBy('sort_order');
-        
+
         if ($request->has('service_id')) {
             $query->where('service_id', $request->service_id);
         }
-        
+
         $features = $query->paginate(15);
+
         return view('admin-core::service_features.index', compact('features'));
     }
 
@@ -25,6 +26,7 @@ class ServiceFeatureController extends Controller
     {
         $services = Service::all();
         $selectedService = $request->get('service_id');
+
         return view('admin-core::service_features.form', compact('services', 'selectedService'));
     }
 
@@ -45,6 +47,7 @@ class ServiceFeatureController extends Controller
     public function edit(ServiceFeature $serviceFeature)
     {
         $services = Service::all();
+
         return view('admin-core::service_features.form', ['feature' => $serviceFeature, 'services' => $services, 'selectedService' => $serviceFeature->service_id]);
     }
 
@@ -65,9 +68,7 @@ class ServiceFeatureController extends Controller
     public function destroy(ServiceFeature $serviceFeature)
     {
         $serviceFeature->delete();
+
         return redirect()->route('admin.service-features.index')->with('success', 'Service feature deleted successfully.');
     }
 }
-
-
-

@@ -10,8 +10,6 @@ class SocialLink extends Model
     use HasFactory;
 
     protected $table = 'social_links';
+
     protected $guarded = [];
-
 }
-
-

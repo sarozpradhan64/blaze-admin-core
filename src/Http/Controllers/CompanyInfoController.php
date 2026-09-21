@@ -5,8 +5,8 @@ namespace Blaze\AdminCore\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\ContactInformation;
 use Blaze\AdminCore\Models\SocialLink;
-use Illuminate\Http\Request;
 use Blaze\AdminCore\Models\WebsiteSetting;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyInfoController extends Controller
@@ -23,19 +23,19 @@ class CompanyInfoController extends Controller
     public function updateContact(Request $request)
     {
         $validated = $request->validate([
-            'company_name'    => 'required|string|max:255',
-            'address'         => 'required|string',
-            'phone'           => 'required|string|max:50',
+            'company_name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'phone' => 'required|string|max:50',
             'secondary_phone' => 'nullable|string|max:50',
-            'email'           => 'required|email|max:255',
+            'email' => 'required|email|max:255',
             'secondary_email' => 'nullable|email|max:255',
-            'whatsapp'        => 'nullable|string|max:50',
-            'latitude'        => 'nullable|numeric|between:-90,90',
-            'longitude'       => 'nullable|numeric|between:-180,180',
+            'whatsapp' => 'nullable|string|max:50',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'google_maps_url' => 'nullable|url|max:1000',
-            'working_hours'   => 'nullable|string',
-            'logo'            => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:4096',
-            'favicon'         => 'nullable|file|mimes:ico,png,jpg,jpeg,webp,svg|max:2048',
+            'working_hours' => 'nullable|string',
+            'logo' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:4096',
+            'favicon' => 'nullable|file|mimes:ico,png,jpg,jpeg,webp,svg|max:2048',
         ]);
 
         foreach (['logo', 'favicon'] as $key) {
@@ -60,7 +60,7 @@ class CompanyInfoController extends Controller
             $validated
         );
 
-        return redirect(route('admin.company-info.index') . '?tab=contact')
+        return redirect(route('admin.company-info.index').'?tab=contact')
             ->with('success', 'Contact information updated successfully.');
     }
 
@@ -68,17 +68,17 @@ class CompanyInfoController extends Controller
     {
         $validated = $request->validate([
             'platform' => 'required|string|max:50',
-            'url'      => 'required|url|max:500',
-            'icon'     => 'nullable|string|max:255',
-            'status'   => 'boolean',
+            'url' => 'required|url|max:500',
+            'icon' => 'nullable|string|max:255',
+            'status' => 'boolean',
         ]);
 
         $validated['sort_order'] = SocialLink::max('sort_order') + 1;
-        $validated['status']     = $request->boolean('status');
+        $validated['status'] = $request->boolean('status');
 
         SocialLink::create($validated);
 
-        return redirect(route('admin.company-info.index') . '?tab=social-links')
+        return redirect(route('admin.company-info.index').'?tab=social-links')
             ->with('success', 'Social link added successfully.');
     }
 
@@ -86,16 +86,16 @@ class CompanyInfoController extends Controller
     {
         $validated = $request->validate([
             'platform' => 'required|string|max:50',
-            'url'      => 'required|url|max:500',
-            'icon'     => 'nullable|string|max:255',
-            'status'   => 'boolean',
+            'url' => 'required|url|max:500',
+            'icon' => 'nullable|string|max:255',
+            'status' => 'boolean',
         ]);
 
         $validated['status'] = $request->boolean('status');
 
         $socialLink->update($validated);
 
-        return redirect(route('admin.company-info.index') . '?tab=social-links')
+        return redirect(route('admin.company-info.index').'?tab=social-links')
             ->with('success', 'Social link updated successfully.');
     }
 
@@ -103,7 +103,7 @@ class CompanyInfoController extends Controller
     {
         $socialLink->delete();
 
-        return redirect(route('admin.company-info.index') . '?tab=social-links')
+        return redirect(route('admin.company-info.index').'?tab=social-links')
             ->with('success', 'Social link deleted.');
     }
 
@@ -118,7 +118,3 @@ class CompanyInfoController extends Controller
         return response()->json(['ok' => true]);
     }
 }
-
-
-
-

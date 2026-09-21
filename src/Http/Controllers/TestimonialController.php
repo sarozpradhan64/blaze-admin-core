@@ -12,6 +12,7 @@ class TestimonialController extends Controller
     public function index()
     {
         $testimonials = Testimonial::orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::testimonials.index', compact('testimonials'));
     }
 
@@ -23,12 +24,12 @@ class TestimonialController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'role'       => 'nullable|string|max:255',
-            'company'    => 'nullable|string|max:255',
-            'content'    => 'required|string',
-            'rating'     => 'nullable|integer|min:1|max:5',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'name' => 'required|string|max:255',
+            'role' => 'nullable|string|max:255',
+            'company' => 'nullable|string|max:255',
+            'content' => 'required|string',
+            'rating' => 'nullable|integer|min:1|max:5',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -38,6 +39,7 @@ class TestimonialController extends Controller
         $validated['status'] = $request->has('status');
 
         Testimonial::create($validated);
+
         return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial created.');
     }
 
@@ -49,12 +51,12 @@ class TestimonialController extends Controller
     public function update(Request $request, Testimonial $testimonial)
     {
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'role'       => 'nullable|string|max:255',
-            'company'    => 'nullable|string|max:255',
-            'content'    => 'required|string',
-            'rating'     => 'nullable|integer|min:1|max:5',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'name' => 'required|string|max:255',
+            'role' => 'nullable|string|max:255',
+            'company' => 'nullable|string|max:255',
+            'content' => 'required|string',
+            'rating' => 'nullable|integer|min:1|max:5',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -69,6 +71,7 @@ class TestimonialController extends Controller
         $validated['status'] = $request->has('status');
 
         $testimonial->update($validated);
+
         return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial updated.');
     }
 
@@ -78,9 +81,7 @@ class TestimonialController extends Controller
             Storage::disk('public')->delete($testimonial->image);
         }
         $testimonial->delete();
+
         return back()->with('success', 'Testimonial deleted.');
     }
 }
-
-
-

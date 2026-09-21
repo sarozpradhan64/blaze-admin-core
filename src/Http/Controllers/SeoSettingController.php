@@ -13,7 +13,7 @@ class SeoSettingController extends Controller
     {
         $keys = ['seo_default_title', 'seo_default_description', 'seo_default_image', 'seo_default_keywords'];
         $settings = WebsiteSetting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
-        
+
         return view('admin-core::seo_settings.index', compact('settings'));
     }
 
@@ -37,7 +37,7 @@ class SeoSettingController extends Controller
 
         if ($request->hasFile('seo_default_image')) {
             $path = $request->file('seo_default_image')->store('seo', 'public');
-            
+
             // Delete old if exists
             $oldImage = WebsiteSetting::where('key', 'seo_default_image')->first();
             if ($oldImage && $oldImage->value) {
@@ -53,9 +53,3 @@ class SeoSettingController extends Controller
         return back()->with('success', 'SEO settings updated successfully.');
     }
 }
-
-
-
-
-
-

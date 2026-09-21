@@ -10,8 +10,6 @@ class SpamLog extends Model
     use HasFactory;
 
     protected $table = 'spam_logs';
+
     protected $guarded = [];
-
 }
-
-

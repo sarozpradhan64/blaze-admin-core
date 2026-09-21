@@ -10,11 +10,12 @@ class Enquiry extends Model
     use HasFactory;
 
     protected $table = 'enquiries';
+
     protected $guarded = [];
 
     protected $casts = [
         'service_ids' => 'array',
-        'replied_at' => 'datetime'
+        'replied_at' => 'datetime',
     ];
 
     public function service()
@@ -32,5 +33,3 @@ class Enquiry extends Model
         return $this->belongsTo(User::class, 'assigned_to');
     }
 }
-
-

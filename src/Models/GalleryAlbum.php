@@ -7,16 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class GalleryAlbum extends Model
 {
-    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory;
 
     protected $table = 'gallery_albums';
+
     protected $guarded = [];
 
-    public function items() { return $this->hasMany(GalleryItem::class); }
+    public function items()
+    {
+        return $this->hasMany(GalleryItem::class);
+    }
 
-    public function seoMetadata() { return $this->morphOne(SeoMetadata::class, 'seoable'); }
-
+    public function seoMetadata()
+    {
+        return $this->morphOne(SeoMetadata::class, 'seoable');
+    }
 }
-
-
-

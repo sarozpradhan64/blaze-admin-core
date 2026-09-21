@@ -22,6 +22,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
             return redirect()->intended(route('admin.dashboard'));
         }
 
@@ -33,12 +34,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('admin.login');
     }
 }
-
-
-
-
-
-

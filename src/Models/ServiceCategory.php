@@ -2,21 +2,26 @@
 
 namespace Blaze\AdminCore\Models;
 
+use Blaze\AdminCore\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceCategory extends Model
 {
-    use \Blaze\AdminCore\Traits\HasSeo, \Blaze\AdminCore\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasSeo;
     use HasFactory;
 
     protected $table = 'service_categories';
+
     protected $guarded = [];
 
-    public function services() { return $this->hasMany(Service::class); }
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
 
-    public function seoMetadata() { return $this->morphOne(SeoMetadata::class, 'seoable'); }
-
+    public function seoMetadata()
+    {
+        return $this->morphOne(SeoMetadata::class, 'seoable');
+    }
 }
-
-

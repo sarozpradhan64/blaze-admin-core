@@ -11,11 +11,16 @@ class AuditLog extends Model
     use HasFactory;
 
     protected $table = 'audit_logs';
+
     protected $guarded = [];
 
-    public function user() { return $this->belongsTo(User::class); }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-    public function auditable() { return $this->morphTo(); }
-
+    public function auditable()
+    {
+        return $this->morphTo();
+    }
 }
-

@@ -7,19 +7,20 @@ use Blaze\AdminCore\Models\Project;
 use Blaze\AdminCore\Models\ProjectCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
     public function index()
     {
         $projects = Project::with('category')->orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::projects.index', compact('projects'));
     }
 
     public function create()
     {
         $categories = ProjectCategory::all();
+
         return view('admin-core::projects.form', compact('categories'));
     }
 
@@ -56,6 +57,7 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $categories = ProjectCategory::all();
+
         return view('admin-core::projects.form', compact('project', 'categories'));
     }
 
@@ -102,9 +104,7 @@ class ProjectController extends Controller
             Storage::disk('public')->delete($project->featured_image);
         }
         $project->delete();
+
         return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
     }
 }
-
-
-

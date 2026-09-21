@@ -2,16 +2,19 @@
 
 namespace Blaze\AdminCore\Models;
 
+use Blaze\AdminCore\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    use \Blaze\AdminCore\Traits\HasSeo, \Blaze\AdminCore\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasSeo;
     use HasFactory;
 
     protected $table = 'services';
+
     protected $guarded = [];
+
     protected $casts = [
         'status' => 'boolean',
         'is_featured' => 'boolean',
@@ -42,5 +45,3 @@ class Service extends Model
         return $this->morphOne(SeoMetadata::class, 'seoable');
     }
 }
-
-

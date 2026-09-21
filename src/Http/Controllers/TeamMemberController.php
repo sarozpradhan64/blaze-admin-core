@@ -12,6 +12,7 @@ class TeamMemberController extends Controller
     public function index()
     {
         $members = TeamMember::orderBy('sort_order')->paginate(10);
+
         return view('admin-core::team_members.index', compact('members'));
     }
 
@@ -23,13 +24,13 @@ class TeamMemberController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'role'          => 'required|string|max:255',
-            'bio'           => 'nullable|string',
-            'image'         => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'facebook_url'  => 'nullable|url|max:500',
-            'twitter_url'   => 'nullable|url|max:500',
-            'linkedin_url'  => 'nullable|url|max:500',
+            'name' => 'required|string|max:255',
+            'role' => 'required|string|max:255',
+            'bio' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'facebook_url' => 'nullable|url|max:500',
+            'twitter_url' => 'nullable|url|max:500',
+            'linkedin_url' => 'nullable|url|max:500',
             'instagram_url' => 'nullable|url|max:500',
         ]);
 
@@ -39,6 +40,7 @@ class TeamMemberController extends Controller
         $validated['is_active'] = $request->has('is_active');
 
         TeamMember::create($validated);
+
         return redirect()->route('admin.team-members.index')->with('success', 'Team Member added.');
     }
 
@@ -50,13 +52,13 @@ class TeamMemberController extends Controller
     public function update(Request $request, TeamMember $teamMember)
     {
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'role'          => 'required|string|max:255',
-            'bio'           => 'nullable|string',
-            'image'         => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'facebook_url'  => 'nullable|url|max:500',
-            'twitter_url'   => 'nullable|url|max:500',
-            'linkedin_url'  => 'nullable|url|max:500',
+            'name' => 'required|string|max:255',
+            'role' => 'required|string|max:255',
+            'bio' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'facebook_url' => 'nullable|url|max:500',
+            'twitter_url' => 'nullable|url|max:500',
+            'linkedin_url' => 'nullable|url|max:500',
             'instagram_url' => 'nullable|url|max:500',
         ]);
 
@@ -71,6 +73,7 @@ class TeamMemberController extends Controller
         $validated['is_active'] = $request->has('is_active');
 
         $teamMember->update($validated);
+
         return redirect()->route('admin.team-members.index')->with('success', 'Team Member updated.');
     }
 
@@ -80,9 +83,7 @@ class TeamMemberController extends Controller
             Storage::disk('public')->delete($teamMember->image);
         }
         $teamMember->delete();
+
         return back()->with('success', 'Team Member deleted.');
     }
 }
-
-
-

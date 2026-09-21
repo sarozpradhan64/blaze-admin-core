@@ -22,6 +22,10 @@
                 <x-lucide-building-2 class="size-4 mr-2" />
                 About Us
             </x-ui.tabs-trigger>
+            <x-ui.tabs-trigger value="system">
+                <x-lucide-settings class="size-4 mr-2" />
+                System
+            </x-ui.tabs-trigger>
             <x-ui.tabs-trigger value="seo">
                 <x-lucide-search class="size-4 mr-2" />
                 SEO
@@ -53,6 +57,18 @@
                             <x-ui.input name="hero_title" value="{{ old('hero_title', $settings['hero_title'] ?? '') }}"
                                 placeholder="E.g., Building Excellence, Delivering Perfection" />
                         </x-ui.field>
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->featureEnabled('hero_highlighted_text'))
+                            <x-ui.field>
+                                <x-ui.field-label>Hero Highlighted Text</x-ui.field-label>
+                                <x-ui.input name="hero_highlighted_text"
+                                    value="{{ old('hero_highlighted_text', $settings['hero_highlighted_text'] ?? '') }}"
+                                    placeholder="E.g., Excellence, Perfection (Must be words from Hero Title)" />
+                                @error('hero_highlighted_text')
+                                    <x-ui.field-error>{{ $message }}</x-ui.field-error>
+                                @enderror
+                                <x-ui.field-description>Specify comma-separated words from the title to be highlighted.</x-ui.field-description>
+                            </x-ui.field>
+                        @endif
                         <x-ui.field>
                             <x-ui.field-label>Hero Text</x-ui.field-label>
                             <x-ui.textarea name="hero_text" rows="3"
@@ -484,6 +500,44 @@
             </form>
         </x-ui.tabs-content>
 
+        {{-- ── System Tab ── --}}
+        <x-ui.tabs-content value="system">
+            <form action="{{ route('admin.settings.system.update') }}" method="POST" enctype="multipart/form-data"
+                class="mt-4">
+                @csrf
+                @method('PUT')
+
+                <x-ui.card>
+                    <x-ui.card-header>
+                        <div class="flex items-center gap-2">
+                            <x-lucide-settings class="size-5 text-muted-foreground" />
+                            <div>
+                                <x-ui.card-title>Admin Portal</x-ui.card-title>
+                                <x-ui.card-description>Customize the admin portal branding shown in the
+                                    sidebar.</x-ui.card-description>
+                            </div>
+                        </div>
+                    </x-ui.card-header>
+                    <x-ui.card-content class="space-y-4">
+                        <x-ui.field>
+                            <x-ui.field-label>Admin Portal Title</x-ui.field-label>
+                            <x-ui.input name="admin_portal_title"
+                                value="{{ old('admin_portal_title', $settings['admin_portal_title'] ?? 'Blaze Admin') }}"
+                                placeholder="Blaze Admin" />
+                            <x-ui.field-description>This appears in the admin sidebar in place of the default
+                                label.</x-ui.field-description>
+                        </x-ui.field>
+                    </x-ui.card-content>
+                    <x-ui.card-footer class="border-t pt-4 flex justify-end">
+                        <x-ui.button type="submit">
+                            <x-slot:before><x-lucide-save class="size-4" /></x-slot:before>
+                            Save System Settings
+                        </x-ui.button>
+                    </x-ui.card-footer>
+                </x-ui.card>
+            </form>
+        </x-ui.tabs-content>
+
         {{-- ── SEO Tab ── --}}
         <x-ui.tabs-content value="seo">
             <form action="{{ route('admin.settings.seo.update') }}" method="POST" enctype="multipart/form-data"
@@ -523,6 +577,15 @@
                             <x-ui.input name="seo_default_keywords"
                                 value="{{ old('seo_default_keywords', $settings['seo_default_keywords'] ?? '') }}"
                                 placeholder="construction, building, finishing..." />
+                        </x-ui.field>
+
+                        <x-ui.field>
+                            <x-ui.field-label>Google Analytics ID</x-ui.field-label>
+                            <x-ui.input name="google_analytics"
+                                value="{{ old('google_analytics', $settings['google_analytics'] ?? '') }}"
+                                placeholder="G-XXXXXXXXXX" />
+                            <x-ui.field-description>Enter your Google Analytics measurement ID to enable
+                                tracking.</x-ui.field-description>
                         </x-ui.field>
 
                         <x-ui.field>

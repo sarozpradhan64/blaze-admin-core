@@ -10,10 +10,6 @@ class HomepageSection extends Model
     use HasFactory;
 
     protected $table = 'homepage_sections';
+
     protected $guarded = [];
-
 }
-
-
-
-

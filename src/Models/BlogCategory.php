@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlogCategory extends Model
 {
-    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory;
 
     protected $table = 'blog_categories';
 

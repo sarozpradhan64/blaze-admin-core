@@ -12,6 +12,7 @@ class DownloadController extends Controller
     public function index()
     {
         $downloads = Download::orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::downloads.index', compact('downloads'));
     }
 
@@ -23,10 +24,10 @@ class DownloadController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'file_path'   => 'required|file|max:51200', // 50 MB
+            'title' => 'required|string|max:255',
+            'file_path' => 'required|file|max:51200', // 50 MB
             'description' => 'nullable|string',
-            'sort_order'  => 'nullable|integer',
+            'sort_order' => 'nullable|integer',
         ]);
 
         $validated['file_path'] = $request->file('file_path')->store('downloads', 'public');
@@ -34,6 +35,7 @@ class DownloadController extends Controller
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
 
         Download::create($validated);
+
         return redirect()->route('admin.downloads.index')->with('success', 'Download created.');
     }
 
@@ -45,10 +47,10 @@ class DownloadController extends Controller
     public function update(Request $request, Download $download)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'file_path'   => 'nullable|file|max:51200',
+            'title' => 'required|string|max:255',
+            'file_path' => 'nullable|file|max:51200',
             'description' => 'nullable|string',
-            'sort_order'  => 'nullable|integer',
+            'sort_order' => 'nullable|integer',
         ]);
 
         if ($request->hasFile('file_path')) {
@@ -63,6 +65,7 @@ class DownloadController extends Controller
         $validated['is_public'] = $request->has('is_public');
 
         $download->update($validated);
+
         return redirect()->route('admin.downloads.index')->with('success', 'Download updated.');
     }
 
@@ -72,9 +75,7 @@ class DownloadController extends Controller
             Storage::disk('public')->delete($download->file_path);
         }
         $download->delete();
+
         return back()->with('success', 'Download deleted.');
     }
 }
-
-
-

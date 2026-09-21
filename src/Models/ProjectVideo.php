@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectVideo extends Model
 {
-    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory;
 
     protected $table = 'project_videos';
+
     protected $guarded = [];
 
-    public function project() { return $this->belongsTo(Project::class); }
-
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 }
-
-

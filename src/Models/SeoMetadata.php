@@ -10,12 +10,11 @@ class SeoMetadata extends Model
     use HasFactory;
 
     protected $table = 'seo_metadata';
+
     protected $guarded = [];
 
-    public function seoable() { return $this->morphTo(); }
-
+    public function seoable()
+    {
+        return $this->morphTo();
+    }
 }
-
-
-
-

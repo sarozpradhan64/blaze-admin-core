@@ -12,6 +12,7 @@ class ServiceCategoryController extends Controller
     public function index()
     {
         $categories = ServiceCategory::withCount('services')->orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::service_categories.index', compact('categories'));
     }
 
@@ -66,9 +67,7 @@ class ServiceCategoryController extends Controller
         }
 
         $serviceCategory->delete();
+
         return redirect()->route('admin.service-categories.index')->with('success', 'Service Category deleted successfully.');
     }
 }
-
-
-

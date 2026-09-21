@@ -12,6 +12,7 @@ class ProjectCategoryController extends Controller
     public function index()
     {
         $categories = ProjectCategory::withCount('projects')->orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::project_categories.index', compact('categories'));
     }
 
@@ -64,9 +65,7 @@ class ProjectCategoryController extends Controller
         }
 
         $projectCategory->delete();
+
         return redirect()->route('admin.project-categories.index')->with('success', 'Project Category deleted successfully.');
     }
 }
-
-
-

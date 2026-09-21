@@ -17,6 +17,7 @@ class ProjectImageController extends Controller
             $query->where('project_id', $request->project_id);
         }
         $images = $query->paginate(15);
+
         return view('admin-core::project_images.index', compact('images'));
     }
 
@@ -24,6 +25,7 @@ class ProjectImageController extends Controller
     {
         $projects = Project::all();
         $selectedProject = $request->get('project_id');
+
         return view('admin-core::project_images.form', compact('projects', 'selectedProject'));
     }
 
@@ -31,21 +33,23 @@ class ProjectImageController extends Controller
     {
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
-            'image'      => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'alt_text'   => 'nullable|string|max:255',
-            'caption'    => 'nullable|string|max:500',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'alt_text' => 'nullable|string|max:255',
+            'caption' => 'nullable|string|max:500',
         ]);
 
         $validated['image'] = $request->file('image')->store('projects/images', 'public');
         $validated['is_featured'] = $request->has('is_featured');
 
         ProjectImage::create($validated);
+
         return redirect()->route('admin.project-images.index', ['project_id' => $validated['project_id']])->with('success', 'Image added successfully.');
     }
 
     public function edit(ProjectImage $projectImage)
     {
         $projects = Project::all();
+
         return view('admin-core::project_images.form', ['image' => $projectImage, 'projects' => $projects, 'selectedProject' => $projectImage->project_id]);
     }
 
@@ -53,9 +57,9 @@ class ProjectImageController extends Controller
     {
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'alt_text'   => 'nullable|string|max:255',
-            'caption'    => 'nullable|string|max:500',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'alt_text' => 'nullable|string|max:255',
+            'caption' => 'nullable|string|max:500',
         ]);
 
         if ($request->hasFile('image')) {
@@ -69,6 +73,7 @@ class ProjectImageController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
 
         $projectImage->update($validated);
+
         return redirect()->route('admin.project-images.index', ['project_id' => $validated['project_id']])->with('success', 'Image updated successfully.');
     }
 
@@ -78,9 +83,7 @@ class ProjectImageController extends Controller
             Storage::disk('public')->delete($projectImage->image);
         }
         $projectImage->delete();
+
         return back()->with('success', 'Image deleted successfully.');
     }
 }
-
-
-

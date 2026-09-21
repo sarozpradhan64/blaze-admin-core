@@ -10,8 +10,6 @@ class Download extends Model
     use HasFactory;
 
     protected $table = 'downloads';
+
     protected $guarded = [];
-
 }
-
-

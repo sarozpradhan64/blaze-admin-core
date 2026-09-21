@@ -7,12 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Testimonial extends Model
 {
-    use HasFactory, \Blaze\AdminCore\Traits\HasSortOrder;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory;
 
     protected $table = 'testimonials';
+
     protected $guarded = [];
-
 }
-
-
-

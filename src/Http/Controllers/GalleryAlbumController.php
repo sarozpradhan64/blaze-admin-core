@@ -13,6 +13,7 @@ class GalleryAlbumController extends Controller
     public function index()
     {
         $albums = GalleryAlbum::withCount('items')->orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::gallery_albums.index', compact('albums'));
     }
 
@@ -24,7 +25,7 @@ class GalleryAlbumController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
@@ -36,6 +37,7 @@ class GalleryAlbumController extends Controller
         $validated['status'] = $request->has('status');
 
         GalleryAlbum::create($validated);
+
         return redirect()->route('admin.gallery-albums.index')->with('success', 'Album created.');
     }
 
@@ -47,7 +49,7 @@ class GalleryAlbumController extends Controller
     public function update(Request $request, GalleryAlbum $galleryAlbum)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
@@ -66,6 +68,7 @@ class GalleryAlbumController extends Controller
         $validated['status'] = $request->has('status');
 
         $galleryAlbum->update($validated);
+
         return redirect()->route('admin.gallery-albums.index')->with('success', 'Album updated.');
     }
 
@@ -75,9 +78,7 @@ class GalleryAlbumController extends Controller
             Storage::disk('public')->delete($galleryAlbum->cover_image);
         }
         $galleryAlbum->delete();
+
         return back()->with('success', 'Album deleted.');
     }
 }
-
-
-

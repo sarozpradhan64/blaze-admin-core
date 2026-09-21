@@ -3,23 +3,35 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Blaze\AdminCore\Models\GalleryAlbum;
+use Blaze\AdminCore\Models\GalleryItem;
+use Blaze\AdminCore\Models\Project;
+use Blaze\AdminCore\Models\ProjectCategory;
+use Blaze\AdminCore\Models\ProjectImage;
+use Blaze\AdminCore\Models\ProjectStatistic;
+use Blaze\AdminCore\Models\ProjectVideo;
+use Blaze\AdminCore\Models\Service;
+use Blaze\AdminCore\Models\ServiceCategory;
+use Blaze\AdminCore\Models\ServiceFeature;
+use Blaze\AdminCore\Models\TeamMember;
+use Blaze\AdminCore\Models\Testimonial;
 use Illuminate\Http\Request;
 
 class ReorderController extends Controller
 {
     private static array $models = [
-        'services'            => \Blaze\AdminCore\Models\Service::class,
-        'service-categories'  => \Blaze\AdminCore\Models\ServiceCategory::class,
-        'service-features'    => \Blaze\AdminCore\Models\ServiceFeature::class,
-        'projects'            => \Blaze\AdminCore\Models\Project::class,
-        'project-categories'  => \Blaze\AdminCore\Models\ProjectCategory::class,
-        'project-images'      => \Blaze\AdminCore\Models\ProjectImage::class,
-        'project-videos'      => \Blaze\AdminCore\Models\ProjectVideo::class,
-        'project-statistics'  => \Blaze\AdminCore\Models\ProjectStatistic::class,
-        'team-members'        => \Blaze\AdminCore\Models\TeamMember::class,
-        'testimonials'        => \Blaze\AdminCore\Models\Testimonial::class,
-        'gallery-albums'      => \Blaze\AdminCore\Models\GalleryAlbum::class,
-        'gallery-items'       => \Blaze\AdminCore\Models\GalleryItem::class,
+        'services' => Service::class,
+        'service-categories' => ServiceCategory::class,
+        'service-features' => ServiceFeature::class,
+        'projects' => Project::class,
+        'project-categories' => ProjectCategory::class,
+        'project-images' => ProjectImage::class,
+        'project-videos' => ProjectVideo::class,
+        'project-statistics' => ProjectStatistic::class,
+        'team-members' => TeamMember::class,
+        'testimonials' => Testimonial::class,
+        'gallery-albums' => GalleryAlbum::class,
+        'gallery-items' => GalleryItem::class,
     ];
 
     public function __invoke(Request $request, string $resource)
@@ -35,10 +47,3 @@ class ReorderController extends Controller
         return response()->noContent();
     }
 }
-
-
-
-
-
-
-

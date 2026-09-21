@@ -17,6 +17,7 @@ class ProjectVideoController extends Controller
             $query->where('project_id', $request->project_id);
         }
         $videos = $query->paginate(15);
+
         return view('admin-core::project_videos.index', compact('videos'));
     }
 
@@ -24,6 +25,7 @@ class ProjectVideoController extends Controller
     {
         $projects = Project::all();
         $selectedProject = $request->get('project_id');
+
         return view('admin-core::project_videos.form', compact('projects', 'selectedProject'));
     }
 
@@ -31,10 +33,10 @@ class ProjectVideoController extends Controller
     {
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
-            'title'      => 'nullable|string|max:255',
-            'video_url'  => 'required|string|max:500',
+            'title' => 'nullable|string|max:255',
+            'video_url' => 'required|string|max:500',
             'video_type' => 'required|in:youtube,vimeo,uploaded',
-            'thumbnail'  => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($request->hasFile('thumbnail')) {
@@ -42,12 +44,14 @@ class ProjectVideoController extends Controller
         }
 
         ProjectVideo::create($validated);
+
         return redirect()->route('admin.project-videos.index', ['project_id' => $validated['project_id']])->with('success', 'Video added successfully.');
     }
 
     public function edit(ProjectVideo $projectVideo)
     {
         $projects = Project::all();
+
         return view('admin-core::project_videos.form', ['video' => $projectVideo, 'projects' => $projects, 'selectedProject' => $projectVideo->project_id]);
     }
 
@@ -55,10 +59,10 @@ class ProjectVideoController extends Controller
     {
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
-            'title'      => 'nullable|string|max:255',
-            'video_url'  => 'required|string|max:500',
+            'title' => 'nullable|string|max:255',
+            'video_url' => 'required|string|max:500',
             'video_type' => 'required|in:youtube,vimeo,uploaded',
-            'thumbnail'  => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($request->hasFile('thumbnail')) {
@@ -71,6 +75,7 @@ class ProjectVideoController extends Controller
         }
 
         $projectVideo->update($validated);
+
         return redirect()->route('admin.project-videos.index', ['project_id' => $validated['project_id']])->with('success', 'Video updated successfully.');
     }
 
@@ -80,9 +85,7 @@ class ProjectVideoController extends Controller
             Storage::disk('public')->delete($projectVideo->thumbnail);
         }
         $projectVideo->delete();
+
         return back()->with('success', 'Video deleted successfully.');
     }
 }
-
-
-

@@ -11,6 +11,7 @@ class ContactMessageController extends Controller
     public function index(Request $request)
     {
         $messages = ContactMessage::latest()->paginate(15);
+
         return view('admin-core::contact_messages.index', compact('messages'));
     }
 
@@ -19,6 +20,7 @@ class ContactMessageController extends Controller
         if ($contactMessage->status === 'new') {
             $contactMessage->update(['status' => 'read']);
         }
+
         return view('admin-core::contact_messages.show', ['message' => $contactMessage]);
     }
 
@@ -27,21 +29,20 @@ class ContactMessageController extends Controller
         $validated = $request->validate([
             'status' => 'required|in:new,read,replied,closed,spam',
         ]);
-        
-        if ($validated['status'] === 'replied' && !$contactMessage->replied_at) {
+
+        if ($validated['status'] === 'replied' && ! $contactMessage->replied_at) {
             $validated['replied_at'] = now();
         }
 
         $contactMessage->update($validated);
+
         return back()->with('success', 'Message status updated.');
     }
 
     public function destroy(ContactMessage $contactMessage)
     {
         $contactMessage->delete();
+
         return redirect()->route('admin.contact-messages.index')->with('success', 'Message deleted.');
     }
 }
-
-
-

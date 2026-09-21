@@ -31,5 +31,3 @@ trait HasSeo
         return $this->seo?->meta_description ?? $this->excerpt ?? $this->short_description ?? '';
     }
 }
-
-

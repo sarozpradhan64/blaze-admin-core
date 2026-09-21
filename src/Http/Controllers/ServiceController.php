@@ -8,13 +8,13 @@ use Blaze\AdminCore\Models\ServiceCategory;
 use Blaze\AdminCore\Models\WebsiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
     public function index()
     {
         $services = Service::with('category')->orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::services.index', compact('services'));
     }
 
@@ -23,6 +23,7 @@ class ServiceController extends Controller
         $categories = ServiceCategory::all();
         $seoDefaults = WebsiteSetting::whereIn('key', ['seo_default_title', 'seo_default_description', 'seo_default_keywords'])
             ->pluck('value', 'key');
+
         return view('admin-core::services.form', compact('categories', 'seoDefaults'));
     }
 
@@ -44,7 +45,7 @@ class ServiceController extends Controller
         $validated['slug'] = $this->uniqueSlug($validated['title'], 'services');
         $validated['status'] = $request->has('status');
         $validated['is_featured'] = $request->has('is_featured');
-        
+
         Service::create($validated);
 
         return redirect()->route('admin.services.index')->with('success', 'Service created successfully.');
@@ -53,6 +54,7 @@ class ServiceController extends Controller
     public function edit(Service $service)
     {
         $categories = ServiceCategory::all();
+
         return view('admin-core::services.form', compact('service', 'categories'));
     }
 
@@ -93,10 +95,7 @@ class ServiceController extends Controller
             Storage::disk('public')->delete($service->featured_image);
         }
         $service->delete();
+
         return redirect()->route('admin.services.index')->with('success', 'Service deleted successfully.');
     }
 }
-
-
-
-
