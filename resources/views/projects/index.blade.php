@@ -42,6 +42,10 @@
                                     @foreach ($project->tags->take(3) as $tag)
                                         <x-ui.badge variant="outline">{{ $tag->name }}</x-ui.badge>
                                     @endforeach
+                                    @if ($project->tags->count() > 3)
+                                        <x-ui.badge variant="secondary">+{{ $project->tags->count() - 3 }}
+                                            more</x-ui.badge>
+                                    @endif
                                 </div>
                             </x-ui.table-cell>
                             <x-ui.table-cell>
@@ -53,19 +57,23 @@
                                 </x-ui.badge>
                             </x-ui.table-cell>
                             <x-ui.table-cell>
-                                @if($project->is_featured)
+                                @if ($project->is_featured)
                                     <x-lucide-check-circle class="size-4 text-primary" />
                                 @endif
                             </x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <x-ui.button variant="ghost" size="icon" href="{{ route('admin.projects.edit', $project) }}">
+                                    <x-ui.button variant="ghost" size="icon"
+                                        href="{{ route('admin.projects.edit', $project) }}">
                                         <x-lucide-edit class="size-4" />
                                     </x-ui.button>
-                                    <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                    <form action="{{ route('admin.projects.destroy', $project) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure?');">
                                         @csrf
                                         @method('DELETE')
-                                        <x-ui.button variant="ghost" size="icon" class="text-destructive hover:text-destructive hover:bg-destructive/10" type="submit">
+                                        <x-ui.button variant="ghost" size="icon"
+                                            class="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            type="submit">
                                             <x-lucide-trash-2 class="size-4" />
                                         </x-ui.button>
                                     </form>
@@ -82,7 +90,7 @@
                 </x-ui.table-body>
             </x-ui.table>
         </x-ui.card-content>
-        @if($projects->hasPages())
+        @if ($projects->hasPages())
             <x-ui.card-footer class="border-t p-4">
                 {{ $projects->links() }}
             </x-ui.card-footer>

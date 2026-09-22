@@ -47,6 +47,10 @@
                                     @foreach ($service->tags->take(3) as $tag)
                                         <x-ui.badge variant="outline">{{ $tag->name }}</x-ui.badge>
                                     @endforeach
+                                    @if ($service->tags->count() > 3)
+                                        <x-ui.badge variant="secondary">+{{ $service->tags->count() - 3 }}
+                                            more</x-ui.badge>
+                                    @endif
                                 </div>
                             </x-ui.table-cell>
                             <x-ui.table-cell>
