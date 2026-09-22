@@ -28,6 +28,7 @@
                     <x-ui.table-row>
                         <x-ui.table-head class="w-8"></x-ui.table-head>
                         <x-ui.table-head>Name</x-ui.table-head>
+                        <x-ui.table-head>Parent</x-ui.table-head>
                         <x-ui.table-head>Slug</x-ui.table-head>
                         <x-ui.table-head>Services</x-ui.table-head>
                         <x-ui.table-head>Status</x-ui.table-head>
@@ -44,6 +45,7 @@
                                 </button>
                             </x-ui.table-cell>
                             <x-ui.table-cell class="font-medium">{{ $category->name }}</x-ui.table-cell>
+                            <x-ui.table-cell>{{ $category->parent?->name ?? 'None' }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-muted-foreground">{{ $category->slug }}</x-ui.table-cell>
                             <x-ui.table-cell>{{ $category->services_count }}</x-ui.table-cell>
                             <x-ui.table-cell>
@@ -72,7 +74,7 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="6" class="text-center py-6 text-muted-foreground">
+                            <x-ui.table-cell colspan="7" class="text-center py-6 text-muted-foreground">
                                 No categories found.
                             </x-ui.table-cell>
                         </x-ui.table-row>

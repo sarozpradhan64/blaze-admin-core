@@ -25,6 +25,7 @@
                         <x-ui.table-head>Title</x-ui.table-head>
                         <x-ui.table-head>Category</x-ui.table-head>
                         <x-ui.table-head>Author</x-ui.table-head>
+                        <x-ui.table-head>Tags</x-ui.table-head>
                         <x-ui.table-head>Status</x-ui.table-head>
                         <x-ui.table-head>Updated</x-ui.table-head>
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
@@ -36,6 +37,13 @@
                             <x-ui.table-cell class="font-medium">{{ $blog->title }}</x-ui.table-cell>
                             <x-ui.table-cell>{{ $blog->category?->name ?? 'Uncategorized' }}</x-ui.table-cell>
                             <x-ui.table-cell>{{ $blog->author?->name ?? 'System' }}</x-ui.table-cell>
+                            <x-ui.table-cell>
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach ($blog->tags->take(3) as $tag)
+                                        <x-ui.badge variant="outline">{{ $tag->name }}</x-ui.badge>
+                                    @endforeach
+                                </div>
+                            </x-ui.table-cell>
                             <x-ui.table-cell>
                                 <x-ui.badge variant="{{ $blog->status ? 'default' : 'secondary' }}">
                                     {{ $blog->status ? 'Published' : 'Draft' }}
@@ -62,7 +70,7 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="6" class="text-center py-6 text-muted-foreground">
+                            <x-ui.table-cell colspan="7" class="text-center py-6 text-muted-foreground">
                                 No blog posts found.
                             </x-ui.table-cell>
                         </x-ui.table-row>

@@ -116,6 +116,8 @@
                                 :active="request()->routeIs('admin.company-info.*')"><x-lucide-building-2 /><span>Company
                                     Info</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
+                    <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.tags.manage') }}"
+                            :active="request()->routeIs('admin.tags.manage')"><x-lucide-tags /><span>Tags</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                 </x-ui.sidebar-menu></x-ui.sidebar-group-content>
         </x-ui.sidebar-group>
 

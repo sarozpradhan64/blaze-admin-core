@@ -20,6 +20,7 @@ use Blaze\AdminCore\Http\Controllers\ReorderController;
 use Blaze\AdminCore\Http\Controllers\ServiceCategoryController;
 use Blaze\AdminCore\Http\Controllers\ServiceController;
 use Blaze\AdminCore\Http\Controllers\ServiceFeatureController;
+use Blaze\AdminCore\Http\Controllers\TagController;
 use Blaze\AdminCore\Http\Controllers\TeamMemberController;
 use Blaze\AdminCore\Http\Controllers\TestimonialController;
 use Blaze\AdminCore\Http\Controllers\UserController;
@@ -117,5 +118,12 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
 
         // Universal drag-to-reorder endpoint
         Route::post('reorder/{resource}', ReorderController::class)->name('reorder');
+        Route::get('tags', [TagController::class, 'index'])->name('tags.index');
+        Route::get('tags/manage', [TagController::class, 'manage'])->name('tags.manage');
+        Route::get('tags/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
+        Route::get('tags/{tag}', [TagController::class, 'show'])->name('tags.show');
+        Route::post('tags', [TagController::class, 'store'])->name('tags.store');
+        Route::put('tags/{tag}', [TagController::class, 'update'])->name('tags.update');
+        Route::delete('tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
     });
 });

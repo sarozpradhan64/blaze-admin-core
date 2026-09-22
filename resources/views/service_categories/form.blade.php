@@ -7,7 +7,8 @@
                 </x-ui.breadcrumb-item>
                 <x-ui.breadcrumb-separator />
                 <x-ui.breadcrumb-item>
-                    <x-ui.breadcrumb-link href="{{ route('admin.service-categories.index') }}">Categories</x-ui.breadcrumb-link>
+                    <x-ui.breadcrumb-link
+                        href="{{ route('admin.service-categories.index') }}">Categories</x-ui.breadcrumb-link>
                 </x-ui.breadcrumb-item>
                 <x-ui.breadcrumb-separator />
                 <x-ui.breadcrumb-item>
@@ -19,12 +20,15 @@
 
     <div class="max-w-2xl">
         <div class="mb-6 flex items-center justify-between">
-            <h2 class="text-2xl font-bold tracking-tight">{{ isset($category) ? 'Edit Category' : 'Add New Category' }}</h2>
+            <h2 class="text-2xl font-bold tracking-tight">{{ isset($category) ? 'Edit Category' : 'Add New Category' }}
+            </h2>
         </div>
 
-        <form action="{{ isset($category) ? route('admin.service-categories.update', $category) : route('admin.service-categories.store') }}" method="POST">
+        <form
+            action="{{ isset($category) ? route('admin.service-categories.update', $category) : route('admin.service-categories.store') }}"
+            method="POST" enctype="multipart/form-data">
             @csrf
-            @if(isset($category))
+            @if (isset($category))
                 @method('PUT')
             @endif
 
@@ -33,16 +37,42 @@
                     <x-ui.card-content class="space-y-4 pt-6">
                         <x-ui.field>
                             <x-ui.field-label for="name">Name</x-ui.field-label>
-                            <x-ui.input id="name" name="name" value="{{ old('name', $category->name ?? '') }}" />
+                            <x-ui.input id="name" name="name"
+                                value="{{ old('name', $category->name ?? '') }}" />
                             <x-ui.field-error name="name" />
                         </x-ui.field>
 
                         <x-ui.field>
+                            <x-ui.field-label for="parent_id">Parent Category</x-ui.field-label>
+                            <x-ui.select name="parent_id">
+                                <x-ui.select-trigger>
+                                    <x-ui.select-value placeholder="Select a parent category" />
+                                </x-ui.select-trigger>
+                                <x-ui.select-content>
+                                    <x-ui.select-item value="">None</x-ui.select-item>
+                                    @foreach ($categories as $parentCategory)
+                                        <x-ui.select-item value="{{ $parentCategory->id }}" :selected="old('parent_id', $category->parent_id ?? '') == $parentCategory->id">
+                                            {{ $parentCategory->name }}
+                                        </x-ui.select-item>
+                                    @endforeach
+                                </x-ui.select-content>
+                            </x-ui.select>
+                            <x-ui.field-error name="parent_id" />
+                        </x-ui.field>
+
+                        <x-ui.field>
                             <x-ui.field-label for="description">Description</x-ui.field-label>
-                            <x-ui.textarea id="description" name="description" rows="3">{{ old('description', $category->description ?? '') }}</x-ui.textarea>
+                            <x-ui.rich-text-editor name="description" :value="old('description', $category->description ?? '')" />
                             <x-ui.field-error name="description" />
                         </x-ui.field>
-                        
+
+                        <x-ui.field>
+                            <x-ui.field-label for="thumbnail">Thumbnail</x-ui.field-label>
+                            <x-ui.file-upload name="thumbnail" accept="image/jpeg,image/png,image/gif,image/webp"
+                                :current="old('thumbnail', $category->thumbnail ?? null)" />
+                            <x-ui.field-error name="thumbnail" />
+                        </x-ui.field>
+
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex items-center pt-8">
                                 <x-ui.label for="status" class="flex flex-col space-y-1 w-full">
@@ -53,7 +83,8 @@
                         </div>
                     </x-ui.card-content>
                     <x-ui.card-footer class="border-t bg-muted/50 flex justify-end gap-2 p-4">
-                        <x-ui.button variant="outline" href="{{ route('admin.service-categories.index') }}">Cancel</x-ui.button>
+                        <x-ui.button variant="outline"
+                            href="{{ route('admin.service-categories.index') }}">Cancel</x-ui.button>
                         <x-ui.button type="submit">Save Category</x-ui.button>
                     </x-ui.card-footer>
                 </x-ui.card>

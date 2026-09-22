@@ -12,7 +12,7 @@ class ServiceController extends Controller
 {
     public function index()
     {
-        $services = Service::with('category')->orderBy('sort_order')->latest()->paginate(10);
+        $services = Service::with(['category', 'tags'])->orderBy('sort_order')->latest()->paginate(10);
 
         return view('admin-core::services.index', compact('services'));
     }
@@ -35,7 +35,11 @@ class ServiceController extends Controller
             'description' => 'required|string',
             'icon' => 'nullable|string|max:255',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'tags' => 'nullable|string|max:1000',
         ]);
+
+        $tags = $validated['tags'] ?? null;
+        unset($validated['tags']);
 
         if ($request->hasFile('featured_image')) {
             $validated['featured_image'] = $request->file('featured_image')->store('services', 'public');
@@ -45,7 +49,8 @@ class ServiceController extends Controller
         $validated['status'] = $request->has('status');
         $validated['is_featured'] = $request->has('is_featured');
 
-        Service::create($validated);
+        $service = Service::create($validated);
+        $service->syncTagsFromString($tags);
 
         return redirect()->route('admin.services.index')->with('success', 'Service created successfully.');
     }
@@ -66,7 +71,11 @@ class ServiceController extends Controller
             'description' => 'required|string',
             'icon' => 'nullable|string|max:255',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'tags' => 'nullable|string|max:1000',
         ]);
+
+        $tags = $validated['tags'] ?? null;
+        unset($validated['tags']);
 
         if ($request->hasFile('featured_image')) {
             if ($service->featured_image) {
@@ -84,6 +93,7 @@ class ServiceController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
 
         $service->update($validated);
+        $service->syncTagsFromString($tags);
 
         return redirect()->route('admin.services.index')->with('success', 'Service updated successfully.');
     }

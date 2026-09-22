@@ -93,6 +93,12 @@
                                 <x-ui.field-error name="service_category_id" />
                             </x-ui.field>
 
+                            <x-ui.field>
+                                <x-ui.field-label for="tags">Tags</x-ui.field-label>
+                                <x-admin::tag-picker :value="old('tags', isset($service) ? $service->tagList() : '')" placeholder="Search or create tags" />
+                                <x-ui.field-error name="tags" />
+                            </x-ui.field>
+
                         </x-ui.card-content>
                     </x-ui.card>
 

@@ -2,7 +2,8 @@
     <x-slot:header>
         <x-ui.breadcrumb>
             <x-ui.breadcrumb-list>
-                <x-ui.breadcrumb-item><x-ui.breadcrumb-link href="{{ route('admin.gallery-items.index') }}">Gallery Items</x-ui.breadcrumb-link></x-ui.breadcrumb-item>
+                <x-ui.breadcrumb-item><x-ui.breadcrumb-link href="{{ route('admin.gallery-items.index') }}">Gallery
+                        Items</x-ui.breadcrumb-link></x-ui.breadcrumb-item>
                 <x-ui.breadcrumb-separator />
                 <x-ui.breadcrumb-item><x-ui.breadcrumb-page>{{ isset($item) ? 'Edit' : 'Add' }}</x-ui.breadcrumb-page></x-ui.breadcrumb-item>
             </x-ui.breadcrumb-list>
@@ -14,8 +15,12 @@
             <h2 class="text-2xl font-bold tracking-tight">{{ isset($item) ? 'Edit Image' : 'Add Gallery Image' }}</h2>
         </div>
 
-        <form action="{{ isset($item) ? route('admin.gallery-items.update', $item) : route('admin.gallery-items.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf @if(isset($item)) @method('PUT') @endif
+        <form
+            action="{{ isset($item) ? route('admin.gallery-items.update', $item) : route('admin.gallery-items.store') }}"
+            method="POST" enctype="multipart/form-data">
+            @csrf @if (isset($item))
+                @method('PUT')
+            @endif
 
             <div class="grid gap-6 md:grid-cols-3">
                 <div class="md:col-span-2 space-y-6">
@@ -25,10 +30,15 @@
                             <x-ui.field>
                                 <x-ui.field-label>Album</x-ui.field-label>
                                 <x-ui.select name="gallery_album_id">
-                                    <x-ui.select-trigger class="w-full"><x-ui.select-value placeholder="Select an album" /></x-ui.select-trigger>
+                                    <x-ui.select-trigger class="w-full"><x-ui.select-value
+                                            placeholder="Select an album" /></x-ui.select-trigger>
                                     <x-ui.select-content>
-                                        @foreach($albums as $a)
-                                            <x-ui.select-item value="{{ $a->id }}" :selected="old('gallery_album_id', $item->gallery_album_id ?? $selectedAlbum) == $a->id">{{ $a->title }}</x-ui.select-item>
+                                        @foreach ($albums as $a)
+                                            <x-ui.select-item value="{{ $a->id }}"
+                                                :selected="old(
+                                                    'gallery_album_id',
+                                                    $item->gallery_album_id ?? $selectedAlbum,
+                                                ) == $a->id">{{ $a->title }}</x-ui.select-item>
                                         @endforeach
                                     </x-ui.select-content>
                                 </x-ui.select>
@@ -39,6 +49,11 @@
                                 <x-ui.input name="title" value="{{ old('title', $item->title ?? '') }}" />
                                 <x-ui.field-error name="title" />
                             </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label for="tags">Tags</x-ui.field-label>
+                                <x-admin::tag-picker :value="old('tags', isset($item) ? $item->tagList() : '')" placeholder="Search or create tags" />
+                                <x-ui.field-error name="tags" />
+                            </x-ui.field>
                         </x-ui.card-content>
                     </x-ui.card>
                 </div>
@@ -47,12 +62,8 @@
                     <x-ui.card>
                         <x-ui.card-header><x-ui.card-title>Image</x-ui.card-title></x-ui.card-header>
                         <x-ui.card-content>
-                            <x-ui.file-upload
-                                name="image_path"
-                                accept="image/jpeg,image/png,image/gif,image/webp"
-                                :current="old('image_path', $item->image_path ?? null)"
-                                
-                            />
+                            <x-ui.file-upload name="image_path" accept="image/jpeg,image/png,image/gif,image/webp"
+                                :current="old('image_path', $item->image_path ?? null)" />
                             <x-ui.field-error name="image_path" />
                         </x-ui.card-content>
                     </x-ui.card>

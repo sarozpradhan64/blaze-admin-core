@@ -3,12 +3,13 @@
 namespace Blaze\AdminCore\Models;
 
 use Blaze\AdminCore\Traits\HasSeo;
+use Blaze\AdminCore\Traits\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory, HasTags;
     use HasSeo;
 
     protected $table = 'projects';
