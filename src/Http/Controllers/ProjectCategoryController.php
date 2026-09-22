@@ -2,7 +2,6 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\ProjectCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

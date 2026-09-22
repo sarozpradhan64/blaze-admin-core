@@ -2,7 +2,6 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\GalleryAlbum;
 use Blaze\AdminCore\Models\GalleryItem;
 use Illuminate\Http\Request;

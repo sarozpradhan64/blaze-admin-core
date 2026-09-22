@@ -2,7 +2,6 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\ContactInformation;
 use Blaze\AdminCore\Models\SocialLink;
 use Blaze\AdminCore\Models\WebsiteSetting;

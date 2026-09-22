@@ -2,7 +2,6 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\ServiceFeature;
 use Illuminate\Http\Request;

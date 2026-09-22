@@ -2,7 +2,6 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Project;
 use Blaze\AdminCore\Models\ProjectVideo;
 use Illuminate\Http\Request;

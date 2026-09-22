@@ -2,7 +2,6 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\ServiceCategory;
 use Blaze\AdminCore\Models\WebsiteSetting;

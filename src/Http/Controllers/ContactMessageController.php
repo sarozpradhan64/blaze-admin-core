@@ -2,7 +2,6 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\ContactMessage;
 use Illuminate\Http\Request;
 
@@ -30,7 +29,7 @@ class ContactMessageController extends Controller
             'status' => 'required|in:new,read,replied,closed,spam',
         ]);
 
-        if ($validated['status'] === 'replied' && ! $contactMessage->replied_at) {
+        if ($validated['status'] === 'replied' && !$contactMessage->replied_at) {
             $validated['replied_at'] = now();
         }
 
