@@ -38,10 +38,14 @@ class BlogController extends Controller
             'featured_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
             'status' => ['nullable'],
             'tags' => ['nullable', 'string', 'max:1000'],
+            'faqs' => ['nullable', 'array'],
         ]);
 
         $tags = $validated['tags'] ?? null;
         unset($validated['tags']);
+
+        $faqs = $validated['faqs'] ?? [];
+        unset($validated['faqs']);
 
         if ($request->hasFile('featured_image')) {
             $validated['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
@@ -55,6 +59,9 @@ class BlogController extends Controller
 
         $blog = Blog::create($validated);
         $blog->syncTagsFromString($tags);
+        if (method_exists($blog, 'syncFaqs')) {
+            $blog->syncFaqs($faqs);
+        }
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
     }
@@ -78,10 +85,14 @@ class BlogController extends Controller
             'featured_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
             'status' => ['nullable'],
             'tags' => ['nullable', 'string', 'max:1000'],
+            'faqs' => ['nullable', 'array'],
         ]);
 
         $tags = $validated['tags'] ?? null;
         unset($validated['tags']);
+
+        $faqs = $validated['faqs'] ?? [];
+        unset($validated['faqs']);
 
         if ($request->hasFile('featured_image')) {
             if ($blog->featured_image) {
@@ -102,6 +113,9 @@ class BlogController extends Controller
 
         $blog->update($validated);
         $blog->syncTagsFromString($tags);
+        if (method_exists($blog, 'syncFaqs')) {
+            $blog->syncFaqs($faqs);
+        }
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog updated successfully.');
     }

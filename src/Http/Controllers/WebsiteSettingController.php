@@ -42,6 +42,19 @@ class WebsiteSettingController extends Controller
             'seo_default_image',
             'google_analytics',
             'admin_portal_title',
+            'label_services',
+            'label_projects',
+            'label_enquiries',
+            'label_contact_messages',
+            'label_testimonials',
+            'label_team_members',
+            'label_gallery',
+            'label_blog',
+            'label_downloads',
+            'label_company_info',
+            'label_tags',
+            'label_faqs',
+            'label_services_features',
         ];
 
         $settings = WebsiteSetting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
@@ -191,12 +204,34 @@ class WebsiteSettingController extends Controller
     {
         $validated = $request->validate([
             'admin_portal_title' => 'nullable|string|max:255',
+            'label_services' => 'nullable|string|max:255',
+            'label_projects' => 'nullable|string|max:255',
+            'label_enquiries' => 'nullable|string|max:255',
+            'label_contact_messages' => 'nullable|string|max:255',
+            'label_testimonials' => 'nullable|string|max:255',
+            'label_team_members' => 'nullable|string|max:255',
+            'label_gallery' => 'nullable|string|max:255',
+            'label_blog' => 'nullable|string|max:255',
+            'label_downloads' => 'nullable|string|max:255',
+            'label_company_info' => 'nullable|string|max:255',
+            'label_tags' => 'nullable|string|max:255',
+            'label_faqs' => 'nullable|string|max:255',
+            'label_services_features' => 'nullable|string|max:255',
         ]);
 
-        WebsiteSetting::updateOrCreate(
-            ['key' => 'admin_portal_title'],
-            ['group' => 'system', 'value' => $validated['admin_portal_title'] ?? null, 'type' => 'string']
-        );
+        $keys = [
+            'admin_portal_title', 'label_services', 'label_projects', 'label_enquiries',
+            'label_contact_messages', 'label_testimonials', 'label_team_members', 'label_gallery',
+            'label_blog', 'label_downloads', 'label_company_info', 'label_tags', 'label_faqs',
+            'label_services_features'
+        ];
+
+        foreach ($keys as $key) {
+            WebsiteSetting::updateOrCreate(
+                ['key' => $key],
+                ['group' => 'system', 'value' => $validated[$key] ?? null, 'type' => 'string']
+            );
+        }
 
         return back()->with('success', 'System settings updated.')->with('active_tab', 'system');
     }

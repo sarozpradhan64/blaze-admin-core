@@ -96,6 +96,12 @@
                                 <x-admin::tag-picker :value="old('tags', isset($blog) ? $blog->tagList() : '')" placeholder="Search or create tags" />
                                 <x-ui.field-error name="tags" />
                             </x-ui.field>
+
+                            <x-ui.field>
+                                <x-ui.field-label for="faqs">FAQs</x-ui.field-label>
+                                <x-admin::faq-picker :value="old('faqs', isset($blog) ? $blog->faqs->pluck('id')->toArray() : [])" placeholder="Select FAQs" />
+                                <x-ui.field-error name="faqs" />
+                            </x-ui.field>
                         </x-ui.card-content>
                     </x-ui.card>
                 </div>

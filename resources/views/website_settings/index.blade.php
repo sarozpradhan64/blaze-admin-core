@@ -528,6 +528,92 @@
                                 label.</x-ui.field-description>
                         </x-ui.field>
                     </x-ui.card-content>
+                </x-ui.card>
+
+                <x-ui.card class="mt-6">
+                    <x-ui.card-header>
+                        <div class="flex items-center gap-2">
+                            <x-lucide-menu class="size-5 text-muted-foreground" />
+                            <div>
+                                <x-ui.card-title>Sidebar Modules</x-ui.card-title>
+                                <x-ui.card-description>Rename the modules in the sidebar.</x-ui.card-description>
+                            </div>
+                        </div>
+                    </x-ui.card-header>
+                    <x-ui.card-content class="grid grid-cols-2 gap-4">
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('services'))
+                        <x-ui.field>
+                            <x-ui.field-label>Services Label</x-ui.field-label>
+                            <x-ui.input name="label_services" value="{{ old('label_services', $settings['label_services'] ?? 'Services') }}" placeholder="Services" />
+                        </x-ui.field>
+                        <x-ui.field>
+                            <x-ui.field-label>Service Features Label</x-ui.field-label>
+                            <x-ui.input name="label_services_features" value="{{ old('label_services_features', $settings['label_services_features'] ?? 'Features') }}" placeholder="Features" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('projects'))
+                        <x-ui.field>
+                            <x-ui.field-label>Projects Label</x-ui.field-label>
+                            <x-ui.input name="label_projects" value="{{ old('label_projects', $settings['label_projects'] ?? 'Projects') }}" placeholder="Projects" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('enquiries'))
+                        <x-ui.field>
+                            <x-ui.field-label>Enquiries Label</x-ui.field-label>
+                            <x-ui.input name="label_enquiries" value="{{ old('label_enquiries', $settings['label_enquiries'] ?? 'Enquiries') }}" placeholder="Enquiries" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('contact-messages'))
+                        <x-ui.field>
+                            <x-ui.field-label>Contact Messages Label</x-ui.field-label>
+                            <x-ui.input name="label_contact_messages" value="{{ old('label_contact_messages', $settings['label_contact_messages'] ?? 'Contact Messages') }}" placeholder="Contact Messages" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('testimonials'))
+                        <x-ui.field>
+                            <x-ui.field-label>Testimonials Label</x-ui.field-label>
+                            <x-ui.input name="label_testimonials" value="{{ old('label_testimonials', $settings['label_testimonials'] ?? 'Testimonials') }}" placeholder="Testimonials" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('team-members'))
+                        <x-ui.field>
+                            <x-ui.field-label>Team Members Label</x-ui.field-label>
+                            <x-ui.input name="label_team_members" value="{{ old('label_team_members', $settings['label_team_members'] ?? 'Team Members') }}" placeholder="Team Members" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('gallery'))
+                        <x-ui.field>
+                            <x-ui.field-label>Gallery Label</x-ui.field-label>
+                            <x-ui.input name="label_gallery" value="{{ old('label_gallery', $settings['label_gallery'] ?? 'Gallery') }}" placeholder="Gallery" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('blog'))
+                        <x-ui.field>
+                            <x-ui.field-label>Blog Label</x-ui.field-label>
+                            <x-ui.input name="label_blog" value="{{ old('label_blog', $settings['label_blog'] ?? 'Blog') }}" placeholder="Blog" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('downloads'))
+                        <x-ui.field>
+                            <x-ui.field-label>Downloads Label</x-ui.field-label>
+                            <x-ui.input name="label_downloads" value="{{ old('label_downloads', $settings['label_downloads'] ?? 'Downloads') }}" placeholder="Downloads" />
+                        </x-ui.field>
+                        @endif
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('company-info'))
+                        <x-ui.field>
+                            <x-ui.field-label>Company Info Label</x-ui.field-label>
+                            <x-ui.input name="label_company_info" value="{{ old('label_company_info', $settings['label_company_info'] ?? 'Company Info') }}" placeholder="Company Info" />
+                        </x-ui.field>
+                        @endif
+                        <x-ui.field>
+                            <x-ui.field-label>Tags Label</x-ui.field-label>
+                            <x-ui.input name="label_tags" value="{{ old('label_tags', $settings['label_tags'] ?? 'Tags') }}" placeholder="Tags" />
+                        </x-ui.field>
+                        <x-ui.field>
+                            <x-ui.field-label>FAQs Label</x-ui.field-label>
+                            <x-ui.input name="label_faqs" value="{{ old('label_faqs', $settings['label_faqs'] ?? 'FAQs') }}" placeholder="FAQs" />
+                        </x-ui.field>
+                    </x-ui.card-content>
                     <x-ui.card-footer class="border-t pt-4 flex justify-end">
                         <x-ui.button type="submit">
                             <x-slot:before><x-lucide-save class="size-4" /></x-slot:before>
