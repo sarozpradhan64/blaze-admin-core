@@ -12,7 +12,6 @@ class Blog extends Model
 {
     use HasFactory;
     use HasSeo;
-    use HasSortOrder;
 
     protected $table = 'pages';
 
