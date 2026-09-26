@@ -2,13 +2,13 @@
 
 namespace Blaze\AdminCore\Models;
 
-use Blaze\AdminCore\Traits\HasTags;
+use Blaze\AdminCore\Traits\HasSortOrder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class GalleryItem extends Model
 {
-    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory, HasTags;
+    use HasFactory, HasSortOrder;
 
     protected $table = 'gallery_items';
 

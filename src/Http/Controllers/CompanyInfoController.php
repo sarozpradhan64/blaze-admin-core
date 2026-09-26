@@ -32,6 +32,7 @@ class CompanyInfoController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'google_maps_url' => 'nullable|url|max:1000',
+            'google_maps_iframe' => 'nullable|string',
             'working_hours' => 'nullable|string',
             'logo' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:4096',
             'favicon' => 'nullable|file|mimes:ico,png,jpg,jpeg,webp,svg|max:2048',

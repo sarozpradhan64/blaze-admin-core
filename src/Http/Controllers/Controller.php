@@ -15,9 +15,9 @@ abstract class Controller
 
         while (
             DB::table($table)
-            ->where('slug', $slug)
-            ->when($excludeId, fn($q) => $q->where('id', '!=', $excludeId))
-            ->exists()
+                ->where('slug', $slug)
+                ->when($excludeId, fn ($q) => $q->where('id', '!=', $excludeId))
+                ->exists()
         ) {
             $slug = "{$base}-{$i}";
             $i++;

@@ -13,10 +13,12 @@
         </x-ui.breadcrumb>
     </x-slot:header>
 
-    <div class="flex justify-between items-center">
+    <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold tracking-tight">Project Videos</h2>
         <x-ui.button href="{{ route('admin.project-videos.create', ['project_id' => request('project_id')]) }}">
-            <x-slot:before><x-lucide-plus class="size-4" /></x-slot:before>
+            <x-slot:before>
+                <x-lucide-plus class="size-4" />
+            </x-slot:before>
             Add Video
         </x-ui.button>
     </div>
@@ -34,11 +36,14 @@
                     </x-ui.table-row>
                 </x-ui.table-header>
                 <x-ui.table-body>
-                    @forelse($videos as $video)
+                    @forelse ($videos as $video)
                         <x-ui.table-row>
                             <x-ui.table-cell class="font-medium">{{ $video->title ?? 'Untitled' }}</x-ui.table-cell>
                             <x-ui.table-cell>
-                                <a href="{{ route('admin.projects.edit', $video->project_id) }}" class="hover:underline text-primary">
+                                <a
+                                    href="{{ route('admin.projects.edit', $video->project_id) }}"
+                                    class="text-primary hover:underline"
+                                >
                                     {{ $video->project?->title }}
                                 </a>
                             </x-ui.table-cell>
@@ -48,13 +53,26 @@
                             <x-ui.table-cell>{{ $video->sort_order }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <x-ui.button variant="ghost" size="icon" href="{{ route('admin.project-videos.edit', $video) }}">
+                                    <x-ui.button
+                                        variant="ghost"
+                                        size="icon"
+                                        href="{{ route('admin.project-videos.edit', $video) }}"
+                                    >
                                         <x-lucide-edit class="size-4" />
                                     </x-ui.button>
-                                    <form action="{{ route('admin.project-videos.destroy', $video) }}" method="POST" onsubmit="return confirm('Delete this video?');">
+                                    <form
+                                        action="{{ route('admin.project-videos.destroy', $video) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Delete this video?');"
+                                    >
                                         @csrf
                                         @method('DELETE')
-                                        <x-ui.button variant="ghost" size="icon" class="text-destructive hover:text-destructive hover:bg-destructive/10" type="submit">
+                                        <x-ui.button
+                                            variant="ghost"
+                                            size="icon"
+                                            class="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            type="submit"
+                                        >
                                             <x-lucide-trash-2 class="size-4" />
                                         </x-ui.button>
                                     </form>
@@ -63,13 +81,14 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="5" class="text-center py-6 text-muted-foreground">No videos found.</x-ui.table-cell>
+                            <x-ui.table-cell colspan="5" class="text-muted-foreground py-6 text-center">
+                                No videos found.</x-ui.table-cell>
                         </x-ui.table-row>
                     @endforelse
                 </x-ui.table-body>
             </x-ui.table>
         </x-ui.card-content>
-        @if($videos->hasPages())
+        @if ($videos->hasPages())
             <x-ui.card-footer class="border-t p-4">{{ $videos->links() }}</x-ui.card-footer>
         @endif
     </x-ui.card>

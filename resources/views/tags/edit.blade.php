@@ -14,7 +14,7 @@
     <div class="max-w-2xl">
         <div class="mb-6">
             <h2 class="text-2xl font-bold tracking-tight">Edit Tag</h2>
-            <p class="text-sm text-muted-foreground">Update the name used for this tag across your content.</p>
+            <p class="text-muted-foreground text-sm">Update the name used for this tag across your content.</p>
         </div>
 
         <x-ui.card>
@@ -27,12 +27,12 @@
                         <x-ui.input id="name" name="name" value="{{ old('name', $tag->name) }}" autofocus />
                         <x-ui.field-error name="name" />
                     </x-ui.field>
-                    <div class="rounded-md border bg-muted/40 px-3 py-2 text-sm">
+                    <div class="bg-muted/40 rounded-md border px-3 py-2 text-sm">
                         <span class="text-muted-foreground">Current slug:</span>
                         <span class="font-mono">{{ $tag->slug }}</span>
                     </div>
                 </x-ui.card-content>
-                <x-ui.card-footer class="flex justify-end gap-2 border-t bg-muted/50 p-4">
+                <x-ui.card-footer class="bg-muted/50 flex justify-end gap-2 border-t p-4">
                     <x-ui.button variant="outline" href="{{ route('admin.tags.manage') }}">Cancel</x-ui.button>
                     <x-ui.button type="submit">Save Changes</x-ui.button>
                 </x-ui.card-footer>

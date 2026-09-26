@@ -13,10 +13,12 @@
         </x-ui.breadcrumb>
     </x-slot:header>
 
-    <div class="flex justify-between items-center">
+    <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold tracking-tight">Project Categories</h2>
         <x-ui.button href="{{ route('admin.project-categories.create') }}">
-            <x-slot:before><x-lucide-plus class="size-4" /></x-slot:before>
+            <x-slot:before>
+                <x-lucide-plus class="size-4" />
+            </x-slot:before>
             Add Category
         </x-ui.button>
     </div>
@@ -34,7 +36,7 @@
                     </x-ui.table-row>
                 </x-ui.table-header>
                 <x-ui.table-body>
-                    @forelse($categories as $category)
+                    @forelse ($categories as $category)
                         <x-ui.table-row>
                             <x-ui.table-cell class="font-medium">{{ $category->name }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-muted-foreground">{{ $category->slug }}</x-ui.table-cell>
@@ -46,13 +48,26 @@
                             </x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <x-ui.button variant="ghost" size="icon" href="{{ route('admin.project-categories.edit', $category) }}">
+                                    <x-ui.button
+                                        variant="ghost"
+                                        size="icon"
+                                        href="{{ route('admin.project-categories.edit', $category) }}"
+                                    >
                                         <x-lucide-edit class="size-4" />
                                     </x-ui.button>
-                                    <form action="{{ route('admin.project-categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                    <form
+                                        action="{{ route('admin.project-categories.destroy', $category) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure?');"
+                                    >
                                         @csrf
                                         @method('DELETE')
-                                        <x-ui.button variant="ghost" size="icon" class="text-destructive hover:text-destructive hover:bg-destructive/10" type="submit">
+                                        <x-ui.button
+                                            variant="ghost"
+                                            size="icon"
+                                            class="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            type="submit"
+                                        >
                                             <x-lucide-trash-2 class="size-4" />
                                         </x-ui.button>
                                     </form>
@@ -61,7 +76,7 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="5" class="text-center py-6 text-muted-foreground">
+                            <x-ui.table-cell colspan="5" class="text-muted-foreground py-6 text-center">
                                 No categories found.
                             </x-ui.table-cell>
                         </x-ui.table-row>
@@ -69,10 +84,8 @@
                 </x-ui.table-body>
             </x-ui.table>
         </x-ui.card-content>
-        @if($categories->hasPages())
-            <x-ui.card-footer class="border-t p-4">
-                {{ $categories->links() }}
-            </x-ui.card-footer>
+        @if ($categories->hasPages())
+            <x-ui.card-footer class="border-t p-4"> {{ $categories->links() }} </x-ui.card-footer>
         @endif
     </x-ui.card>
 </x-layouts.admin>

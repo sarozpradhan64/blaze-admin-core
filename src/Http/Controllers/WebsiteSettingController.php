@@ -2,6 +2,7 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
+use Blaze\AdminCore\AdminCoreConfiguration;
 use Blaze\AdminCore\Models\WebsiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -42,19 +43,6 @@ class WebsiteSettingController extends Controller
             'seo_default_image',
             'google_analytics',
             'admin_portal_title',
-            'label_services',
-            'label_projects',
-            'label_enquiries',
-            'label_contact_messages',
-            'label_testimonials',
-            'label_team_members',
-            'label_gallery',
-            'label_blog',
-            'label_downloads',
-            'label_company_info',
-            'label_tags',
-            'label_faqs',
-            'label_services_features',
         ];
 
         $settings = WebsiteSetting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
@@ -78,7 +66,7 @@ class WebsiteSettingController extends Controller
                             $fail("The highlighted word \"{$word}\" was not found in the hero title.");
                         }
                     }
-                }
+                },
             ],
             'hero_image' => 'nullable|image|max:4096',
             'stats' => 'nullable|array|max:4',
@@ -93,7 +81,7 @@ class WebsiteSettingController extends Controller
         ]);
 
         WebsiteSetting::updateOrCreate(['key' => 'hero_title'], ['group' => 'homepage', 'value' => $validated['hero_title'] ?? null, 'type' => 'string']);
-        if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->featureEnabled('hero_highlighted_text')) {
+        if (app(AdminCoreConfiguration::class)->featureEnabled('hero_highlighted_text')) {
             WebsiteSetting::updateOrCreate(['key' => 'hero_highlighted_text'], ['group' => 'homepage', 'value' => $validated['hero_highlighted_text'] ?? null, 'type' => 'string']);
         }
         WebsiteSetting::updateOrCreate(['key' => 'hero_text'], ['group' => 'homepage', 'value' => $validated['hero_text'] ?? null,  'type' => 'text']);
@@ -108,7 +96,7 @@ class WebsiteSettingController extends Controller
         }
 
         $stats = collect($validated['stats'] ?? [])
-            ->filter(fn($s) => filled($s['value'] ?? null) || filled($s['label'] ?? null))
+            ->filter(fn ($s) => filled($s['value'] ?? null) || filled($s['label'] ?? null))
             ->values()
             ->toArray();
 
@@ -119,7 +107,7 @@ class WebsiteSettingController extends Controller
         }
 
         $bullets = collect($validated['who_are_we_bullets'] ?? [])
-            ->filter(fn($b) => filled($b))
+            ->filter(fn ($b) => filled($b))
             ->values()
             ->toArray();
         WebsiteSetting::updateOrCreate(['key' => 'who_are_we_bullets'], ['group' => 'homepage', 'value' => json_encode($bullets), 'type' => 'json']);
@@ -178,11 +166,11 @@ class WebsiteSettingController extends Controller
             WebsiteSetting::updateOrCreate(['key' => $key], ['group' => 'about', 'value' => $validated[$key] ?? null, 'type' => 'string']);
         }
 
-        $paragraphs = collect($validated['about_overview_paragraphs'] ?? [])->filter(fn($p) => filled($p))->values()->toArray();
+        $paragraphs = collect($validated['about_overview_paragraphs'] ?? [])->filter(fn ($p) => filled($p))->values()->toArray();
         WebsiteSetting::updateOrCreate(['key' => 'about_overview_paragraphs'], ['group' => 'about', 'value' => json_encode($paragraphs), 'type' => 'json']);
 
         $valuesItems = collect($validated['about_values_items'] ?? [])
-            ->filter(fn($v) => filled($v['title'] ?? null))
+            ->filter(fn ($v) => filled($v['title'] ?? null))
             ->values()->toArray();
         WebsiteSetting::updateOrCreate(['key' => 'about_values_items'], ['group' => 'about', 'value' => json_encode($valuesItems), 'type' => 'json']);
 
@@ -204,34 +192,12 @@ class WebsiteSettingController extends Controller
     {
         $validated = $request->validate([
             'admin_portal_title' => 'nullable|string|max:255',
-            'label_services' => 'nullable|string|max:255',
-            'label_projects' => 'nullable|string|max:255',
-            'label_enquiries' => 'nullable|string|max:255',
-            'label_contact_messages' => 'nullable|string|max:255',
-            'label_testimonials' => 'nullable|string|max:255',
-            'label_team_members' => 'nullable|string|max:255',
-            'label_gallery' => 'nullable|string|max:255',
-            'label_blog' => 'nullable|string|max:255',
-            'label_downloads' => 'nullable|string|max:255',
-            'label_company_info' => 'nullable|string|max:255',
-            'label_tags' => 'nullable|string|max:255',
-            'label_faqs' => 'nullable|string|max:255',
-            'label_services_features' => 'nullable|string|max:255',
         ]);
 
-        $keys = [
-            'admin_portal_title', 'label_services', 'label_projects', 'label_enquiries',
-            'label_contact_messages', 'label_testimonials', 'label_team_members', 'label_gallery',
-            'label_blog', 'label_downloads', 'label_company_info', 'label_tags', 'label_faqs',
-            'label_services_features'
-        ];
-
-        foreach ($keys as $key) {
-            WebsiteSetting::updateOrCreate(
-                ['key' => $key],
-                ['group' => 'system', 'value' => $validated[$key] ?? null, 'type' => 'string']
-            );
-        }
+        WebsiteSetting::updateOrCreate(
+            ['key' => 'admin_portal_title'],
+            ['group' => 'system', 'value' => $validated['admin_portal_title'] ?? null, 'type' => 'string']
+        );
 
         return back()->with('success', 'System settings updated.')->with('active_tab', 'system');
     }

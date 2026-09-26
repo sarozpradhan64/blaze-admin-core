@@ -4,7 +4,6 @@ namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Faq;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,16 +14,16 @@ class FaqController extends Controller
         // For the picker component
         if ($request->expectsJson()) {
             $search = trim((string) $request->query('search', ''));
-            
+
             $faqs = Faq::query()
                 ->when($search !== '', function ($query) use ($search): void {
-                    $query->where('question', 'like', '%' . $search . '%');
+                    $query->where('question', 'like', '%'.$search.'%');
                 })
                 ->orderByDesc('usage_count')
                 ->orderBy('sort_order')
                 ->limit(20)
                 ->get(['id', 'question', 'usage_count']);
-                
+
             return response()->json($faqs);
         }
 
@@ -32,7 +31,7 @@ class FaqController extends Controller
         $search = trim((string) $request->query('search', ''));
 
         $faqs = Faq::query()
-            ->when($search !== '', fn($query) => $query->where('question', 'like', '%' . $search . '%'))
+            ->when($search !== '', fn ($query) => $query->where('question', 'like', '%'.$search.'%'))
             ->orderBy('sort_order')
             ->paginate(15)
             ->withQueryString();

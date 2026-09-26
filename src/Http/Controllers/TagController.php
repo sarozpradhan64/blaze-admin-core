@@ -16,7 +16,7 @@ class TagController extends Controller
         $search = trim((string) $request->query('search', ''));
 
         $tags = Tag::query()
-            ->when($search !== '', fn($query) => $query->where('name', 'like', '%' . $search . '%'))
+            ->when($search !== '', fn ($query) => $query->where('name', 'like', '%'.$search.'%'))
             ->orderBy('name')
             ->paginate(15)
             ->withQueryString();
@@ -31,8 +31,8 @@ class TagController extends Controller
         $tags = Tag::query()
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($query) use ($search): void {
-                    $query->where('name', 'like', $search . '%')
-                        ->orWhere('name', 'like', '% ' . $search . '%');
+                    $query->where('name', 'like', $search.'%')
+                        ->orWhere('name', 'like', '% '.$search.'%');
                 });
             })
             ->orderByDesc('usage_count')
@@ -51,13 +51,13 @@ class TagController extends Controller
         ]);
 
         $usedItems = collect()
-            ->merge($tag->services->map(fn($service): array => [
+            ->merge($tag->services->map(fn ($service): array => [
                 'type' => 'Service',
                 'title' => $service->title,
                 'slug' => $service->slug,
                 'url' => route('admin.services.edit', $service),
             ]))
-            ->merge($tag->projects->map(fn($project): array => [
+            ->merge($tag->projects->map(fn ($project): array => [
                 'type' => 'Project',
                 'title' => $project->title,
                 'slug' => $project->slug,

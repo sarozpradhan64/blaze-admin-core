@@ -18,11 +18,15 @@
     </x-slot:header>
 
     <div class="max-w-2xl">
-        <h2 class="text-2xl font-bold tracking-tight mb-6">{{ isset($image) ? 'Edit Image' : 'Add Project Image' }}</h2>
+        <h2 class="mb-6 text-2xl font-bold tracking-tight">{{ isset($image) ? 'Edit Image' : 'Add Project Image' }}</h2>
 
-        <form action="{{ isset($image) ? route('admin.project-images.update', $image) : route('admin.project-images.store') }}" method="POST" enctype="multipart/form-data">
+        <form
+            action="{{ isset($image) ? route('admin.project-images.update', $image) : route('admin.project-images.store') }}"
+            method="POST"
+            enctype="multipart/form-data"
+        >
             @csrf
-            @if(isset($image)) @method('PUT') @endif
+            @if (isset($image)) @method('PUT') @endif
 
             <x-ui.card>
                 <x-ui.card-content class="space-y-4 pt-6">
@@ -33,8 +37,11 @@
                                 <x-ui.select-value placeholder="Select project" />
                             </x-ui.select-trigger>
                             <x-ui.select-content>
-                                @foreach($projects as $project)
-                                    <x-ui.select-item value="{{ $project->id }}" :selected="old('project_id', $image->project_id ?? $selectedProject) == $project->id">
+                                @foreach ($projects as $project)
+                                    <x-ui.select-item
+                                        value="{{ $project->id }}"
+                                        :selected="old('project_id', $image->project_id ?? $selectedProject) == $project->id"
+                                    >
                                         {{ $project->title }}
                                     </x-ui.select-item>
                                 @endforeach
@@ -57,7 +64,11 @@
                     <div class="grid grid-cols-2 gap-4">
                         <x-ui.field>
                             <x-ui.field-label for="alt_text">Alt Text</x-ui.field-label>
-                            <x-ui.input id="alt_text" name="alt_text" value="{{ old('alt_text', $image->alt_text ?? '') }}" />
+                            <x-ui.input
+                                id="alt_text"
+                                name="alt_text"
+                                value="{{ old('alt_text', $image->alt_text ?? '') }}"
+                            />
                         </x-ui.field>
                     </div>
 
@@ -69,12 +80,17 @@
                     <div class="flex items-center justify-between pt-2">
                         <x-ui.label for="is_featured" class="flex flex-col space-y-1">
                             <span>Featured Image</span>
-                            <span class="font-normal text-xs text-muted-foreground">Use as the project thumbnail</span>
+                            <span class="text-muted-foreground text-xs font-normal">Use as the project thumbnail</span>
                         </x-ui.label>
-                        <x-ui.switch id="is_featured" name="is_featured" value="1" :checked="old('is_featured', $image->is_featured ?? false)" />
+                        <x-ui.switch
+                            id="is_featured"
+                            name="is_featured"
+                            value="1"
+                            :checked="old('is_featured', $image->is_featured ?? false)"
+                        />
                     </div>
                 </x-ui.card-content>
-                <x-ui.card-footer class="border-t bg-muted/50 flex justify-end gap-2 p-4">
+                <x-ui.card-footer class="bg-muted/50 flex justify-end gap-2 border-t p-4">
                     <x-ui.button variant="outline" href="{{ route('admin.project-images.index') }}">Cancel</x-ui.button>
                     <x-ui.button type="submit">Save Image</x-ui.button>
                 </x-ui.card-footer>

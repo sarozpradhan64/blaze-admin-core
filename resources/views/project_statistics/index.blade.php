@@ -13,10 +13,12 @@
         </x-ui.breadcrumb>
     </x-slot:header>
 
-    <div class="flex justify-between items-center">
+    <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold tracking-tight">Project Statistics</h2>
         <x-ui.button href="{{ route('admin.project-statistics.create', ['project_id' => request('project_id')]) }}">
-            <x-slot:before><x-lucide-plus class="size-4" /></x-slot:before>
+            <x-slot:before>
+                <x-lucide-plus class="size-4" />
+            </x-slot:before>
             Add Statistic
         </x-ui.button>
     </div>
@@ -34,25 +36,41 @@
                     </x-ui.table-row>
                 </x-ui.table-header>
                 <x-ui.table-body>
-                    @forelse($statistics as $stat)
+                    @forelse ($statistics as $stat)
                         <x-ui.table-row>
                             <x-ui.table-cell class="font-medium">{{ $stat->label }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-primary font-semibold">{{ $stat->value }}</x-ui.table-cell>
                             <x-ui.table-cell>
-                                <a href="{{ route('admin.projects.edit', $stat->project_id) }}" class="hover:underline text-primary">
+                                <a
+                                    href="{{ route('admin.projects.edit', $stat->project_id) }}"
+                                    class="text-primary hover:underline"
+                                >
                                     {{ $stat->project?->title }}
                                 </a>
                             </x-ui.table-cell>
                             <x-ui.table-cell>{{ $stat->sort_order }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <x-ui.button variant="ghost" size="icon" href="{{ route('admin.project-statistics.edit', $stat) }}">
+                                    <x-ui.button
+                                        variant="ghost"
+                                        size="icon"
+                                        href="{{ route('admin.project-statistics.edit', $stat) }}"
+                                    >
                                         <x-lucide-edit class="size-4" />
                                     </x-ui.button>
-                                    <form action="{{ route('admin.project-statistics.destroy', $stat) }}" method="POST" onsubmit="return confirm('Delete this statistic?');">
+                                    <form
+                                        action="{{ route('admin.project-statistics.destroy', $stat) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Delete this statistic?');"
+                                    >
                                         @csrf
                                         @method('DELETE')
-                                        <x-ui.button variant="ghost" size="icon" class="text-destructive hover:text-destructive hover:bg-destructive/10" type="submit">
+                                        <x-ui.button
+                                            variant="ghost"
+                                            size="icon"
+                                            class="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            type="submit"
+                                        >
                                             <x-lucide-trash-2 class="size-4" />
                                         </x-ui.button>
                                     </form>
@@ -61,13 +79,14 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="5" class="text-center py-6 text-muted-foreground">No statistics found.</x-ui.table-cell>
+                            <x-ui.table-cell colspan="5" class="text-muted-foreground py-6 text-center">
+                                No statistics found.</x-ui.table-cell>
                         </x-ui.table-row>
                     @endforelse
                 </x-ui.table-body>
             </x-ui.table>
         </x-ui.card-content>
-        @if($statistics->hasPages())
+        @if ($statistics->hasPages())
             <x-ui.card-footer class="border-t p-4">{{ $statistics->links() }}</x-ui.card-footer>
         @endif
     </x-ui.card>

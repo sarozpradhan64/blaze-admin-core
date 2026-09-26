@@ -8,6 +8,7 @@ use Blaze\AdminCore\Http\Controllers\CompanyInfoController;
 use Blaze\AdminCore\Http\Controllers\ContactMessageController;
 use Blaze\AdminCore\Http\Controllers\DownloadController;
 use Blaze\AdminCore\Http\Controllers\EnquiryController;
+use Blaze\AdminCore\Http\Controllers\FaqController;
 use Blaze\AdminCore\Http\Controllers\GalleryAlbumController;
 use Blaze\AdminCore\Http\Controllers\GalleryItemController;
 use Blaze\AdminCore\Http\Controllers\ProfileController;
@@ -65,8 +66,6 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
 
         // Admin Services
         if ($configuration->enabled('services')) {
-            Route::put('services/{service}/features', [ServiceController::class, 'updateFeatures'])->name('services.features.update');
-            Route::put('services/{service}/seo', [ServiceController::class, 'updateSeo'])->name('services.seo.update');
             Route::resource('services', ServiceController::class);
             Route::resource('service-categories', ServiceCategoryController::class);
             Route::resource('service-features', ServiceFeatureController::class);
@@ -129,11 +128,11 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::delete('tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
 
         // FAQs
-        Route::get('faqs', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'index'])->name('faqs.index');
-        Route::get('faqs/create', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'create'])->name('faqs.create');
-        Route::post('faqs', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'store'])->name('faqs.store');
-        Route::get('faqs/{faq}/edit', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'edit'])->name('faqs.edit');
-        Route::put('faqs/{faq}', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'update'])->name('faqs.update');
-        Route::delete('faqs/{faq}', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'destroy'])->name('faqs.destroy');
+        Route::get('faqs', [FaqController::class, 'index'])->name('faqs.index');
+        Route::get('faqs/create', [FaqController::class, 'create'])->name('faqs.create');
+        Route::post('faqs', [FaqController::class, 'store'])->name('faqs.store');
+        Route::get('faqs/{faq}/edit', [FaqController::class, 'edit'])->name('faqs.edit');
+        Route::put('faqs/{faq}', [FaqController::class, 'update'])->name('faqs.update');
+        Route::delete('faqs/{faq}', [FaqController::class, 'destroy'])->name('faqs.destroy');
     });
 });

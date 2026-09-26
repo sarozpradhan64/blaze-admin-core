@@ -10,7 +10,9 @@
     <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold tracking-tight">Users</h2>
         <x-ui.button href="{{ route('admin.users.create') }}">
-            <x-slot:before><x-lucide-plus class="size-4" /></x-slot:before>
+            <x-slot:before>
+                <x-lucide-plus class="size-4" />
+            </x-slot:before>
             Add User
         </x-ui.button>
     </div>
@@ -33,20 +35,30 @@
                             <x-ui.table-cell class="font-medium">{{ $user->name }}</x-ui.table-cell>
                             <x-ui.table-cell>{{ $user->username }}</x-ui.table-cell>
                             <x-ui.table-cell>{{ $user->email }}</x-ui.table-cell>
-                            <x-ui.table-cell
-                                class="text-muted-foreground">{{ $user->created_at->format('M j, Y') }}</x-ui.table-cell>
+                            <x-ui.table-cell class="text-muted-foreground">
+                                {{ $user->created_at->format('M j, Y') }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <x-ui.button variant="ghost" size="icon"
-                                        href="{{ route('admin.users.edit', $user) }}">
+                                    <x-ui.button
+                                        variant="ghost"
+                                        size="icon"
+                                        href="{{ route('admin.users.edit', $user) }}"
+                                    >
                                         <x-lucide-edit class="size-4" />
                                     </x-ui.button>
-                                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                    <form
+                                        action="{{ route('admin.users.destroy', $user) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                    >
                                         @csrf
                                         @method('DELETE')
-                                        <x-ui.button type="submit" variant="ghost" size="icon"
-                                            class="text-destructive hover:bg-destructive/10 hover:text-destructive">
+                                        <x-ui.button
+                                            type="submit"
+                                            variant="ghost"
+                                            size="icon"
+                                            class="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                        >
                                             <x-lucide-trash-2 class="size-4" />
                                         </x-ui.button>
                                     </form>
@@ -55,8 +67,8 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="5" class="py-10 text-center text-muted-foreground">No users
-                                found.</x-ui.table-cell>
+                            <x-ui.table-cell colspan="5" class="text-muted-foreground py-10 text-center">
+                                No users found.</x-ui.table-cell>
                         </x-ui.table-row>
                     @endforelse
                 </x-ui.table-body>

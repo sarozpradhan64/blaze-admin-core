@@ -19,26 +19,24 @@
                     @endif
                 </x-ui.field-label>
 
-                @switch($field->type)
-
-                    @case('textarea')
+                @switch ($field->type)
+                    @case ('textarea')
                         <x-ui.textarea
                             :id="$field->name"
                             :name="$field->name"
                             :placeholder="$field->placeholder"
                             rows="3"
                             v-bind="$field->attributes"
-                        >{{ old($field->name, $model?->{$field->name} ?? '') }}</x-ui.textarea>
+                        >
+                            {{ old($field->name, $model?->{$field->name} ?? '') }}</x-ui.textarea>
                         @break
-
-                    @case('richtext')
+                    @case ('richtext')
                         <x-ui.rich-text-editor
                             :name="$field->name"
                             :value="old($field->name, $model?->{$field->name} ?? '')"
                         />
                         @break
-
-                    @case('select')
+                    @case ('select')
                         <x-ui.select :name="$field->name">
                             <x-ui.select-trigger>
                                 <x-ui.select-value :placeholder="$field->placeholder ?? 'Select…'" />
@@ -49,13 +47,13 @@
                                     <x-ui.select-item
                                         :value="$value"
                                         :selected="old($field->name, $model?->{$field->name} ?? '') == $value"
-                                    >{{ $optionLabel }}</x-ui.select-item>
+                                    >
+                                        {{ $optionLabel }}</x-ui.select-item>
                                 @endforeach
                             </x-ui.select-content>
                         </x-ui.select>
                         @break
-
-                    @case('checkbox')
+                    @case ('checkbox')
                         <x-ui.switch
                             :id="$field->name"
                             :name="$field->name"
@@ -63,15 +61,13 @@
                             :checked="old($field->name, $model?->{$field->name} ?? false)"
                         />
                         @break
-
-                    @case('file')
+                    @case ('file')
                         <x-ui.file-upload
                             :name="$field->name"
                             :current="old($field->name, $model?->{$field->name} ?? null)"
                         />
                         @break
-
-                    @case('number')
+                    @case ('number')
                         <x-ui.input
                             type="number"
                             :id="$field->name"
@@ -80,7 +76,6 @@
                             :placeholder="$field->placeholder"
                         />
                         @break
-
                     @default
                         {{-- text, email, url, date, etc. --}}
                         <x-ui.input

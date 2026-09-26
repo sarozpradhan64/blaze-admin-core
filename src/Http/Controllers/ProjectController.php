@@ -11,7 +11,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::with(['category', 'tags'])->orderBy('sort_order')->latest()->paginate(10);
+        $projects = Project::with('category')->orderBy('sort_order')->latest()->paginate(10);
 
         return view('admin-core::projects.index', compact('projects'));
     }
@@ -38,11 +38,7 @@ class ProjectController extends Controller
             'description' => 'required|string',
             'website_url' => 'nullable|url|max:500',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'tags' => 'nullable|string|max:1000',
         ]);
-
-        $tags = $validated['tags'] ?? null;
-        unset($validated['tags']);
 
         if ($request->hasFile('featured_image')) {
             $validated['featured_image'] = $request->file('featured_image')->store('projects', 'public');
@@ -52,8 +48,7 @@ class ProjectController extends Controller
         $validated['status'] = $request->has('status');
         $validated['is_featured'] = $request->has('is_featured');
 
-        $project = Project::create($validated);
-        $project->syncTagsFromString($tags);
+        Project::create($validated);
 
         return redirect()->route('admin.projects.index')->with('success', 'Project created successfully.');
     }
@@ -80,11 +75,7 @@ class ProjectController extends Controller
             'description' => 'required|string',
             'website_url' => 'nullable|url|max:500',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'tags' => 'nullable|string|max:1000',
         ]);
-
-        $tags = $validated['tags'] ?? null;
-        unset($validated['tags']);
 
         if ($request->hasFile('featured_image')) {
             if ($project->featured_image) {
@@ -102,7 +93,6 @@ class ProjectController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
 
         $project->update($validated);
-        $project->syncTagsFromString($tags);
 
         return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
     }

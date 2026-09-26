@@ -29,7 +29,7 @@ class ContactMessageController extends Controller
             'status' => 'required|in:new,read,replied,closed,spam',
         ]);
 
-        if ($validated['status'] === 'replied' && !$contactMessage->replied_at) {
+        if ($validated['status'] === 'replied' && ! $contactMessage->replied_at) {
             $validated['replied_at'] = now();
         }
 

@@ -17,8 +17,8 @@ namespace Blaze\AdminCore\Support;
 final class ServiceFormField
 {
     /**
-     * @param array<string, string> $options
-     * @param array<string, mixed>  $attributes
+     * @param  array<string, string>  $options
+     * @param  array<string, mixed>  $attributes
      */
     public function __construct(
         public readonly string $name,
@@ -34,8 +34,8 @@ final class ServiceFormField
     /**
      * Named constructor for fluent definition in project configuration classes.
      *
-     * @param array<string, string> $options
-     * @param array<string, mixed>  $attributes
+     * @param  array<string, string>  $options
+     * @param  array<string, mixed>  $attributes
      */
     public static function make(
         string $name,

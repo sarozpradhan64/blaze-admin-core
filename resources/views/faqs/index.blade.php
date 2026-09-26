@@ -7,13 +7,15 @@
         </x-ui.breadcrumb>
     </x-slot:header>
 
-    <div class="flex items-center justify-between mb-6">
+    <div class="mb-6 flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold tracking-tight">Manage FAQs</h2>
-            <p class="text-sm text-muted-foreground">Create, edit, and review FAQs used across your content.</p>
+            <p class="text-muted-foreground text-sm">Create, edit, and review FAQs used across your content.</p>
         </div>
         <x-ui.button href="{{ route('admin.faqs.create') }}">
-            <x-slot:before><x-lucide-plus class="size-4" /></x-slot:before>
+            <x-slot:before>
+                <x-lucide-plus class="size-4" />
+            </x-slot:before>
             Add FAQ
         </x-ui.button>
     </div>
@@ -23,10 +25,16 @@
             <div class="flex items-center justify-between gap-4">
                 <div>
                     <x-ui.card-title>All FAQs</x-ui.card-title>
-                    <x-ui.card-description>{{ $faqs->total() }} {{ Str::plural('FAQ', $faqs->total()) }}</x-ui.card-description>
+                    <x-ui.card-description>
+                        {{ $faqs->total() }} {{ Str::plural('FAQ', $faqs->total()) }}</x-ui.card-description>
                 </div>
                 <form method="GET" action="{{ route('admin.faqs.index') }}" class="w-full max-w-xs">
-                    <x-ui.input name="search" value="{{ $search }}" placeholder="Search FAQs" aria-label="Search FAQs" />
+                    <x-ui.input
+                        name="search"
+                        value="{{ $search }}"
+                        placeholder="Search FAQs"
+                        aria-label="Search FAQs"
+                    />
                 </form>
             </div>
         </x-ui.card-header>
@@ -45,10 +53,13 @@
                     <x-ui.table-body>
                         @forelse ($faqs as $faq)
                             <x-ui.table-row>
-                                <x-ui.table-cell class="font-mono text-muted-foreground">{{ $faq->sort_order }}</x-ui.table-cell>
+                                <x-ui.table-cell class="text-muted-foreground font-mono">
+                                    {{ $faq->sort_order }}</x-ui.table-cell>
                                 <x-ui.table-cell class="min-w-64">
-                                    <p class="font-medium truncate">{{ $faq->question }}</p>
-                                    <p class="truncate text-xs text-muted-foreground max-w-sm">{{ strip_tags($faq->answer) }}</p>
+                                    <p class="truncate font-medium">{{ $faq->question }}</p>
+                                    <p class="text-muted-foreground max-w-sm truncate text-xs">
+                                        {{ strip_tags($faq->answer) }}
+                                    </p>
                                 </x-ui.table-cell>
                                 <x-ui.table-cell>
                                     <x-ui.badge variant="{{ $faq->status ? 'success' : 'secondary' }}">
@@ -58,15 +69,31 @@
                                 <x-ui.table-cell class="whitespace-nowrap">
                                     {{ $faq->usage_count }} {{ Str::plural('item', $faq->usage_count) }}
                                 </x-ui.table-cell>
-                                <x-ui.table-cell class="whitespace-nowrap text-right">
+                                <x-ui.table-cell class="text-right whitespace-nowrap">
                                     <div class="flex justify-end gap-1">
-                                        <x-ui.button variant="ghost" size="icon" href="{{ route('admin.faqs.edit', $faq) }}" title="Edit FAQ">
+                                        <x-ui.button
+                                            variant="ghost"
+                                            size="icon"
+                                            href="{{ route('admin.faqs.edit', $faq) }}"
+                                            title="Edit FAQ"
+                                        >
                                             <x-lucide-edit class="size-4" />
                                         </x-ui.button>
-                                        <form action="{{ route('admin.faqs.destroy', $faq) }}" method="POST" onsubmit="return confirm('Delete this unused FAQ?');">
+                                        <form
+                                            action="{{ route('admin.faqs.destroy', $faq) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Delete this unused FAQ?');"
+                                        >
                                             @csrf
                                             @method('DELETE')
-                                            <x-ui.button type="submit" variant="ghost" size="icon" class="text-destructive hover:bg-destructive/10 hover:text-destructive" title="Delete FAQ" :disabled="$faq->usage_count > 0">
+                                            <x-ui.button
+                                                type="submit"
+                                                variant="ghost"
+                                                size="icon"
+                                                class="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                                title="Delete FAQ"
+                                                :disabled="$faq->usage_count > 0"
+                                            >
                                                 <x-lucide-trash-2 class="size-4" />
                                             </x-ui.button>
                                         </form>
@@ -75,7 +102,8 @@
                             </x-ui.table-row>
                         @empty
                             <x-ui.table-row>
-                                <x-ui.table-cell colspan="5" class="py-8 text-center text-muted-foreground">No FAQs found.</x-ui.table-cell>
+                                <x-ui.table-cell colspan="5" class="text-muted-foreground py-8 text-center">
+                                    No FAQs found.</x-ui.table-cell>
                             </x-ui.table-row>
                         @endforelse
                     </x-ui.table-body>
@@ -83,9 +111,7 @@
             </div>
         </x-ui.card-content>
         @if ($faqs->hasPages())
-            <x-ui.card-footer class="border-t p-4">
-                {{ $faqs->links() }}
-            </x-ui.card-footer>
+            <x-ui.card-footer class="border-t p-4"> {{ $faqs->links() }} </x-ui.card-footer>
         @endif
     </x-ui.card>
 </x-layouts.admin>

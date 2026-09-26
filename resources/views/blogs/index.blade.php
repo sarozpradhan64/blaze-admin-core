@@ -9,10 +9,12 @@
         </x-ui.breadcrumb>
     </x-slot:header>
 
-    <div class="flex justify-between items-center">
+    <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold tracking-tight">Blog</h2>
         <x-ui.button href="{{ route('admin.blogs.create') }}">
-            <x-slot:before><x-lucide-plus class="size-4" /></x-slot:before>
+            <x-slot:before>
+                <x-lucide-plus class="size-4" />
+            </x-slot:before>
             Add Blog Post
         </x-ui.button>
     </div>
@@ -25,7 +27,6 @@
                         <x-ui.table-head>Title</x-ui.table-head>
                         <x-ui.table-head>Category</x-ui.table-head>
                         <x-ui.table-head>Author</x-ui.table-head>
-                        <x-ui.table-head>Tags</x-ui.table-head>
                         <x-ui.table-head>Status</x-ui.table-head>
                         <x-ui.table-head>Updated</x-ui.table-head>
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
@@ -38,17 +39,6 @@
                             <x-ui.table-cell>{{ $blog->category?->name ?? 'Uncategorized' }}</x-ui.table-cell>
                             <x-ui.table-cell>{{ $blog->author?->name ?? 'System' }}</x-ui.table-cell>
                             <x-ui.table-cell>
-                                <div class="flex flex-wrap gap-1">
-                                    @foreach ($blog->tags->take(3) as $tag)
-                                        <x-ui.badge variant="outline">{{ $tag->name }}</x-ui.badge>
-                                    @endforeach
-                                    @if ($blog->tags->count() > 3)
-                                        <x-ui.badge variant="secondary">+{{ $blog->tags->count() - 3 }}
-                                            more</x-ui.badge>
-                                    @endif
-                                </div>
-                            </x-ui.table-cell>
-                            <x-ui.table-cell>
                                 <x-ui.badge variant="{{ $blog->status ? 'default' : 'secondary' }}">
                                     {{ $blog->status ? 'Published' : 'Draft' }}
                                 </x-ui.badge>
@@ -56,16 +46,26 @@
                             <x-ui.table-cell>{{ $blog->updated_at->format('M d, Y') }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <x-ui.button variant="ghost" size="icon"
-                                        href="{{ route('admin.blogs.edit', $blog) }}">
+                                    <x-ui.button
+                                        variant="ghost"
+                                        size="icon"
+                                        href="{{ route('admin.blogs.edit', $blog) }}"
+                                    >
                                         <x-lucide-edit class="size-4" />
                                     </x-ui.button>
-                                    <form action="{{ route('admin.blogs.destroy', $blog) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure?');">
+                                    <form
+                                        action="{{ route('admin.blogs.destroy', $blog) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure?');"
+                                    >
                                         @csrf
                                         @method('DELETE')
-                                        <x-ui.button type="submit" variant="ghost" size="icon"
-                                            class="text-destructive hover:text-destructive hover:bg-destructive/10">
+                                        <x-ui.button
+                                            type="submit"
+                                            variant="ghost"
+                                            size="icon"
+                                            class="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                        >
                                             <x-lucide-trash-2 class="size-4" />
                                         </x-ui.button>
                                     </form>
@@ -74,7 +74,7 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="7" class="text-center py-6 text-muted-foreground">
+                            <x-ui.table-cell colspan="6" class="text-muted-foreground py-6 text-center">
                                 No blog posts found.
                             </x-ui.table-cell>
                         </x-ui.table-row>
@@ -83,9 +83,7 @@
             </x-ui.table>
         </x-ui.card-content>
         @if ($blogs->hasPages())
-            <x-ui.card-footer class="border-t p-4">
-                {{ $blogs->links() }}
-            </x-ui.card-footer>
+            <x-ui.card-footer class="border-t p-4"> {{ $blogs->links() }} </x-ui.card-footer>
         @endif
     </x-ui.card>
 </x-layouts.admin>

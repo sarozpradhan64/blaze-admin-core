@@ -26,14 +26,25 @@
                     </x-ui.field>
                     <x-ui.field>
                         <x-ui.field-label for="username">Username</x-ui.field-label>
-                        <x-ui.input id="username" name="username" value="{{ old('username', $user->username) }}"
-                            autocomplete="username" required />
+                        <x-ui.input
+                            id="username"
+                            name="username"
+                            value="{{ old('username', $user->username) }}"
+                            autocomplete="username"
+                            required
+                        />
                         <x-ui.field-error name="username" />
                     </x-ui.field>
                     <x-ui.field>
                         <x-ui.field-label for="email">Email</x-ui.field-label>
-                        <x-ui.input id="email" name="email" type="email"
-                            value="{{ old('email', $user->email) }}" autocomplete="email" required />
+                        <x-ui.input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value="{{ old('email', $user->email) }}"
+                            autocomplete="email"
+                            required
+                        />
                         <x-ui.field-error name="email" />
                     </x-ui.field>
                     <div class="flex justify-end"><x-ui.button type="submit">Save Profile</x-ui.button></div>
@@ -49,8 +60,12 @@
                     @method('PUT')
                     <x-ui.field>
                         <x-ui.field-label for="current_password">Current Password</x-ui.field-label>
-                        <x-ui.password-input id="current_password" name="current_password"
-                            autocomplete="current-password" required />
+                        <x-ui.password-input
+                            id="current_password"
+                            name="current_password"
+                            autocomplete="current-password"
+                            required
+                        />
                         <x-ui.field-error name="current_password" />
                     </x-ui.field>
                     <x-ui.field>
@@ -60,8 +75,12 @@
                     </x-ui.field>
                     <x-ui.field>
                         <x-ui.field-label for="password_confirmation">Confirm New Password</x-ui.field-label>
-                        <x-ui.password-input id="password_confirmation" name="password_confirmation"
-                            autocomplete="new-password" required />
+                        <x-ui.password-input
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            autocomplete="new-password"
+                            required
+                        />
                         <x-ui.field-error name="password_confirmation" />
                     </x-ui.field>
                     <div class="flex justify-end"><x-ui.button type="submit">Change Password</x-ui.button></div>
