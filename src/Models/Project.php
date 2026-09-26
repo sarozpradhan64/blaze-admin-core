@@ -31,20 +31,7 @@ class Project extends Model
         return $this->belongsToMany(Service::class);
     }
 
-    public function images()
-    {
-        return $this->hasMany(ProjectImage::class);
-    }
 
-    public function videos()
-    {
-        return $this->hasMany(ProjectVideo::class);
-    }
-
-    public function statistics()
-    {
-        return $this->hasMany(ProjectStatistic::class);
-    }
 
     public function enquiries()
     {
