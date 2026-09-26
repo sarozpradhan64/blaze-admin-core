@@ -124,6 +124,20 @@
 
                     <x-ui.card>
                         <x-ui.card-header>
+                            <x-ui.card-title>Tags</x-ui.card-title>
+                        </x-ui.card-header>
+                        <x-ui.card-content>
+                            <x-admin-core::admin.tag-picker
+                                name="tags"
+                                :value="old('tags', $blogTags ?? '')"
+                                placeholder="Search or create tags..."
+                            />
+                            <x-ui.field-error name="tags" />
+                        </x-ui.card-content>
+                    </x-ui.card>
+
+                    <x-ui.card>
+                        <x-ui.card-header>
                             <x-ui.card-title>Publication</x-ui.card-title>
                         </x-ui.card-header>
                         <x-ui.card-content class="space-y-4">
