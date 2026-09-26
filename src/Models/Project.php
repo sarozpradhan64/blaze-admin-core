@@ -3,12 +3,13 @@
 namespace Blaze\AdminCore\Models;
 
 use Blaze\AdminCore\Traits\HasSeo;
+use Blaze\AdminCore\Traits\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasFactory, HasTags;
     use HasSeo;
 
     protected $table = 'projects';
@@ -30,20 +31,7 @@ class Project extends Model
         return $this->belongsToMany(Service::class);
     }
 
-    public function images()
-    {
-        return $this->hasMany(ProjectImage::class);
-    }
 
-    public function videos()
-    {
-        return $this->hasMany(ProjectVideo::class);
-    }
-
-    public function statistics()
-    {
-        return $this->hasMany(ProjectStatistic::class);
-    }
 
     public function enquiries()
     {

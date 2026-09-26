@@ -2,6 +2,8 @@
 
 namespace Blaze\AdminCore;
 
+use Blaze\AdminCore\Support\ServiceFormField;
+
 class AdminCoreConfiguration
 {
     /**
@@ -44,5 +46,40 @@ class AdminCoreConfiguration
     public function featureEnabled(string $feature): bool
     {
         return $this->features()[$feature] ?? false;
+    }
+
+    /**
+     * Extra site-specific fields to inject into the service create / edit form.
+     *
+     * Override this in the project's AdminCoreConfiguration subclass and return
+     * an array of ServiceFormField instances describing each additional column.
+     *
+     * @return ServiceFormField[]
+     */
+    public function serviceFormFields(): array
+    {
+        return [];
+    }
+
+    /**
+     * Extra site-specific fields to inject into the service feature create / edit form.
+     *
+     * @return ServiceFormField[]
+     */
+    public function serviceFeatureFormFields(): array
+    {
+        return [];
+    }
+
+    /**
+     * Define custom submenu items to inject into existing sidebar modules.
+     * 
+     * Structure: ['module_key' => [['label' => 'Name', 'route' => 'route.name', 'activeRoute' => 'route.*']]]
+     *
+     * @return array
+     */
+    public function customSidebarItems(): array
+    {
+        return [];
     }
 }

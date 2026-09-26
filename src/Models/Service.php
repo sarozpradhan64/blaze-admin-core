@@ -3,12 +3,14 @@
 namespace Blaze\AdminCore\Models;
 
 use Blaze\AdminCore\Traits\HasSeo;
+use Blaze\AdminCore\Traits\HasTags;
+use Blaze\AdminCore\Traits\HasFaqs;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    use \Blaze\AdminCore\Traits\HasSortOrder, HasSeo;
+    use \Blaze\AdminCore\Traits\HasSortOrder, HasSeo, HasTags, HasFaqs;
     use HasFactory;
 
     protected $table = 'services';

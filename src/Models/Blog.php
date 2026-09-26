@@ -5,6 +5,8 @@ namespace Blaze\AdminCore\Models;
 use App\Models\User;
 use Blaze\AdminCore\Traits\HasSeo;
 use Blaze\AdminCore\Traits\HasSortOrder;
+use Blaze\AdminCore\Traits\HasTags;
+use Blaze\AdminCore\Traits\HasFaqs;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +15,8 @@ class Blog extends Model
     use HasFactory;
     use HasSeo;
     use HasSortOrder;
+    use HasTags;
+    use HasFaqs;
 
     protected $table = 'pages';
 

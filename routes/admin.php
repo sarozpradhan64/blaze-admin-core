@@ -20,6 +20,7 @@ use Blaze\AdminCore\Http\Controllers\ReorderController;
 use Blaze\AdminCore\Http\Controllers\ServiceCategoryController;
 use Blaze\AdminCore\Http\Controllers\ServiceController;
 use Blaze\AdminCore\Http\Controllers\ServiceFeatureController;
+use Blaze\AdminCore\Http\Controllers\TagController;
 use Blaze\AdminCore\Http\Controllers\TeamMemberController;
 use Blaze\AdminCore\Http\Controllers\TestimonialController;
 use Blaze\AdminCore\Http\Controllers\UserController;
@@ -64,6 +65,8 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
 
         // Admin Services
         if ($configuration->enabled('services')) {
+            Route::put('services/{service}/features', [ServiceController::class, 'updateFeatures'])->name('services.features.update');
+            Route::put('services/{service}/seo', [ServiceController::class, 'updateSeo'])->name('services.seo.update');
             Route::resource('services', ServiceController::class);
             Route::resource('service-categories', ServiceCategoryController::class);
             Route::resource('service-features', ServiceFeatureController::class);
@@ -117,5 +120,20 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
 
         // Universal drag-to-reorder endpoint
         Route::post('reorder/{resource}', ReorderController::class)->name('reorder');
+        Route::get('tags', [TagController::class, 'index'])->name('tags.index');
+        Route::get('tags/manage', [TagController::class, 'manage'])->name('tags.manage');
+        Route::get('tags/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
+        Route::get('tags/{tag}', [TagController::class, 'show'])->name('tags.show');
+        Route::post('tags', [TagController::class, 'store'])->name('tags.store');
+        Route::put('tags/{tag}', [TagController::class, 'update'])->name('tags.update');
+        Route::delete('tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
+
+        // FAQs
+        Route::get('faqs', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'index'])->name('faqs.index');
+        Route::get('faqs/create', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'create'])->name('faqs.create');
+        Route::post('faqs', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'store'])->name('faqs.store');
+        Route::get('faqs/{faq}/edit', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'edit'])->name('faqs.edit');
+        Route::put('faqs/{faq}', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'update'])->name('faqs.update');
+        Route::delete('faqs/{faq}', [\Blaze\AdminCore\Http\Controllers\FaqController::class, 'destroy'])->name('faqs.destroy');
     });
 });
