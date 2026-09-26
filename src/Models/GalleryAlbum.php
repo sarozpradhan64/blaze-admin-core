@@ -14,6 +14,10 @@ class GalleryAlbum extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'is_featured' => 'boolean',
+    ];
+
     public function items()
     {
         return $this->hasMany(GalleryItem::class);

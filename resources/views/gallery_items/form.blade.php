@@ -65,11 +65,11 @@
                         <x-ui.card-header><x-ui.card-title>Image</x-ui.card-title></x-ui.card-header>
                         <x-ui.card-content>
                             <x-ui.file-upload
-                                name="image_path"
+                                name="file_path"
                                 accept="image/jpeg,image/png,image/gif,image/webp"
-                                :current="old('image_path', $item->image_path ?? null)"
+                                :current="old('file_path', $item->file_path ?? null)"
                             />
-                            <x-ui.field-error name="image_path" />
+                            <x-ui.field-error name="file_path" />
                         </x-ui.card-content>
                     </x-ui.card>
                 </div>

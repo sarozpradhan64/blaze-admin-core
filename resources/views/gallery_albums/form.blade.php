@@ -76,6 +76,18 @@
                                     :checked="old('status', $album->status ?? true)"
                                 />
                             </div>
+                            <div class="flex items-center justify-between">
+                                <x-ui.label for="is_featured" class="flex flex-col space-y-1">
+                                    <span>Featured</span>
+                                    <span class="text-muted-foreground text-xs font-normal">Show in featured section</span>
+                                </x-ui.label>
+                                <x-ui.switch
+                                    id="is_featured"
+                                    name="is_featured"
+                                    value="1"
+                                    :checked="old('is_featured', $album->is_featured ?? false)"
+                                />
+                            </div>
                         </x-ui.card-content>
                     </x-ui.card>
                 </div>

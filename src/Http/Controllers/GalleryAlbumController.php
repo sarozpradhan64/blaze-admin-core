@@ -34,6 +34,7 @@ class GalleryAlbumController extends Controller
         }
         $validated['slug'] = Str::slug($validated['title']);
         $validated['status'] = $request->has('status');
+        $validated['is_featured'] = $request->has('is_featured');
 
         GalleryAlbum::create($validated);
 
@@ -65,6 +66,7 @@ class GalleryAlbumController extends Controller
             $validated['slug'] = Str::slug($validated['title']);
         }
         $validated['status'] = $request->has('status');
+        $validated['is_featured'] = $request->has('is_featured');
 
         $galleryAlbum->update($validated);
 

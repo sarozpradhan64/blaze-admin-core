@@ -33,10 +33,11 @@ class GalleryItemController extends Controller
         $validated = $request->validate([
             'gallery_album_id' => 'required|exists:gallery_albums,id',
             'title' => 'nullable|string|max:255',
-            'image_path' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'file_path' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
-        $validated['image_path'] = $request->file('image_path')->store('gallery', 'public');
+        $validated['file_path'] = $request->file('file_path')->store('gallery', 'public');
+        $validated['type'] = 'image';
 
         GalleryItem::create($validated);
 
@@ -55,16 +56,17 @@ class GalleryItemController extends Controller
         $validated = $request->validate([
             'gallery_album_id' => 'required|exists:gallery_albums,id',
             'title' => 'nullable|string|max:255',
-            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'file_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
-        if ($request->hasFile('image_path')) {
-            if ($galleryItem->image_path) {
-                Storage::disk('public')->delete($galleryItem->image_path);
+        if ($request->hasFile('file_path')) {
+            if ($galleryItem->file_path) {
+                Storage::disk('public')->delete($galleryItem->file_path);
             }
-            $validated['image_path'] = $request->file('image_path')->store('gallery', 'public');
+            $validated['file_path'] = $request->file('file_path')->store('gallery', 'public');
+            $validated['type'] = 'image';
         } else {
-            unset($validated['image_path']);
+            unset($validated['file_path']);
         }
 
         $galleryItem->update($validated);
@@ -74,8 +76,8 @@ class GalleryItemController extends Controller
 
     public function destroy(GalleryItem $galleryItem)
     {
-        if ($galleryItem->image_path) {
-            Storage::disk('public')->delete($galleryItem->image_path);
+        if ($galleryItem->file_path) {
+            Storage::disk('public')->delete($galleryItem->file_path);
         }
         $galleryItem->delete();
 
