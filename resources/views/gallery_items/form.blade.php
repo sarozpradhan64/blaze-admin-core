@@ -35,16 +35,13 @@
                         <x-ui.card-content class="space-y-4">
                             <x-ui.field>
                                 <x-ui.field-label>Album</x-ui.field-label>
-                                <x-ui.select name="gallery_album_id">
+                                <x-ui.select name="gallery_album_id" value="{{ old('gallery_album_id', $item->gallery_album_id ?? $selectedAlbum) }}">
                                     <x-ui.select-trigger class="w-full">
                                         <x-ui.select-value placeholder="Select an album"
                                     /></x-ui.select-trigger>
                                     <x-ui.select-content>
                                         @foreach ($albums as $a)
-                                            <x-ui.select-item
-                                                value="{{ $a->id }}"
-                                                :selected="old('gallery_album_id', $item->gallery_album_id ?? $selectedAlbum) == $a->id"
-                                            >
+                                            <x-ui.select-item value="{{ $a->id }}">
                                                 {{ $a->title }}</x-ui.select-item>
                                         @endforeach
                                     </x-ui.select-content>
