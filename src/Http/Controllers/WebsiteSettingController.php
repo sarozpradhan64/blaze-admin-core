@@ -13,6 +13,7 @@ class WebsiteSettingController extends Controller
     {
         $keys = [
             'hero_title',
+            'hero_highlighted_text',
             'hero_text',
             'hero_stats',
             'hero_image',
