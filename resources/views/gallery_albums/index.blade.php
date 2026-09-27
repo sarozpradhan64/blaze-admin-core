@@ -79,5 +79,6 @@
                 </x-ui.table-body>
             </x-ui.table>
         </x-ui.card-content>
+        <x-ui.card-footer class="border-t p-4">{{ $albums->links() }}</x-ui.card-footer>
     </x-ui.card>
 </x-layouts.admin>
