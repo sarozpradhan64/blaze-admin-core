@@ -73,6 +73,10 @@
                                 {{ old('description', $feature->description ?? '') }}</x-ui.textarea>
                             <x-ui.field-error name="description" />
                         </x-ui.field>
+
+                        @if(isset($extraFields) && !empty($extraFields))
+                            @include('admin-core::services._extra_fields', ['fields' => $extraFields, 'model' => $feature ?? null])
+                        @endif
                     </x-ui.card-content>
                     <x-ui.card-footer class="bg-muted/50 flex justify-end gap-2 border-t p-4">
                         <x-ui.button variant="outline" href="{{ route('admin.service-features.index') }}">

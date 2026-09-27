@@ -26,6 +26,7 @@
                     <x-ui.table-row>
                         <x-ui.table-head>Title</x-ui.table-head>
                         <x-ui.table-head>Category</x-ui.table-head>
+                        <x-ui.table-head>Tags</x-ui.table-head>
                         <x-ui.table-head>Status</x-ui.table-head>
                         <x-ui.table-head>Featured</x-ui.table-head>
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
@@ -36,6 +37,17 @@
                         <x-ui.table-row>
                             <x-ui.table-cell class="font-medium"> {{ $project->title }} </x-ui.table-cell>
                             <x-ui.table-cell>{{ $project->category?->name ?? 'Uncategorized' }}</x-ui.table-cell>
+                            <x-ui.table-cell>
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach ($project->tags->take(3) as $tag)
+                                        <x-ui.badge variant="outline">{{ $tag->name }}</x-ui.badge>
+                                    @endforeach
+                                    @if ($project->tags->count() > 3)
+                                        <x-ui.badge variant="secondary">+{{ $project->tags->count() - 3 }}
+                                            more</x-ui.badge>
+                                    @endif
+                                </div>
+                            </x-ui.table-cell>
                             <x-ui.table-cell>
                                 <x-ui.badge variant="{{ $project->status ? 'default' : 'secondary' }}">
                                     {{ $project->status ? 'Active' : 'Draft' }}

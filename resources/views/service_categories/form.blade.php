@@ -44,6 +44,24 @@
                         </x-ui.field>
 
                         <x-ui.field>
+                            <x-ui.field-label for="parent_id">Parent Category</x-ui.field-label>
+                            <x-ui.select name="parent_id">
+                                <x-ui.select-trigger>
+                                    <x-ui.select-value placeholder="Select a parent category" />
+                                </x-ui.select-trigger>
+                                <x-ui.select-content>
+                                    <x-ui.select-item value="">None</x-ui.select-item>
+                                    @foreach ($categories as $parentCategory)
+                                        <x-ui.select-item value="{{ $parentCategory->id }}" :selected="old('parent_id', $category->parent_id ?? '') == $parentCategory->id">
+                                            {{ $parentCategory->name }}
+                                        </x-ui.select-item>
+                                    @endforeach
+                                </x-ui.select-content>
+                            </x-ui.select>
+                            <x-ui.field-error name="parent_id" />
+                        </x-ui.field>
+
+                        <x-ui.field>
                             <x-ui.field-label for="description">Description</x-ui.field-label>
                             <x-ui.textarea
                                 id="description"
@@ -52,6 +70,13 @@
                             >
                                 {{ old('description', $category->description ?? '') }}</x-ui.textarea>
                             <x-ui.field-error name="description" />
+                        </x-ui.field>
+
+                        <x-ui.field>
+                            <x-ui.field-label for="thumbnail">Thumbnail</x-ui.field-label>
+                            <x-ui.file-upload name="thumbnail" accept="image/jpeg,image/png,image/gif,image/webp"
+                                :current="old('thumbnail', $category->thumbnail ?? null)" />
+                            <x-ui.field-error name="thumbnail" />
                         </x-ui.field>
 
                         <div class="grid grid-cols-2 gap-4">

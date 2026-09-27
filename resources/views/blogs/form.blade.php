@@ -103,6 +103,18 @@
                                 <x-ui.rich-text-editor name="content" :value="old('content', $blog->content ?? '')" />
                                 <x-ui.field-error name="content" />
                             </x-ui.field>
+
+                            <x-ui.field>
+                                <x-ui.field-label for="tags">Tags</x-ui.field-label>
+                                <x-admin::tag-picker :value="old('tags', isset($blog) ? $blog->tagList() : '')" placeholder="Search or create tags" />
+                                <x-ui.field-error name="tags" />
+                            </x-ui.field>
+
+                            <x-ui.field>
+                                <x-ui.field-label for="faqs">FAQs</x-ui.field-label>
+                                <x-admin::faq-picker :value="old('faqs', isset($blog) ? $blog->faqs->pluck('id')->toArray() : [])" placeholder="Select FAQs" />
+                                <x-ui.field-error name="faqs" />
+                            </x-ui.field>
                         </x-ui.card-content>
                     </x-ui.card>
                 </div>
@@ -119,20 +131,6 @@
                                 :current="old('featured_image', $blog->featured_image ?? null)"
                             />
                             <x-ui.field-error name="featured_image" />
-                        </x-ui.card-content>
-                    </x-ui.card>
-
-                    <x-ui.card>
-                        <x-ui.card-header>
-                            <x-ui.card-title>Tags</x-ui.card-title>
-                        </x-ui.card-header>
-                        <x-ui.card-content>
-                            <x-admin-core::admin.tag-picker
-                                name="tags"
-                                :value="old('tags', $blogTags ?? '')"
-                                placeholder="Search or create tags..."
-                            />
-                            <x-ui.field-error name="tags" />
                         </x-ui.card-content>
                     </x-ui.card>
 

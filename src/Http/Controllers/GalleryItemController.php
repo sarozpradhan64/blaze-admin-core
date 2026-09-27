@@ -11,7 +11,7 @@ class GalleryItemController extends Controller
 {
     public function index(Request $request)
     {
-        $query = GalleryItem::with('album')->orderBy('gallery_album_id')->orderBy('sort_order');
+        $query = GalleryItem::with(['album', 'tags'])->orderBy('gallery_album_id')->orderBy('sort_order');
         if ($request->has('album_id')) {
             $query->where('gallery_album_id', $request->album_id);
         }
@@ -34,12 +34,17 @@ class GalleryItemController extends Controller
             'gallery_album_id' => 'required|exists:gallery_albums,id',
             'title' => 'nullable|string|max:255',
             'file_path' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'tags' => 'nullable|string|max:1000',
         ]);
+
+        $tags = $validated['tags'] ?? null;
+        unset($validated['tags']);
 
         $validated['file_path'] = $request->file('file_path')->store('gallery', 'public');
         $validated['type'] = 'image';
 
-        GalleryItem::create($validated);
+        $galleryItem = GalleryItem::create($validated);
+        $galleryItem->syncTagsFromString($tags);
 
         return redirect()->route('admin.gallery-items.index', ['album_id' => $validated['gallery_album_id']])->with('success', 'Image added.');
     }
@@ -57,7 +62,11 @@ class GalleryItemController extends Controller
             'gallery_album_id' => 'required|exists:gallery_albums,id',
             'title' => 'nullable|string|max:255',
             'file_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'tags' => 'nullable|string|max:1000',
         ]);
+
+        $tags = $validated['tags'] ?? null;
+        unset($validated['tags']);
 
         if ($request->hasFile('file_path')) {
             if ($galleryItem->file_path) {
@@ -70,6 +79,7 @@ class GalleryItemController extends Controller
         }
 
         $galleryItem->update($validated);
+        $galleryItem->syncTagsFromString($tags);
 
         return redirect()->route('admin.gallery-items.index', ['album_id' => $validated['gallery_album_id']])->with('success', 'Image updated.');
     }

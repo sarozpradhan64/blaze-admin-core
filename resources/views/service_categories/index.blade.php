@@ -30,6 +30,7 @@
                     <x-ui.table-row>
                         <x-ui.table-head class="w-8"></x-ui.table-head>
                         <x-ui.table-head>Name</x-ui.table-head>
+                        <x-ui.table-head>Parent</x-ui.table-head>
                         <x-ui.table-head>Slug</x-ui.table-head>
                         <x-ui.table-head>Services</x-ui.table-head>
                         <x-ui.table-head>Status</x-ui.table-head>
@@ -49,6 +50,7 @@
                                 </button>
                             </x-ui.table-cell>
                             <x-ui.table-cell class="font-medium">{{ $category->name }}</x-ui.table-cell>
+                            <x-ui.table-cell>{{ $category->parent?->name ?? 'None' }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-muted-foreground">{{ $category->slug }}</x-ui.table-cell>
                             <x-ui.table-cell>{{ $category->services_count }}</x-ui.table-cell>
                             <x-ui.table-cell>

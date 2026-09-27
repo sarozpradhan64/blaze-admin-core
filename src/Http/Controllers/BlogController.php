@@ -15,7 +15,7 @@ class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::with(['category', 'author'])->orderBy('created_at', 'desc')->paginate(10);
+        $blogs = Blog::with(['category', 'author', 'tags'])->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin-core::blogs.index', compact('blogs'));
     }
@@ -54,10 +54,15 @@ class BlogController extends Controller
 
         $tagsInput = $validated['tags'] ?? '';
         unset($validated['tags']);
+        $faqs = $validated['faqs'] ?? [];
+        unset($validated['faqs']);
 
         $blog = Blog::create($validated);
 
         $this->syncTags($blog, $tagsInput);
+        if (method_exists($blog, 'syncFaqs')) {
+            $blog->syncFaqs($faqs);
+        }
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
     }
@@ -104,9 +109,15 @@ class BlogController extends Controller
         $tagsInput = $validated['tags'] ?? '';
         unset($validated['tags']);
 
+        $faqs = $validated['faqs'] ?? [];
+        unset($validated['faqs']);
+
         $blog->update($validated);
 
         $this->syncTags($blog, $tagsInput);
+        if (method_exists($blog, 'syncFaqs')) {
+            $blog->syncFaqs($faqs);
+        }
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog updated successfully.');
     }

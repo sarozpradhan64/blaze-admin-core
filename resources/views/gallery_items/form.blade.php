@@ -53,6 +53,11 @@
                                 <x-ui.input name="title" value="{{ old('title', $item->title ?? '') }}" />
                                 <x-ui.field-error name="title" />
                             </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label for="tags">Tags</x-ui.field-label>
+                                <x-admin::tag-picker :value="old('tags', isset($item) ? $item->tagList() : '')" placeholder="Search or create tags" />
+                                <x-ui.field-error name="tags" />
+                            </x-ui.field>
                         </x-ui.card-content>
                     </x-ui.card>
                 </div>

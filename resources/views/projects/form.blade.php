@@ -229,6 +229,13 @@
                                         </x-ui.select>
                                         <x-ui.field-error name="project_status" />
                                     </x-ui.field>
+
+                                    <x-ui.field>
+                                        <x-ui.field-label for="tags">Tags</x-ui.field-label>
+                                        <x-admin::tag-picker :value="old('tags', isset($project) ? $project->tagList() : '')" placeholder="Search or create tags" />
+                                        <x-ui.field-error name="tags" />
+                                    </x-ui.field>
+
                                 </x-ui.card-content>
                             </x-ui.card>
 
@@ -274,104 +281,7 @@
                 </form>
             </x-ui.tabs-content>
 
-            @if (isset($project))
-                <x-ui.tabs-content value="images">
-                    <x-ui.card>
-                        <x-ui.card-header class="flex flex-row items-center justify-between">
-                            <div>
-                                <x-ui.card-title>Project Images</x-ui.card-title>
-                                <x-ui.card-description>Manage gallery images for this project.</x-ui.card-description>
-                            </div>
-                            <x-ui.button
-                                size="sm"
-                                href="{{ route('admin.project-images.index', ['project_id' => $project->id]) }}"
-                            >
-                                <x-lucide-external-link class="mr-2 size-4" />
-                                Manage Images
-                            </x-ui.button>
-                        </x-ui.card-header>
-                        <x-ui.card-content>
-                            <p class="text-muted-foreground mb-4 text-sm">
-                                Click "Manage Images" to open the dedicated CRUD for images and upload new ones.
-                            </p>
-                            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                @foreach ($project->images()->take(8)->get() as $image)
-                                    <div class="group bg-muted relative aspect-square overflow-hidden rounded-md border">
-                                        <!-- Placeholder for image, in real app would use $image->image -->
-                                        <div class="text-muted-foreground absolute inset-0 flex items-center justify-center p-2 text-center text-xs">
-                                            {{ $image->image }}
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </x-ui.card-content>
-                    </x-ui.card>
-                </x-ui.tabs-content>
 
-                <x-ui.tabs-content value="videos">
-                    <x-ui.card>
-                        <x-ui.card-header class="flex flex-row items-center justify-between">
-                            <div>
-                                <x-ui.card-title>Project Videos</x-ui.card-title>
-                                <x-ui.card-description>Manage videos embedded in this project.</x-ui.card-description>
-                            </div>
-                            <x-ui.button
-                                size="sm"
-                                href="{{ route('admin.project-videos.index', ['project_id' => $project->id]) }}"
-                            >
-                                <x-lucide-external-link class="mr-2 size-4" />
-                                Manage Videos
-                            </x-ui.button>
-                        </x-ui.card-header>
-                        <x-ui.card-content>
-                            <ul class="space-y-2">
-                                @forelse ($project->videos as $video)
-                                    <li class="flex items-center gap-2 rounded-md border p-2 text-sm">
-                                        <x-lucide-video class="text-muted-foreground size-4" />
-                                        <span class="font-medium">{{ $video->title ?? 'Untitled Video' }}</span>
-                                        <span class="text-muted-foreground">({{ $video->video_type }})</span>
-                                    </li>
-                                @empty
-                                    <li class="text-muted-foreground text-sm">No videos added yet.</li>
-                                @endforelse
-                            </ul>
-                        </x-ui.card-content>
-                    </x-ui.card>
-                </x-ui.tabs-content>
-
-                <x-ui.tabs-content value="statistics">
-                    <x-ui.card>
-                        <x-ui.card-header class="flex flex-row items-center justify-between">
-                            <div>
-                                <x-ui.card-title>Project Statistics</x-ui.card-title>
-                                <x-ui.card-description>
-                                    Manage quick facts (e.g. Area, Duration) for this project.</x-ui.card-description>
-                            </div>
-                            <x-ui.button
-                                size="sm"
-                                href="{{ route('admin.project-statistics.index', ['project_id' => $project->id]) }}"
-                            >
-                                <x-lucide-external-link class="mr-2 size-4" />
-                                Manage Statistics
-                            </x-ui.button>
-                        </x-ui.card-header>
-                        <x-ui.card-content>
-                            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                @forelse ($project->statistics as $stat)
-                                    <div class="bg-muted/20 rounded-md border p-4 text-center">
-                                        <div class="text-primary text-xl font-bold">{{ $stat->value }}</div>
-                                        <div class="text-muted-foreground mt-1 text-sm">{{ $stat->label }}</div>
-                                    </div>
-                                @empty
-                                    <div class="text-muted-foreground col-span-full py-4 text-center text-sm">
-                                        No statistics added yet.
-                                    </div>
-                                @endforelse
-                            </div>
-                        </x-ui.card-content>
-                    </x-ui.card>
-                </x-ui.tabs-content>
-            @endif
         </x-ui.tabs>
     </div>
 </x-layouts.admin>

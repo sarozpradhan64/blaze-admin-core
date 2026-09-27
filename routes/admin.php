@@ -66,6 +66,8 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
 
         // Admin Services
         if ($configuration->enabled('services')) {
+            Route::put('services/{service}/features', [ServiceController::class, 'updateFeatures'])->name('services.features.update');
+            Route::put('services/{service}/seo', [ServiceController::class, 'updateSeo'])->name('services.seo.update');
             Route::resource('services', ServiceController::class);
             Route::resource('service-categories', ServiceCategoryController::class);
             Route::resource('service-features', ServiceFeatureController::class);

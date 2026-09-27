@@ -25,6 +25,7 @@
                         <x-ui.table-head>Image</x-ui.table-head>
                         <x-ui.table-head>Title</x-ui.table-head>
                         <x-ui.table-head>Album</x-ui.table-head>
+                        <x-ui.table-head>Tags</x-ui.table-head>
                         <x-ui.table-head>Sort Order</x-ui.table-head>
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
                     </x-ui.table-row>
@@ -45,6 +46,17 @@
                                     href="{{ route('admin.gallery-items.index', ['album_id' => $item->gallery_album_id]) }}"
                                     class="text-primary hover:underline"
                                 >{{ $item->album?->title }}</a>
+                            </x-ui.table-cell>
+                            <x-ui.table-cell>
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach ($item->tags->take(3) as $tag)
+                                        <x-ui.badge variant="outline">{{ $tag->name }}</x-ui.badge>
+                                    @endforeach
+                                    @if ($item->tags->count() > 3)
+                                        <x-ui.badge variant="secondary">+{{ $item->tags->count() - 3 }}
+                                            more</x-ui.badge>
+                                    @endif
+                                </div>
                             </x-ui.table-cell>
                             <x-ui.table-cell>{{ $item->sort_order }}</x-ui.table-cell>
                             <x-ui.table-cell class="text-right">
