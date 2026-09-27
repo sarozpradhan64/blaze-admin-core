@@ -210,10 +210,16 @@ class ServiceController extends Controller
             'seo.meta_description' => 'nullable|string',
             'seo.og_title' => 'nullable|string|max:255',
             'seo.og_description' => 'nullable|string',
-            'seo.og_image' => 'nullable|url|max:255',
+            'seo.og_image' => 'nullable|string|max:1000',
+            'seo_og_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         $seoData = $validated['seo'] ?? [];
+
+        if ($request->hasFile('seo_og_image_file')) {
+            $seoData['og_image'] = $request->file('seo_og_image_file')->store('seo', 'public');
+        }
+
         $service->seo()->updateOrCreate(
             ['seoable_id' => $service->id, 'seoable_type' => get_class($service)],
             $seoData

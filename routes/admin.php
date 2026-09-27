@@ -7,6 +7,7 @@ use Blaze\AdminCore\Http\Controllers\BlogController;
 use Blaze\AdminCore\Http\Controllers\CompanyInfoController;
 use Blaze\AdminCore\Http\Controllers\ContactMessageController;
 use Blaze\AdminCore\Http\Controllers\DownloadController;
+use Blaze\AdminCore\Http\Controllers\LegalDocumentController;
 use Blaze\AdminCore\Http\Controllers\EnquiryController;
 use Blaze\AdminCore\Http\Controllers\FaqController;
 use Blaze\AdminCore\Http\Controllers\GalleryAlbumController;
@@ -84,6 +85,7 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
 
         // Blog
         if ($configuration->enabled('blog')) {
+            Route::put('blogs/{blog}/seo', [BlogController::class, 'updateSeo'])->name('blogs.seo.update');
             Route::resource('blogs', BlogController::class);
             Route::resource('blog-categories', BlogCategoryController::class);
         }
@@ -102,12 +104,14 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
             Route::resource('team-members', TeamMemberController::class);
         }
         if ($configuration->enabled('gallery')) {
+            Route::put('gallery-albums/{gallery_album}/seo', [GalleryAlbumController::class, 'updateSeo'])->name('gallery-albums.seo.update');
             Route::resource('gallery-albums', GalleryAlbumController::class);
             Route::resource('gallery-items', GalleryItemController::class);
         }
         if ($configuration->enabled('downloads')) {
             Route::resource('downloads', DownloadController::class);
         }
+        Route::resource('legal-documents', LegalDocumentController::class);
 
         // Company Info (Contact Information + Social Links)
         if ($configuration->enabled('company-info')) {

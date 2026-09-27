@@ -15,6 +15,10 @@ class GalleryItem extends Model
 
     protected $guarded = [];
 
+    protected $attributes = [
+        'status' => true,
+    ];
+
     public function album()
     {
         return $this->belongsTo(GalleryAlbum::class, 'gallery_album_id');

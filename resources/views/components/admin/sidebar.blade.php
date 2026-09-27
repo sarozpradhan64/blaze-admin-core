@@ -111,6 +111,8 @@
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.downloads.index') }}"
                                 :active="request()->routeIs('admin.downloads.*')"><x-lucide-download /><span>{{ $websiteSettings['label_downloads'] ?? 'Downloads' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
+                    <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.legal-documents.index') }}"
+                            :active="request()->routeIs('admin.legal-documents.*')"><x-lucide-scale /><span>Legal Documents</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @if ($configuration->enabled('company-info'))
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
                                 href="{{ route('admin.company-info.index') }}"

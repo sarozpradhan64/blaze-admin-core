@@ -2,26 +2,22 @@
 
 namespace Blaze\AdminCore\Models;
 
-use Blaze\AdminCore\Traits\HasSortOrder;
+use Blaze\AdminCore\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GalleryAlbum extends Model
+class LegalDocument extends Model
 {
-    use HasFactory, HasSortOrder, \Blaze\AdminCore\Traits\HasSeo;
+    use HasFactory;
+    use HasSeo;
 
-    protected $table = 'gallery_albums';
+    protected $table = 'legal_documents';
 
     protected $guarded = [];
 
     protected $casts = [
-        'is_featured' => 'boolean',
+        'status' => 'boolean',
     ];
-
-    public function items()
-    {
-        return $this->hasMany(GalleryItem::class);
-    }
 
     public function seoMetadata()
     {

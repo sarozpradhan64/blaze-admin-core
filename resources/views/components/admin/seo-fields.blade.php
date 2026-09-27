@@ -96,17 +96,46 @@
                         {{ old('seo.og_description', $seo?->og_description ?? '') }}</x-ui.textarea>
                 </x-ui.field>
 
-                <x-ui.field>
-                    <x-ui.field-label for="seo_og_image">OG Image URL</x-ui.field-label>
-                    <x-ui.input
-                        id="seo_og_image"
-                        name="seo[og_image]"
-                        type="url"
-                        value="{{ old('seo.og_image', $seo?->og_image ?? '') }}"
-                        placeholder="https://... (recommended: 1200×630px)"
-                    />
-                    <x-ui.field-description>Defaults to the record's featured image.</x-ui.field-description>
-                </x-ui.field>
+                @php
+                    $currentOgImage = old('seo.og_image', $seo?->og_image ?? '');
+                    $isUrl = Str::startsWith($currentOgImage, 'http');
+                    $initialMode = ($currentOgImage && $isUrl) ? 'url' : 'upload';
+                @endphp
+                <div x-data="{ imageMode: '{{ $initialMode }}' }" class="space-y-4 rounded-lg border border-border p-4 bg-muted/20">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex flex-col gap-2">
+                            <x-ui.field-label>OG Image</x-ui.field-label>
+                            <x-ui.field-description>
+                                Provide a direct URL to an image or upload one. Defaults to the record's featured image. Recommended: 1200×630px.
+                            </x-ui.field-description>
+                        </div>
+                        <div class="flex shrink-0 items-center rounded-md border border-input p-1 bg-background">
+                            <button type="button" @click="imageMode = 'upload'" :class="imageMode === 'upload' ? 'bg-muted shadow-sm' : 'hover:bg-muted/50'" class="px-3 py-1 text-xs font-medium rounded-sm transition-all">Upload</button>
+                            <button type="button" @click="imageMode = 'url'" :class="imageMode === 'url' ? 'bg-muted shadow-sm' : 'hover:bg-muted/50'" class="px-3 py-1 text-xs font-medium rounded-sm transition-all">URL</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div x-show="imageMode === 'url'" style="display: none;" x-transition>
+                            <x-ui.input
+                                id="seo_og_image"
+                                name="seo[og_image]"
+                                type="text"
+                                value="{{ $currentOgImage }}"
+                                placeholder="https://..."
+                            />
+                        </div>
+
+                        <div x-show="imageMode === 'upload'" style="display: none;" x-transition>
+                            <x-ui.file-upload
+                                id="seo_og_image_file"
+                                name="seo_og_image_file"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
+                                :current="!$isUrl ? $currentOgImage : null"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         </x-ui.card-content>
     </x-ui.card>

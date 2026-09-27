@@ -241,7 +241,7 @@
                     </x-ui.tabs-content>
 
                     <x-ui.tabs-content value="seo">
-                        <form action="{{ route('admin.services.seo.update', $service) }}" method="POST">
+                        <form action="{{ route('admin.services.seo.update', $service) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <x-admin::seo-fields :model="$service ?? null" :defaults="$seoDefaults ?? null" />

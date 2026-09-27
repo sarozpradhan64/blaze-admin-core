@@ -20,83 +20,117 @@
             <h2 class="text-2xl font-bold tracking-tight">{{ isset($album) ? 'Edit Album' : 'Add New Album' }}</h2>
         </div>
 
-        <form
-            action="{{ isset($album) ? route('admin.gallery-albums.update', $album) : route('admin.gallery-albums.store') }}"
-            method="POST"
-            enctype="multipart/form-data"
-        >
-            @csrf
-            @if (isset($album)) @method('PUT') @endif
+        <x-ui.tabs default-value="general">
+            <x-ui.tabs-list class="mb-4 w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
+                <x-ui.tabs-trigger 
+                    value="general" 
+                    class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
+                >
+                    General
+                </x-ui.tabs-trigger>
+                @if(isset($album))
+                <x-ui.tabs-trigger 
+                    value="seo" 
+                    class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
+                >
+                    SEO Metadata
+                </x-ui.tabs-trigger>
+                @endif
+            </x-ui.tabs-list>
 
-            <div class="grid gap-6 md:grid-cols-3">
-                <div class="space-y-6 md:col-span-2">
-                    <x-ui.card>
-                        <x-ui.card-header><x-ui.card-title>Album Details</x-ui.card-title></x-ui.card-header>
-                        <x-ui.card-content class="space-y-4">
-                            <x-ui.field>
-                                <x-ui.field-label>Title</x-ui.field-label>
-                                <x-ui.input name="title" value="{{ old('title', $album->title ?? '') }}" />
-                                <x-ui.field-error name="title" />
-                            </x-ui.field>
-                            <x-ui.field>
-                                <x-ui.field-label>Description</x-ui.field-label>
-                                <x-ui.rich-text-editor name="description">
-                                    {!! old('description', $album->description ?? '') !!}</x-ui.rich-text-editor>
-                                <x-ui.field-error name="description" />
-                            </x-ui.field>
-                        </x-ui.card-content>
-                    </x-ui.card>
-                </div>
+            <x-ui.tabs-content value="general">
+                <form
+                    action="{{ isset($album) ? route('admin.gallery-albums.update', $album) : route('admin.gallery-albums.store') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+                    @csrf
+                    @if (isset($album)) @method('PUT') @endif
 
-                <div class="space-y-6">
-                    <x-ui.card>
-                        <x-ui.card-header><x-ui.card-title>Cover Image</x-ui.card-title></x-ui.card-header>
-                        <x-ui.card-content>
-                            <x-ui.file-upload
-                                name="cover_image"
-                                accept="image/jpeg,image/png,image/gif,image/webp"
-                                :current="old('cover_image', $album->cover_image ?? null)"
-                            />
-                            <x-ui.field-error name="cover_image" />
-                        </x-ui.card-content>
-                    </x-ui.card>
+                    <div class="grid gap-6 md:grid-cols-3">
+                        <div class="space-y-6 md:col-span-2">
+                            <x-ui.card>
+                                <x-ui.card-header><x-ui.card-title>Album Details</x-ui.card-title></x-ui.card-header>
+                                <x-ui.card-content class="space-y-4">
+                                    <x-ui.field>
+                                        <x-ui.field-label>Title</x-ui.field-label>
+                                        <x-ui.input name="title" value="{{ old('title', $album->title ?? '') }}" />
+                                        <x-ui.field-error name="title" />
+                                    </x-ui.field>
+                                    <x-ui.field>
+                                        <x-ui.field-label>Description</x-ui.field-label>
+                                        <x-ui.rich-text-editor name="description">
+                                            {!! old('description', $album->description ?? '') !!}</x-ui.rich-text-editor>
+                                        <x-ui.field-error name="description" />
+                                    </x-ui.field>
+                                </x-ui.card-content>
+                            </x-ui.card>
+                        </div>
 
-                    <x-ui.card>
-                        <x-ui.card-header><x-ui.card-title>Settings</x-ui.card-title></x-ui.card-header>
-                        <x-ui.card-content class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <x-ui.label for="status" class="flex flex-col space-y-1">
-                                    <span>Active</span>
-                                    <span class="text-muted-foreground text-xs font-normal">Show on website</span>
-                                </x-ui.label>
-                                <x-ui.switch
-                                    id="status"
-                                    name="status"
-                                    value="1"
-                                    :checked="old('status', $album->status ?? true)"
-                                />
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <x-ui.label for="is_featured" class="flex flex-col space-y-1">
-                                    <span>Featured</span>
-                                    <span class="text-muted-foreground text-xs font-normal">Show in featured section</span>
-                                </x-ui.label>
-                                <x-ui.switch
-                                    id="is_featured"
-                                    name="is_featured"
-                                    value="1"
-                                    :checked="old('is_featured', $album->is_featured ?? false)"
-                                />
-                            </div>
-                        </x-ui.card-content>
-                    </x-ui.card>
-                </div>
-            </div>
+                        <div class="space-y-6">
+                            <x-ui.card>
+                                <x-ui.card-header><x-ui.card-title>Cover Image</x-ui.card-title></x-ui.card-header>
+                                <x-ui.card-content>
+                                    <x-ui.file-upload
+                                        name="cover_image"
+                                        accept="image/jpeg,image/png,image/gif,image/webp"
+                                        :current="old('cover_image', $album->cover_image ?? null)"
+                                    />
+                                    <x-ui.field-error name="cover_image" />
+                                </x-ui.card-content>
+                            </x-ui.card>
 
-            <div class="mt-6 flex justify-end gap-2">
-                <x-ui.button variant="outline" href="{{ route('admin.gallery-albums.index') }}">Cancel</x-ui.button>
-                <x-ui.button type="submit">Save Album</x-ui.button>
-            </div>
-        </form>
+                            <x-ui.card>
+                                <x-ui.card-header><x-ui.card-title>Settings</x-ui.card-title></x-ui.card-header>
+                                <x-ui.card-content class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <x-ui.label for="status" class="flex flex-col space-y-1">
+                                            <span>Active</span>
+                                            <span class="text-muted-foreground text-xs font-normal">Show on website</span>
+                                        </x-ui.label>
+                                        <x-ui.switch
+                                            id="status"
+                                            name="status"
+                                            value="1"
+                                            :checked="old('status', $album->status ?? true)"
+                                        />
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <x-ui.label for="is_featured" class="flex flex-col space-y-1">
+                                            <span>Featured</span>
+                                            <span class="text-muted-foreground text-xs font-normal">Show in featured section</span>
+                                        </x-ui.label>
+                                        <x-ui.switch
+                                            id="is_featured"
+                                            name="is_featured"
+                                            value="1"
+                                            :checked="old('is_featured', $album->is_featured ?? false)"
+                                        />
+                                    </div>
+                                </x-ui.card-content>
+                            </x-ui.card>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end gap-2">
+                        <x-ui.button variant="outline" href="{{ route('admin.gallery-albums.index') }}">Cancel</x-ui.button>
+                        <x-ui.button type="submit">Save Album</x-ui.button>
+                    </div>
+                </form>
+            </x-ui.tabs-content>
+
+            @if(isset($album))
+            <x-ui.tabs-content value="seo">
+                <form action="{{ route('admin.gallery-albums.seo.update', $album) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <x-admin::seo-fields :model="$album" />
+                    <div class="mt-6 flex justify-end gap-2">
+                        <x-ui.button type="submit">Save SEO</x-ui.button>
+                    </div>
+                </form>
+            </x-ui.tabs-content>
+            @endif
+        </x-ui.tabs>
     </div>
 </x-layouts.admin>
