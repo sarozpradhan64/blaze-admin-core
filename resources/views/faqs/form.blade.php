@@ -29,7 +29,7 @@
             <x-ui.card>
                 <x-ui.card-content class="space-y-6 pt-6">
                     <x-ui.field>
-                        <x-ui.field-label for="question">Question</x-ui.field-label>
+                        <x-ui.field-label for="question" required>Question</x-ui.field-label>
                         <x-ui.input
                             id="question"
                             name="question"
@@ -40,7 +40,7 @@
                     </x-ui.field>
 
                     <x-ui.field>
-                        <x-ui.field-label for="answer">Answer</x-ui.field-label>
+                        <x-ui.field-label for="answer" required>Answer</x-ui.field-label>
                         <x-ui.rich-text-editor name="answer" :value="old('answer', $faq->answer ?? '')" />
                         <x-ui.field-error name="answer" />
                     </x-ui.field>

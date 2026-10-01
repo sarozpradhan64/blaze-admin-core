@@ -57,7 +57,7 @@
                                 </x-ui.card-header>
                                 <x-ui.card-content class="space-y-4">
                                     <x-ui.field>
-                                        <x-ui.field-label for="title">Project Title</x-ui.field-label>
+                                        <x-ui.field-label for="title" required>Project Title</x-ui.field-label>
                                         <x-ui.input
                                             id="title"
                                             name="title"
@@ -177,7 +177,7 @@
                                 </x-ui.card-header>
                                 <x-ui.card-content class="space-y-4">
                                     <x-ui.field>
-                                        <x-ui.field-label for="project_category_id">Category</x-ui.field-label>
+                                        <x-ui.field-label for="project_category_id" required>Category</x-ui.field-label>
                                         <x-ui.select name="project_category_id">
                                             <x-ui.select-trigger>
                                                 <x-ui.select-value placeholder="Select a category" />

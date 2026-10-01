@@ -31,7 +31,7 @@
             <x-ui.card>
                 <x-ui.card-content class="space-y-4 pt-6">
                     <x-ui.field>
-                        <x-ui.field-label for="project_id">Project</x-ui.field-label>
+                        <x-ui.field-label for="project_id" required>Project</x-ui.field-label>
                         <x-ui.select name="project_id">
                             <x-ui.select-trigger>
                                 <x-ui.select-value placeholder="Select project" />
@@ -51,7 +51,7 @@
                     </x-ui.field>
 
                     <x-ui.field>
-                        <x-ui.field-label for="image">Image</x-ui.field-label>
+                        <x-ui.field-label for="image" required>Image</x-ui.field-label>
                         <x-ui.file-upload
                             name="image"
                             accept="image/jpeg,image/png,image/gif,image/webp"

@@ -32,7 +32,7 @@
                 <x-ui.card-header><x-ui.card-title>Account Details</x-ui.card-title></x-ui.card-header>
                 <x-ui.card-content class="space-y-4">
                     <x-ui.field>
-                        <x-ui.field-label for="name">Name</x-ui.field-label>
+                        <x-ui.field-label for="name" required>Name</x-ui.field-label>
                         <x-ui.input id="name" name="name" value="{{ old('name', $user->name ?? '') }}" required />
                         <x-ui.field-error name="name" />
                     </x-ui.field>
@@ -48,7 +48,7 @@
                         <x-ui.field-error name="username" />
                     </x-ui.field>
                     <x-ui.field>
-                        <x-ui.field-label for="email">Email</x-ui.field-label>
+                        <x-ui.field-label for="email" required>Email</x-ui.field-label>
                         <x-ui.input
                             id="email"
                             name="email"
@@ -71,7 +71,7 @@
                 </x-ui.card-header>
                 <x-ui.card-content class="space-y-4">
                     <x-ui.field>
-                        <x-ui.field-label for="password">
+                        <x-ui.field-label for="password" required>
                             {{ isset($user) ? 'New Password' : 'Password' }}</x-ui.field-label>
                         <x-ui.password-input
                             id="password"

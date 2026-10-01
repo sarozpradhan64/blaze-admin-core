@@ -37,7 +37,7 @@
             <x-ui.card>
                 <x-ui.card-content class="space-y-4">
                     <x-ui.field>
-                        <x-ui.field-label for="name">Category Name</x-ui.field-label>
+                        <x-ui.field-label for="name" required>Category Name</x-ui.field-label>
                         <x-ui.input id="name" name="name" value="{{ old('name', $category->name ?? '') }}" />
                         <x-ui.field-error name="name" />
                     </x-ui.field>

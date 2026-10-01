@@ -37,7 +37,7 @@
                         <x-ui.card-content class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <x-ui.field>
-                                    <x-ui.field-label for="name">Name</x-ui.field-label>
+                                    <x-ui.field-label for="name" required>Name</x-ui.field-label>
                                     <x-ui.input
                                         id="name"
                                         name="name"

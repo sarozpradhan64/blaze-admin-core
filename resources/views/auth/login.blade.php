@@ -26,7 +26,7 @@
                     @csrf
 
                     <x-ui.field>
-                        <x-ui.field-label for="username">Username</x-ui.field-label>
+                        <x-ui.field-label for="username" required>Username</x-ui.field-label>
                         <x-ui.input
                             id="username"
                             name="username"
@@ -43,7 +43,7 @@
                     </x-ui.field>
 
                     <x-ui.field>
-                        <x-ui.field-label for="password">Password</x-ui.field-label>
+                        <x-ui.field-label for="password" required>Password</x-ui.field-label>
                         <x-ui.password-input
                             id="password"
                             name="password"

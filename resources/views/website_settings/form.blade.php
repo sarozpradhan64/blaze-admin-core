@@ -26,22 +26,22 @@
                 <x-ui.card-content class="space-y-4 pt-6">
                     <div class="grid grid-cols-2 gap-4">
                         <x-ui.field>
-                            <x-ui.field-label>Group</x-ui.field-label>
-                            <x-ui.input name="group" value="{{ old('group', $setting->group ?? 'general') }}" />
+                            <x-ui.field-label for="group" required>Group</x-ui.field-label>
+                            <x-ui.input name="group" id="group" value="{{ old('group', $setting->group ?? 'general') }}" />
                         </x-ui.field>
                         <x-ui.field>
-                            <x-ui.field-label>Key (Unique)</x-ui.field-label>
-                            <x-ui.input name="key" value="{{ old('key', $setting->key ?? '') }}" />
+                            <x-ui.field-label for="key" required>Key (Unique)</x-ui.field-label>
+                            <x-ui.input name="key" id="key" value="{{ old('key', $setting->key ?? '') }}" />
                         </x-ui.field>
                     </div>
                     <x-ui.field>
-                        <x-ui.field-label>Value</x-ui.field-label>
-                        <x-ui.textarea name="value" rows="4">{{ old('value', $setting->value ?? '') }}</x-ui.textarea>
+                        <x-ui.field-label for="value" required>Value</x-ui.field-label>
+                        <x-ui.textarea name="value" id="value" rows="4">{{ old('value', $setting->value ?? '') }}</x-ui.textarea>
                     </x-ui.field>
                     <x-ui.field>
-                        <x-ui.field-label>Type</x-ui.field-label>
+                        <x-ui.field-label for="type" required>Type</x-ui.field-label>
                         <x-ui.select name="type">
-                            <x-ui.select-trigger><x-ui.select-value /></x-ui.select-trigger>
+                            <x-ui.select-trigger id="type"><x-ui.select-value /></x-ui.select-trigger>
                             <x-ui.select-content>
                                 @foreach (['string', 'text', 'boolean', 'integer', 'json'] as $t)
                                     <x-ui.select-item

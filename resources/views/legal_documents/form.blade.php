@@ -32,14 +32,14 @@
                         </x-ui.card-header>
                         <x-ui.card-content class="space-y-4">
                             <x-ui.field>
-                                <x-ui.field-label for="title">Title</x-ui.field-label>
+                                <x-ui.field-label for="title" required>Title</x-ui.field-label>
                                 <x-ui.input id="title" name="title"
                                     value="{{ old('title', $legalDocument->title ?? '') }}" required />
                                 <x-ui.field-error name="title" />
                             </x-ui.field>
 
                             <x-ui.field>
-                                <x-ui.field-label for="file">Document File</x-ui.field-label>
+                                <x-ui.field-label for="file" required>Document File</x-ui.field-label>
                                 <x-ui.file-upload name="file" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp" :current="old('file', $legalDocument->file_path ?? null)" />
                                 <x-ui.field-error name="file" />
                             </x-ui.field>

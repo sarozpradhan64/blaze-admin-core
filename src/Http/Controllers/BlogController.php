@@ -33,7 +33,7 @@ class BlogController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'blog_category_id' => ['nullable', 'exists:blog_categories,id'],
+            'blog_category_id' => ['required', 'exists:blog_categories,id'],
             'author_id' => ['nullable', 'exists:users,id'],
             'excerpt' => ['nullable', 'string'],
             'content' => ['required', 'string'],
@@ -80,7 +80,7 @@ class BlogController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'blog_category_id' => ['nullable', 'exists:blog_categories,id'],
+            'blog_category_id' => ['required', 'exists:blog_categories,id'],
             'author_id' => ['nullable', 'exists:users,id'],
             'excerpt' => ['nullable', 'string'],
             'content' => ['required', 'string'],

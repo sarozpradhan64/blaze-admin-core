@@ -20,19 +20,15 @@
             <h2 class="text-2xl font-bold tracking-tight">{{ isset($album) ? 'Edit Album' : 'Add New Album' }}</h2>
         </div>
 
-        <x-ui.tabs default-value="general">
-            <x-ui.tabs-list class="mb-4 w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-                <x-ui.tabs-trigger 
-                    value="general" 
-                    class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
-                >
+        <x-ui.tabs value="general">
+            <x-ui.tabs-list class="mb-6">
+                <x-ui.tabs-trigger value="general">
+                    <x-lucide-layout-dashboard class="size-4 mr-2" />
                     General
                 </x-ui.tabs-trigger>
                 @if(isset($album))
-                <x-ui.tabs-trigger 
-                    value="seo" 
-                    class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
-                >
+                <x-ui.tabs-trigger value="seo">
+                    <x-lucide-search class="size-4 mr-2" />
                     SEO Metadata
                 </x-ui.tabs-trigger>
                 @endif

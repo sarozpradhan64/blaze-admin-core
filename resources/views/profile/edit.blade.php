@@ -20,12 +20,12 @@
                     @csrf
                     @method('PUT')
                     <x-ui.field>
-                        <x-ui.field-label for="name">Name</x-ui.field-label>
+                        <x-ui.field-label for="name" required>Name</x-ui.field-label>
                         <x-ui.input id="name" name="name" value="{{ old('name', $user->name) }}" required />
                         <x-ui.field-error name="name" />
                     </x-ui.field>
                     <x-ui.field>
-                        <x-ui.field-label for="username">Username</x-ui.field-label>
+                        <x-ui.field-label for="username" required>Username</x-ui.field-label>
                         <x-ui.input
                             id="username"
                             name="username"
@@ -36,7 +36,7 @@
                         <x-ui.field-error name="username" />
                     </x-ui.field>
                     <x-ui.field>
-                        <x-ui.field-label for="email">Email</x-ui.field-label>
+                        <x-ui.field-label for="email" required>Email</x-ui.field-label>
                         <x-ui.input
                             id="email"
                             name="email"
@@ -59,7 +59,7 @@
                     @csrf
                     @method('PUT')
                     <x-ui.field>
-                        <x-ui.field-label for="current_password">Current Password</x-ui.field-label>
+                        <x-ui.field-label for="current_password" required>Current Password</x-ui.field-label>
                         <x-ui.password-input
                             id="current_password"
                             name="current_password"
@@ -69,7 +69,7 @@
                         <x-ui.field-error name="current_password" />
                     </x-ui.field>
                     <x-ui.field>
-                        <x-ui.field-label for="password">New Password</x-ui.field-label>
+                        <x-ui.field-label for="password" required>New Password</x-ui.field-label>
                         <x-ui.password-input id="password" name="password" autocomplete="new-password" required />
                         <x-ui.field-error name="password" />
                     </x-ui.field>

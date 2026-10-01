@@ -23,7 +23,7 @@
                 @method('PUT')
                 <x-ui.card-content class="space-y-4 pt-6">
                     <x-ui.field>
-                        <x-ui.field-label for="name">Name</x-ui.field-label>
+                        <x-ui.field-label for="name" required>Name</x-ui.field-label>
                         <x-ui.input id="name" name="name" value="{{ old('name', $tag->name) }}" autofocus />
                         <x-ui.field-error name="name" />
                     </x-ui.field>

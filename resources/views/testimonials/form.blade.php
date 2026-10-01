@@ -35,7 +35,7 @@
                         <x-ui.card-content class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <x-ui.field>
-                                    <x-ui.field-label for="name">Name</x-ui.field-label>
+                                    <x-ui.field-label for="name" required>Name</x-ui.field-label>
                                     <x-ui.input
                                         id="name"
                                         name="name"
@@ -77,7 +77,7 @@
                                 </x-ui.field>
                             </div>
                             <x-ui.field>
-                                <x-ui.field-label for="content">Review Content</x-ui.field-label>
+                                <x-ui.field-label for="content" required>Review Content</x-ui.field-label>
                                 <x-ui.rich-text-editor name="content">
                                     {!! old('content', $testimonial->content ?? '') !!}</x-ui.rich-text-editor>
                                 <x-ui.field-error name="content" />

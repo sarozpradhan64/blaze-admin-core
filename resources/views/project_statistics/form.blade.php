@@ -33,7 +33,7 @@
             <x-ui.card>
                 <x-ui.card-content class="space-y-4 pt-6">
                     <x-ui.field>
-                        <x-ui.field-label for="project_id">Project</x-ui.field-label>
+                        <x-ui.field-label for="project_id" required>Project</x-ui.field-label>
                         <x-ui.select name="project_id">
                             <x-ui.select-trigger>
                                 <x-ui.select-value placeholder="Select project" />
@@ -64,7 +64,7 @@
                             <x-ui.field-error name="label" />
                         </x-ui.field>
                         <x-ui.field>
-                            <x-ui.field-label for="value">Value</x-ui.field-label>
+                            <x-ui.field-label for="value" required>Value</x-ui.field-label>
                             <x-ui.input
                                 id="value"
                                 name="value"

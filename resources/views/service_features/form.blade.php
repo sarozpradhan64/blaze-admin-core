@@ -38,7 +38,7 @@
                 <x-ui.card>
                     <x-ui.card-content class="space-y-4 pt-6">
                         <x-ui.field>
-                            <x-ui.field-label for="service_id">Parent Service</x-ui.field-label>
+                            <x-ui.field-label for="service_id" required>Parent Service</x-ui.field-label>
                             <x-ui.select name="service_id">
                                 <x-ui.select-trigger>
                                     <x-ui.select-value placeholder="Select a service" />
@@ -58,7 +58,7 @@
                         </x-ui.field>
 
                         <x-ui.field>
-                            <x-ui.field-label for="title">Feature Title</x-ui.field-label>
+                            <x-ui.field-label for="title" required>Feature Title</x-ui.field-label>
                             <x-ui.input id="title" name="title" value="{{ old('title', $feature->title ?? '') }}" />
                             <x-ui.field-error name="title" />
                         </x-ui.field>

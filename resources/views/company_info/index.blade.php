@@ -52,7 +52,7 @@
                     <x-ui.card-content class="space-y-4 pt-2">
                         {{-- Company Name --}}
                         <x-ui.field>
-                            <x-ui.field-label for="company_name">Company Name</x-ui.field-label>
+                            <x-ui.field-label for="company_name" required>Company Name</x-ui.field-label>
                             <x-ui.input
                                 id="company_name"
                                 name="company_name"
@@ -66,7 +66,7 @@
                         {{-- Phone + Secondary Phone --}}
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <x-ui.field>
-                                <x-ui.field-label for="phone">Phone</x-ui.field-label>
+                                <x-ui.field-label for="phone" required>Phone</x-ui.field-label>
                                 <x-ui.input id="phone" name="phone" value="{{ old('phone', $contact->phone ?? '') }}">
                                     <x-slot:leading>
                                         <x-lucide-phone class="size-4" />
@@ -98,7 +98,7 @@
                         {{-- Email + Secondary Email --}}
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <x-ui.field>
-                                <x-ui.field-label for="email">Email</x-ui.field-label>
+                                <x-ui.field-label for="email" required>Email</x-ui.field-label>
                                 <x-ui.input
                                     type="email"
                                     id="email"
@@ -155,7 +155,7 @@
 
                         {{-- Address --}}
                         <x-ui.field>
-                            <x-ui.field-label for="address">Address</x-ui.field-label>
+                            <x-ui.field-label for="address" required>Address</x-ui.field-label>
                             <x-ui.textarea
                                 id="address"
                                 name="address"

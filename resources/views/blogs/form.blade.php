@@ -20,19 +20,15 @@
             </h2>
         </div>
 
-        <x-ui.tabs default-value="general">
-            <x-ui.tabs-list class="mb-4 w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-                <x-ui.tabs-trigger 
-                    value="general" 
-                    class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
-                >
+        <x-ui.tabs value="general">
+            <x-ui.tabs-list class="mb-6">
+                <x-ui.tabs-trigger value="general">
+                    <x-lucide-layout-dashboard class="size-4 mr-2" />
                     General
                 </x-ui.tabs-trigger>
                 @if(isset($blog))
-                <x-ui.tabs-trigger 
-                    value="seo" 
-                    class="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-2"
-                >
+                <x-ui.tabs-trigger value="seo">
+                    <x-lucide-search class="size-4 mr-2" />
                     SEO Metadata
                 </x-ui.tabs-trigger>
                 @endif
@@ -57,25 +53,20 @@
                                 </x-ui.card-header>
                                 <x-ui.card-content class="space-y-4">
                                     <x-ui.field>
-                                        <x-ui.field-label for="title">Title</x-ui.field-label>
+                                        <x-ui.field-label for="title" required>Title</x-ui.field-label>
                                         <x-ui.input id="title" name="title" value="{{ old('title', $blog->title ?? '') }}" />
                                         <x-ui.field-error name="title" />
                                     </x-ui.field>
 
                                     <x-ui.field>
-                                        <x-ui.field-label for="blog_category_id">Category</x-ui.field-label>
-                                        <x-ui.select name="blog_category_id">
+                                        <x-ui.field-label for="blog_category_id" required>Category</x-ui.field-label>
+                                        <x-ui.select name="blog_category_id" :value="old('blog_category_id', $blog->blog_category_id ?? '')">
                                             <x-ui.select-trigger>
                                                 <x-ui.select-value placeholder="Select a category" />
                                             </x-ui.select-trigger>
                                             <x-ui.select-content>
-                                                <x-ui.select-item value="">None</x-ui.select-item>
                                                 @foreach ($categories as $category)
-                                                    <x-ui.select-item
-                                                        value="{{ $category->id }}"
-                                                        :selected="old('blog_category_id', $blog->blog_category_id ?? '') ==
-                                                        $category->id"
-                                                    >
+                                                    <x-ui.select-item value="{{ $category->id }}">
                                                         {{ $category->name }}
                                                     </x-ui.select-item>
                                                 @endforeach
@@ -85,19 +76,15 @@
                                     </x-ui.field>
 
                                     <x-ui.field>
-                                        <x-ui.field-label for="author_id">Author</x-ui.field-label>
-                                        <x-ui.select name="author_id">
+                                        <x-ui.field-label for="author_id" required>Author</x-ui.field-label>
+                                        <x-ui.select name="author_id" :value="old('author_id', $blog->author_id ?? '')">
                                             <x-ui.select-trigger>
                                                 <x-ui.select-value placeholder="Select an author" />
                                             </x-ui.select-trigger>
                                             <x-ui.select-content>
                                                 <x-ui.select-item value="">System</x-ui.select-item>
                                                 @foreach ($authors as $author)
-                                                    <x-ui.select-item
-                                                        value="{{ $author->id }}"
-                                                        :selected="old('author_id', $blog->author_id ?? auth()->id()) ==
-                                                        $author->id"
-                                                    >
+                                                    <x-ui.select-item value="{{ $author->id }}">
                                                         {{ $author->name }}
                                                     </x-ui.select-item>
                                                 @endforeach
@@ -118,7 +105,7 @@
                                     </x-ui.field>
 
                                     <x-ui.field>
-                                        <x-ui.field-label for="content">Content</x-ui.field-label>
+                                        <x-ui.field-label for="content" required>Content</x-ui.field-label>
                                         <x-ui.rich-text-editor name="content" :value="old('content', $blog->content ?? '')" />
                                         <x-ui.field-error name="content" />
                                     </x-ui.field>
