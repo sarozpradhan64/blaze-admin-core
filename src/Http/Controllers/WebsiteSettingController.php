@@ -2,6 +2,7 @@
 
 namespace Blaze\AdminCore\Http\Controllers;
 
+use Blaze\AdminCore\AdminCoreConfiguration;
 use Blaze\AdminCore\Models\WebsiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -81,7 +82,8 @@ class WebsiteSettingController extends Controller
                 },
             ],
             'hero_image' => 'nullable|image|max:4096',
-            'stats' => 'nullable|array|max:4',
+            'stats' => 'nullable|array|max:6',
+            'stats.*.icon' => 'nullable|string|max:50',
             'stats.*.value' => 'nullable|string|max:50',
             'stats.*.label' => 'nullable|string|max:100',
             'who_are_we_title' => 'nullable|string|max:255',

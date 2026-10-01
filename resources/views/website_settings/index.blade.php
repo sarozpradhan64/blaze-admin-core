@@ -107,6 +107,134 @@
                     </x-ui.card-content>
                 </x-ui.card>
 
+                       {{-- Hero Stats (dynamic) --}}
+                @php
+                    $heroStats = json_decode($settings['hero_stats'] ?? '[]', true) ?: [];
+                    if (empty($heroStats)) {
+                        $heroStats = [
+                            ['value' => '500+', 'label' => 'Happy Clients'],
+                            ['value' => '100%', 'label' => 'Success Rate'],
+                            ['value' => '', 'label' => 'Eco-Friendly'],
+                            ['value' => '24/7', 'label' => 'Rescue']
+                        ];
+                    }
+                    $statIcons = ['star', 'shield-check', 'leaf', 'siren'];
+                    foreach ($heroStats as $index => &$stat) {
+                        if (empty($stat['icon'])) {
+                            $stat['icon'] = $statIcons[$index % count($statIcons)];
+                        }
+                    }
+                    $statsJson = json_encode(old('stats', $heroStats));
+                @endphp
+
+                <div x-data="heroStats({{ $statsJson }})">
+                    <x-ui.card>
+                        <x-ui.card-header>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <x-lucide-bar-chart-2 class="text-muted-foreground size-5" />
+                                    <div>
+                                        <x-ui.card-title>Hero Section Stats</x-ui.card-title>
+                                        <x-ui.card-description>
+                                            Dynamic statistics displayed in the hero section.</x-ui.card-description>
+                                    </div>
+                                </div>
+                                <x-ui.button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    @click="addStat"
+                                    x-bind:disabled="stats.length >= 6"
+                                >
+                                    <x-slot:before>
+                                        <x-lucide-plus class="size-4" />
+                                    </x-slot:before>
+                                    Add Stat
+                                </x-ui.button>
+                            </div>
+                        </x-ui.card-header>
+                        <x-ui.card-content>
+                            <div class="space-y-3" x-data="{ dragging: null, dragOver: null }">
+                                <template x-if="stats.length === 0">
+                                    <p class="text-muted-foreground py-4 text-center text-sm">
+                                        No stats yet. Click "Add Stat" to add one.
+                                    </p>
+                                </template>
+
+                                <template x-for="(stat, i) in stats" :key="i">
+                                    <div 
+                                        class="border-border bg-muted/30 flex items-center gap-3 rounded-lg border px-4 py-3 transition-colors relative"
+                                        :class="{'opacity-40': dragging === i, 'border-primary': dragOver === i}"
+                                        draggable="true"
+                                        @dragstart="dragging = i; $event.dataTransfer.effectAllowed='move'"
+                                        @dragover.prevent="dragOver = i"
+                                        @dragleave.prevent="dragOver = null"
+                                        @drop.prevent="
+                                            if (dragging !== null && dragging !== i) {
+                                                let item = stats.splice(dragging, 1)[0];
+                                                stats.splice(i, 0, item);
+                                            }
+                                            dragging = null;
+                                            dragOver = null;
+                                        "
+                                        @dragend="dragging = null; dragOver = null"
+                                    >
+                                        <div class="cursor-grab text-muted-foreground hover:text-foreground active:cursor-grabbing">
+                                            <x-lucide-grip-vertical class="size-5" />
+                                        </div>
+                                        <div
+                                            class="bg-primary/10 text-primary flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                                            x-text="i + 1"
+                                        ></div>
+                                        <div class="grid flex-1 grid-cols-3 gap-3">
+                                            <div>
+                                                <label class="text-muted-foreground mb-1 block text-xs">Icon</label>
+                                                <x-ui.icon-picker x-model="stat.icon" class="h-9" />
+                                                <input type="hidden" :name="`stats[${i}][icon]`" :value="stat.icon" />
+                                            </div>
+                                            <div>
+                                                <label class="text-muted-foreground mb-1 block text-xs">Value</label>
+                                                <input
+                                                    type="text"
+                                                    :name="`stats[${i}][value]`"
+                                                    x-model="stat.value"
+                                                    placeholder="E.g., 15+"
+                                                    class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label class="text-muted-foreground mb-1 block text-xs">Label</label>
+                                                <input
+                                                    type="text"
+                                                    :name="`stats[${i}][label]`"
+                                                    x-model="stat.label"
+                                                    placeholder="E.g., Years Experience"
+                                                    class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
+                                                />
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            @click="removeStat(i)"
+                                            class="text-destructive hover:bg-destructive/10 inline-flex size-8 shrink-0 items-center justify-center rounded-md transition-colors"
+                                        >
+                                            <x-lucide-trash-2 class="size-4" />
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </x-ui.card-content>
+                        <x-ui.card-footer class="flex justify-end border-t pt-4">
+                            <x-ui.button type="submit">
+                                <x-slot:before>
+                                    <x-lucide-save class="size-4" />
+                                </x-slot:before>
+                                Save Homepage Settings
+                            </x-ui.button>
+                        </x-ui.card-footer>
+                    </x-ui.card>
+                </div>
+
                 {{-- Who Are We Section --}}
                 @php
                     $whoAreWeBullets = json_decode($settings['who_are_we_bullets'] ?? '[]', true) ?: [];
@@ -202,96 +330,6 @@
                                 <x-ui.file-upload name="who_are_we_image" accept="image/*" />
                             </x-ui.field>
                         </x-ui.card-content>
-                    </x-ui.card>
-                </div>
-
-                {{-- Hero Stats (dynamic) --}}
-                @php
-                    $heroStats = json_decode($settings['hero_stats'] ?? '[]', true) ?: [];
-                    $statsJson = json_encode(old('stats', $heroStats));
-                @endphp
-
-                <div x-data="heroStats({{ $statsJson }})">
-                    <x-ui.card>
-                        <x-ui.card-header>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <x-lucide-bar-chart-2 class="text-muted-foreground size-5" />
-                                    <div>
-                                        <x-ui.card-title>Hero Section Stats</x-ui.card-title>
-                                        <x-ui.card-description>
-                                            Dynamic statistics displayed in the hero section.</x-ui.card-description>
-                                    </div>
-                                </div>
-                                <x-ui.button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    @click="addStat"
-                                    x-bind:disabled="stats.length >= 4"
-                                >
-                                    <x-slot:before>
-                                        <x-lucide-plus class="size-4" />
-                                    </x-slot:before>
-                                    Add Stat
-                                </x-ui.button>
-                            </div>
-                        </x-ui.card-header>
-                        <x-ui.card-content>
-                            <div class="space-y-3">
-                                <template x-if="stats.length === 0">
-                                    <p class="text-muted-foreground py-4 text-center text-sm">
-                                        No stats yet. Click "Add Stat" to add one.
-                                    </p>
-                                </template>
-
-                                <template x-for="(stat, i) in stats" :key="i">
-                                    <div class="border-border bg-muted/30 flex items-center gap-3 rounded-lg border px-4 py-3">
-                                        <div
-                                            class="bg-primary/10 text-primary flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                                            x-text="i + 1"
-                                        ></div>
-                                        <div class="grid flex-1 grid-cols-2 gap-3">
-                                            <div>
-                                                <label class="text-muted-foreground mb-1 block text-xs">Value</label>
-                                                <input
-                                                    type="text"
-                                                    :name="`stats[${i}][value]`"
-                                                    x-model="stat.value"
-                                                    placeholder="E.g., 15+"
-                                                    class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label class="text-muted-foreground mb-1 block text-xs">Label</label>
-                                                <input
-                                                    type="text"
-                                                    :name="`stats[${i}][label]`"
-                                                    x-model="stat.label"
-                                                    placeholder="E.g., Years Experience"
-                                                    class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
-                                                />
-                                            </div>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            @click="removeStat(i)"
-                                            class="text-destructive hover:bg-destructive/10 inline-flex size-8 shrink-0 items-center justify-center rounded-md transition-colors"
-                                        >
-                                            <x-lucide-trash-2 class="size-4" />
-                                        </button>
-                                    </div>
-                                </template>
-                            </div>
-                        </x-ui.card-content>
-                        <x-ui.card-footer class="flex justify-end border-t pt-4">
-                            <x-ui.button type="submit">
-                                <x-slot:before>
-                                    <x-lucide-save class="size-4" />
-                                </x-slot:before>
-                                Save Homepage Settings
-                            </x-ui.button>
-                        </x-ui.card-footer>
                     </x-ui.card>
                 </div>
             </form>
@@ -851,8 +889,9 @@
         return {
             stats: initial,
             addStat() {
-                if (this.stats.length < 4)
+                if (this.stats.length < 6)
                     this.stats.push({
+                        icon: '',
                         value: '',
                         label: '',
                     });

@@ -27,6 +27,9 @@ use Blaze\AdminCore\Http\Controllers\TeamMemberController;
 use Blaze\AdminCore\Http\Controllers\TestimonialController;
 use Blaze\AdminCore\Http\Controllers\UserController;
 use Blaze\AdminCore\Http\Controllers\WebsiteSettingController;
+use Blaze\AdminCore\Http\Controllers\JobCategoryController;
+use Blaze\AdminCore\Http\Controllers\JobController;
+use Blaze\AdminCore\Http\Controllers\JobApplicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
@@ -140,5 +143,13 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::get('faqs/{faq}/edit', [FaqController::class, 'edit'])->name('faqs.edit');
         Route::put('faqs/{faq}', [FaqController::class, 'update'])->name('faqs.update');
         Route::delete('faqs/{faq}', [FaqController::class, 'destroy'])->name('faqs.destroy');
+
+        // Careers
+        if ($configuration->enabled('careers') || true) { // Default enabled for now
+            Route::resource('job-categories', JobCategoryController::class);
+            Route::resource('jobs', JobController::class);
+            Route::resource('job-applications', JobApplicationController::class)->except(['create', 'store', 'edit']);
+            Route::put('job-applications/{job_application}/status', [JobApplicationController::class, 'updateStatus'])->name('job-applications.status.update');
+        }
     });
 });

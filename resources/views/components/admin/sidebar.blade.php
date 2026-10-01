@@ -120,6 +120,38 @@
                     @endif
                     <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.tags.manage') }}"
                             :active="request()->routeIs('admin.tags.manage')"><x-lucide-tags /><span>{{ $websiteSettings['label_tags'] ?? 'Tags' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                    
+                    @if ($configuration->enabled('careers') || true)
+                        @php($careersActive = request()->routeIs('admin.jobs.*') || request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.job-applications.*'))
+                        @php($newApps = \Blaze\AdminCore\Models\JobApplication::where('status', 'pending')->count())
+                        <x-ui.sidebar-menu-item x-data="{ expanded: {{ $careersActive ? 'true' : 'false' }} }">
+                            <x-ui.sidebar-menu-button :active="$careersActive" @click.prevent="expanded = !expanded">
+                                <x-lucide-briefcase />
+                                <span>Careers</span>
+                                @if ($newApps > 0 && !$careersActive)
+                                    <x-ui.sidebar-menu-badge>{{ $newApps }}</x-ui.sidebar-menu-badge>
+                                @endif
+                                <x-lucide-chevron-down class="ml-auto transition-transform" x-bind:class="{ 'rotate-180': expanded }" />
+                            </x-ui.sidebar-menu-button>
+                            <x-ui.sidebar-menu-sub x-show="expanded" x-collapse>
+                                <x-ui.sidebar-menu-sub-item>
+                                    <x-ui.sidebar-menu-sub-button href="{{ route('admin.jobs.index') }}" :active="request()->routeIs('admin.jobs.*')">All Jobs</x-ui.sidebar-menu-sub-button>
+                                </x-ui.sidebar-menu-sub-item>
+                                <x-ui.sidebar-menu-sub-item>
+                                    <x-ui.sidebar-menu-sub-button href="{{ route('admin.job-categories.index') }}" :active="request()->routeIs('admin.job-categories.*')">Categories</x-ui.sidebar-menu-sub-button>
+                                </x-ui.sidebar-menu-sub-item>
+                                <x-ui.sidebar-menu-sub-item>
+                                    <x-ui.sidebar-menu-sub-button href="{{ route('admin.job-applications.index') }}" :active="request()->routeIs('admin.job-applications.*')">
+                                        Applications
+                                        @if ($newApps > 0)
+                                            <span class="ml-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">{{ $newApps }}</span>
+                                        @endif
+                                    </x-ui.sidebar-menu-sub-button>
+                                </x-ui.sidebar-menu-sub-item>
+                            </x-ui.sidebar-menu-sub>
+                        </x-ui.sidebar-menu-item>
+                    @endif
+
                     <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.faqs.index') }}"
                             :active="request()->routeIs('admin.faqs.*')"><x-lucide-message-circle-question /><span>{{ $websiteSettings['label_faqs'] ?? 'FAQs' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                 </x-ui.sidebar-menu></x-ui.sidebar-group-content>
