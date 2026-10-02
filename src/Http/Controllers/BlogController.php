@@ -42,8 +42,9 @@ class BlogController extends Controller
             'tags' => ['nullable', 'string'],
         ]);
 
-        if ($request->hasFile('featured_image')) {
-            $validated['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
+        $hasFeaturedImage = $request->hasFile('featured_image');
+        if ($hasFeaturedImage) {
+            unset($validated['featured_image']);
         }
 
         $validated['slug'] = $this->uniqueSlug($validated['title'], 'pages');
@@ -58,6 +59,13 @@ class BlogController extends Controller
         unset($validated['faqs']);
 
         $blog = Blog::create($validated);
+
+        if ($hasFeaturedImage) {
+            $file = $request->file('featured_image');
+            $filename = 'featured_image.' . $file->extension();
+            $path = $file->storeAs($blog->getMediaDirectory() . '/' . $blog->id, $filename, 'public');
+            $blog->updateQuietly(['featured_image' => $path]);
+        }
 
         $this->syncTags($blog, $tagsInput);
         if (method_exists($blog, 'syncFaqs')) {
@@ -89,12 +97,8 @@ class BlogController extends Controller
             'tags' => ['nullable', 'string'],
         ]);
 
-        if ($request->hasFile('featured_image')) {
-            if ($blog->featured_image) {
-                Storage::disk('public')->delete($blog->featured_image);
-            }
-            $validated['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
-        } else {
+        $hasFeaturedImage = $request->hasFile('featured_image');
+        if ($hasFeaturedImage) {
             unset($validated['featured_image']);
         }
 
@@ -114,6 +118,16 @@ class BlogController extends Controller
 
         $blog->update($validated);
 
+        if ($hasFeaturedImage) {
+            if ($blog->featured_image) {
+                Storage::disk('public')->delete($blog->featured_image);
+            }
+            $file = $request->file('featured_image');
+            $filename = 'featured_image_' . time() . '.' . $file->extension();
+            $path = $file->storeAs($blog->getMediaDirectory() . '/' . $blog->id, $filename, 'public');
+            $blog->updateQuietly(['featured_image' => $path]);
+        }
+
         $this->syncTags($blog, $tagsInput);
         if (method_exists($blog, 'syncFaqs')) {
             $blog->syncFaqs($faqs);
@@ -124,9 +138,8 @@ class BlogController extends Controller
 
     public function destroy(Blog $blog)
     {
-        if ($blog->featured_image) {
-            Storage::disk('public')->delete($blog->featured_image);
-        }
+        // Handled automatically by the HandlesMedia trait on the Blog model deleted event
+
 
         $blog->tags()->detach();
         $blog->delete();

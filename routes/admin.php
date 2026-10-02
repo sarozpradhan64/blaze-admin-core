@@ -30,6 +30,7 @@ use Blaze\AdminCore\Http\Controllers\WebsiteSettingController;
 use Blaze\AdminCore\Http\Controllers\JobCategoryController;
 use Blaze\AdminCore\Http\Controllers\JobController;
 use Blaze\AdminCore\Http\Controllers\JobApplicationController;
+use Blaze\AdminCore\Http\Controllers\MediaUploadController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
@@ -48,6 +49,9 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::get('/', function () {
             return view('admin-core::dashboard');
         })->name('dashboard');
+
+        Route::post('media/upload', [MediaUploadController::class, 'upload'])->name('media.upload');
+        Route::delete('media/delete', [MediaUploadController::class, 'delete'])->name('media.delete');
 
         // Settings (unified tabbed page)
         if ($configuration->enabled('settings')) {

@@ -6,13 +6,16 @@ use Blaze\AdminCore\Traits\HasFaqs;
 use Blaze\AdminCore\Traits\HasSeo;
 use Blaze\AdminCore\Traits\HasSortOrder;
 use Blaze\AdminCore\Traits\HasTags;
+use Blaze\AdminCore\Traits\HandlesMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
     use HasFactory;
-    use HasFaqs, HasSeo, HasSortOrder, HasTags;
+    use HasFaqs, HasSeo, HasSortOrder, HasTags, HandlesMedia;
+
+    protected array $richTextFields = ['description'];
 
     protected $table = 'services';
 
