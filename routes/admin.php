@@ -7,11 +7,15 @@ use Blaze\AdminCore\Http\Controllers\BlogController;
 use Blaze\AdminCore\Http\Controllers\CompanyInfoController;
 use Blaze\AdminCore\Http\Controllers\ContactMessageController;
 use Blaze\AdminCore\Http\Controllers\DownloadController;
-use Blaze\AdminCore\Http\Controllers\LegalDocumentController;
 use Blaze\AdminCore\Http\Controllers\EnquiryController;
 use Blaze\AdminCore\Http\Controllers\FaqController;
 use Blaze\AdminCore\Http\Controllers\GalleryAlbumController;
 use Blaze\AdminCore\Http\Controllers\GalleryItemController;
+use Blaze\AdminCore\Http\Controllers\JobApplicationController;
+use Blaze\AdminCore\Http\Controllers\JobCategoryController;
+use Blaze\AdminCore\Http\Controllers\JobController;
+use Blaze\AdminCore\Http\Controllers\LegalDocumentController;
+use Blaze\AdminCore\Http\Controllers\MediaUploadController;
 use Blaze\AdminCore\Http\Controllers\ProfileController;
 use Blaze\AdminCore\Http\Controllers\ProjectCategoryController;
 use Blaze\AdminCore\Http\Controllers\ProjectController;
@@ -27,10 +31,6 @@ use Blaze\AdminCore\Http\Controllers\TeamMemberController;
 use Blaze\AdminCore\Http\Controllers\TestimonialController;
 use Blaze\AdminCore\Http\Controllers\UserController;
 use Blaze\AdminCore\Http\Controllers\WebsiteSettingController;
-use Blaze\AdminCore\Http\Controllers\JobCategoryController;
-use Blaze\AdminCore\Http\Controllers\JobController;
-use Blaze\AdminCore\Http\Controllers\JobApplicationController;
-use Blaze\AdminCore\Http\Controllers\MediaUploadController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {

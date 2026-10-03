@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\Storage;
 
 class TestimonialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $testimonials = Testimonial::orderBy('sort_order')->latest()->paginate(10);
+        $testimonials = Testimonial::search($request->get('search'), ['name', 'company', 'role'])
+            ->filterStatus($request->get('status'))
+            ->sort($request->get('sort_by'), $request->get('sort_dir'))
+            ->paginate($request->get('per_page', 10))
+            ->withQueryString();
 
         return view('admin-core::testimonials.index', compact('testimonials'));
     }

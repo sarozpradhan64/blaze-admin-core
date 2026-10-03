@@ -13,11 +13,29 @@ use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::with(['category', 'author', 'tags'])->orderBy('created_at', 'desc')->paginate(10);
+        $query = Blog::with(['category', 'author', 'tags'])
+            ->search($request->get('search'), ['title', 'excerpt'])
+            ->filterStatus($request->get('status'))
+            ->sort($request->get('sort_by', 'created_at'), $request->get('sort_dir', 'desc'));
 
-        return view('admin-core::blogs.index', compact('blogs'));
+        if ($request->filled('category_id') && $request->category_id !== 'all') {
+            $query->where('blog_category_id', $request->category_id);
+        }
+
+        if ($request->filled('tag') && $request->tag !== 'all') {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('name', $request->tag);
+            });
+        }
+
+        $blogs = $query->paginate($request->get('per_page', 10))->withQueryString();
+
+        $categories = BlogCategory::all();
+        $tags = Blog::with('tags')->get()->flatMap->tags->unique('id')->pluck('name', 'name');
+
+        return view('admin-core::blogs.index', compact('blogs', 'categories', 'tags'));
     }
 
     public function create()
@@ -62,8 +80,8 @@ class BlogController extends Controller
 
         if ($hasFeaturedImage) {
             $file = $request->file('featured_image');
-            $filename = 'featured_image.' . $file->extension();
-            $path = $file->storeAs($blog->getMediaDirectory() . '/' . $blog->id, $filename, 'public');
+            $filename = 'featured_image.'.$file->extension();
+            $path = $file->storeAs($blog->getMediaDirectory().'/'.$blog->id, $filename, 'public');
             $blog->updateQuietly(['featured_image' => $path]);
         }
 
@@ -123,8 +141,8 @@ class BlogController extends Controller
                 Storage::disk('public')->delete($blog->featured_image);
             }
             $file = $request->file('featured_image');
-            $filename = 'featured_image_' . time() . '.' . $file->extension();
-            $path = $file->storeAs($blog->getMediaDirectory() . '/' . $blog->id, $filename, 'public');
+            $filename = 'featured_image_'.time().'.'.$file->extension();
+            $path = $file->storeAs($blog->getMediaDirectory().'/'.$blog->id, $filename, 'public');
             $blog->updateQuietly(['featured_image' => $path]);
         }
 
@@ -139,7 +157,6 @@ class BlogController extends Controller
     public function destroy(Blog $blog)
     {
         // Handled automatically by the HandlesMedia trait on the Blog model deleted event
-
 
         $blog->tags()->detach();
         $blog->delete();

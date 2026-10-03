@@ -10,6 +10,7 @@ class JobCategoryController extends Controller
     public function index()
     {
         $categories = JobCategory::orderBy('sort_order')->latest()->paginate(10);
+
         return view('admin-core::job_categories.index', compact('categories'));
     }
 
@@ -58,6 +59,7 @@ class JobCategoryController extends Controller
     public function destroy(JobCategory $jobCategory)
     {
         $jobCategory->delete();
+
         return redirect()->route('admin.job-categories.index')->with('success', 'Job Category deleted successfully.');
     }
 }

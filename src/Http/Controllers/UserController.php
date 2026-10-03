@@ -11,9 +11,12 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::query()->latest()->paginate(10);
+        $users = User::search($request->get('search'), ['name', 'username', 'email'])
+            ->sort($request->get('sort_by'), $request->get('sort_dir'), 'created_at', 'desc')
+            ->paginate($request->get('per_page', 10))
+            ->withQueryString();
 
         return view('admin-core::users.index', compact('users'));
     }

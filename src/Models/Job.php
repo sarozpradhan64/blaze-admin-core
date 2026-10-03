@@ -2,6 +2,7 @@
 
 namespace Blaze\AdminCore\Models;
 
+use Blaze\AdminCore\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Job extends Model
 {
+    use Filterable;
     use HasFactory;
 
     protected $table = 'job_postings';

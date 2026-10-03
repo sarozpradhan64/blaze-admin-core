@@ -8,9 +8,17 @@ use Illuminate\Support\Facades\Storage;
 
 class TeamMemberController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $members = TeamMember::orderBy('sort_order')->paginate(10);
+        $query = TeamMember::search($request->get('search'), ['name', 'role', 'bio'])
+            ->sort($request->get('sort_by'), $request->get('sort_dir'));
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $statusBool = in_array($request->status, ['1', 'true', 'active', 1, true], true);
+            $query->where('is_active', $statusBool);
+        }
+
+        $members = $query->paginate($request->get('per_page', 10))->withQueryString();
 
         return view('admin-core::team_members.index', compact('members'));
     }

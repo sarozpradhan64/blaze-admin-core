@@ -9,11 +9,29 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::with(['category', 'tags'])->orderBy('sort_order')->latest()->paginate(10);
+        $query = Project::with(['category', 'tags'])
+            ->search($request->get('search'), ['title', 'client_name', 'location'])
+            ->filterStatus($request->get('status'))
+            ->sort($request->get('sort_by'), $request->get('sort_dir'));
 
-        return view('admin-core::projects.index', compact('projects'));
+        if ($request->filled('category_id') && $request->category_id !== 'all') {
+            $query->where('project_category_id', $request->category_id);
+        }
+
+        if ($request->filled('tag') && $request->tag !== 'all') {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('name', $request->tag);
+            });
+        }
+
+        $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
+
+        $categories = ProjectCategory::all();
+        $tags = Project::with('tags')->get()->flatMap->tags->unique('id')->pluck('name', 'name');
+
+        return view('admin-core::projects.index', compact('projects', 'categories', 'tags'));
     }
 
     public function create()

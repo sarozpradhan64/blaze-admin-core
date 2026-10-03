@@ -9,7 +9,14 @@ class ContactMessageController extends Controller
 {
     public function index(Request $request)
     {
-        $messages = ContactMessage::latest()->paginate(15);
+        $query = ContactMessage::search($request->get('search'), ['name', 'email', 'subject', 'message'])
+            ->sort($request->get('sort_by'), $request->get('sort_dir'), 'created_at', 'desc');
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $messages = $query->paginate($request->get('per_page', 15))->withQueryString();
 
         return view('admin-core::contact_messages.index', compact('messages'));
     }

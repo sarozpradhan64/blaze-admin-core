@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GalleryAlbum extends Model
 {
-    use HasFactory, HasSortOrder, \Blaze\AdminCore\Traits\HasSeo;
+    use \Blaze\AdminCore\Traits\HasSeo, HasFactory, HasSortOrder;
 
     protected $table = 'gallery_albums';
 

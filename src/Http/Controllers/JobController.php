@@ -8,15 +8,27 @@ use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = Job::with('category')->orderBy('sort_order')->latest()->paginate(10);
-        return view('admin-core::jobs.index', compact('jobs'));
+        $query = Job::with('category')
+            ->search($request->get('search'), ['title', 'location', 'excerpt'])
+            ->filterStatus($request->get('status'))
+            ->sort($request->get('sort_by'), $request->get('sort_dir'));
+
+        if ($request->filled('category_id') && $request->category_id !== 'all') {
+            $query->where('job_category_id', $request->category_id);
+        }
+
+        $jobs = $query->paginate($request->get('per_page', 10))->withQueryString();
+        $categories = JobCategory::all();
+
+        return view('admin-core::jobs.index', compact('jobs', 'categories'));
     }
 
     public function create()
     {
         $categories = JobCategory::all();
+
         return view('admin-core::jobs.form', compact('categories'));
     }
 
@@ -45,6 +57,7 @@ class JobController extends Controller
     public function edit(Job $job)
     {
         $categories = JobCategory::all();
+
         return view('admin-core::jobs.form', compact('job', 'categories'));
     }
 
@@ -75,6 +88,7 @@ class JobController extends Controller
     public function destroy(Job $job)
     {
         $job->delete();
+
         return redirect()->route('admin.jobs.index')->with('success', 'Job deleted successfully.');
     }
 }

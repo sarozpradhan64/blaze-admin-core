@@ -29,13 +29,13 @@ trait HandlesMedia
         $richTextFields = $this->richTextFields ?? ['content'];
         $changesMade = false;
         $disk = Storage::disk('public');
-        $directory = $this->getMediaDirectory() . '/' . $this->getKey() . '/editor-media';
-        
+        $directory = $this->getMediaDirectory().'/'.$this->getKey().'/editor-media';
+
         $validFileUrls = [];
 
         foreach ($richTextFields as $field) {
             $html = $this->{$field};
-            
+
             if (empty($html)) {
                 continue;
             }
@@ -56,9 +56,9 @@ trait HandlesMedia
                     }
 
                     $extension = $type == 'jpeg' ? 'jpg' : $type;
-                    $filename = Str::uuid() . '.' . $extension;
-                    $path = $directory . '/' . $filename;
-                    
+                    $filename = Str::uuid().'.'.$extension;
+                    $path = $directory.'/'.$filename;
+
                     $disk->put($path, $data);
                     $url = Storage::url($path);
 
@@ -66,7 +66,7 @@ trait HandlesMedia
                     $html = str_replace($src, $url, $html);
                     $changesMade = true;
                     $validFileUrls[] = $url;
-                } 
+                }
                 // If it's already an uploaded file in our directory, keep track of it
                 elseif (str_contains($src, Storage::url($directory))) {
                     $validFileUrls[] = $src;
@@ -84,7 +84,7 @@ trait HandlesMedia
             foreach ($existingFiles as $file) {
                 $fileUrl = Storage::url($file);
                 // If this file is no longer in the HTML across any rich text field, delete it
-                if (!in_array($fileUrl, $validFileUrls)) {
+                if (! in_array($fileUrl, $validFileUrls)) {
                     $disk->delete($file);
                 }
             }
@@ -100,7 +100,7 @@ trait HandlesMedia
      */
     public function cleanupAllMedia()
     {
-        $directory = $this->getMediaDirectory() . '/' . $this->getKey();
+        $directory = $this->getMediaDirectory().'/'.$this->getKey();
         if (Storage::disk('public')->exists($directory)) {
             Storage::disk('public')->deleteDirectory($directory);
         }

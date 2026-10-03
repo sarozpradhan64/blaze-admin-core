@@ -2,6 +2,7 @@
 
 namespace Blaze\AdminCore\Models;
 
+use Blaze\AdminCore\Traits\Filterable;
 use Blaze\AdminCore\Traits\HasSeo;
 use Blaze\AdminCore\Traits\HasSortOrder;
 use Blaze\AdminCore\Traits\HasTags;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use HasFactory, HasSortOrder, HasTags;
+    use Filterable, HasFactory, HasSortOrder, HasTags;
     use HasSeo;
 
     protected $table = 'projects';

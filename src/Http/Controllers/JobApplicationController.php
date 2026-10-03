@@ -11,18 +11,20 @@ class JobApplicationController extends Controller
     public function index(Request $request)
     {
         $query = JobApplication::with('job')->latest();
-        
+
         if ($request->has('job_id') && $request->job_id) {
             $query->where('job_id', $request->job_id);
         }
 
         $applications = $query->paginate(20);
+
         return view('admin-core::job_applications.index', compact('applications'));
     }
 
     public function show(JobApplication $jobApplication)
     {
         $jobApplication->load('job');
+
         return view('admin-core::job_applications.show', compact('jobApplication'));
     }
 
@@ -53,6 +55,7 @@ class JobApplicationController extends Controller
         }
 
         $jobApplication->delete();
+
         return redirect()->route('admin.job-applications.index')->with('success', 'Application deleted successfully.');
     }
 }

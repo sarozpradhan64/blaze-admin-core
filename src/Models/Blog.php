@@ -3,20 +3,22 @@
 namespace Blaze\AdminCore\Models;
 
 use App\Models\User;
+use Blaze\AdminCore\Traits\Filterable;
+use Blaze\AdminCore\Traits\HandlesMedia;
 use Blaze\AdminCore\Traits\HasFaqs;
 use Blaze\AdminCore\Traits\HasSeo;
 use Blaze\AdminCore\Traits\HasTags;
-use Blaze\AdminCore\Traits\HandlesMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Blog extends Model
 {
+    use Filterable;
+    use HandlesMedia;
     use HasFactory;
     use HasFaqs;
     use HasSeo;
     use HasTags;
-    use HandlesMedia;
 
     protected array $richTextFields = ['content'];
 

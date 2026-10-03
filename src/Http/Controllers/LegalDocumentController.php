@@ -4,6 +4,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 
 use Blaze\AdminCore\Models\LegalDocument;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class LegalDocumentController extends Controller
@@ -11,6 +12,7 @@ class LegalDocumentController extends Controller
     public function index()
     {
         $legalDocuments = LegalDocument::latest()->paginate(20);
+
         return view('admin-core::legal_documents.index', compact('legalDocuments'));
     }
 
@@ -27,11 +29,11 @@ class LegalDocumentController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
-        
+
         // Ensure unique slug
-        $count = LegalDocument::where('slug', 'like', $validated['slug'] . '%')->count();
+        $count = LegalDocument::where('slug', 'like', $validated['slug'].'%')->count();
         if ($count > 0) {
-            $validated['slug'] = $validated['slug'] . '-' . ($count + 1);
+            $validated['slug'] = $validated['slug'].'-'.($count + 1);
         }
 
         $validated['status'] = $request->has('status');
@@ -39,7 +41,7 @@ class LegalDocumentController extends Controller
         if ($request->hasFile('file')) {
             $validated['file_path'] = $request->file('file')->store('legal_documents', 'public');
         }
-        
+
         unset($validated['file']);
 
         LegalDocument::create($validated);
@@ -61,9 +63,9 @@ class LegalDocumentController extends Controller
 
         if ($legalDocument->title !== $validated['title']) {
             $validated['slug'] = Str::slug($validated['title']);
-            $count = LegalDocument::where('slug', 'like', $validated['slug'] . '%')->where('id', '!=', $legalDocument->id)->count();
+            $count = LegalDocument::where('slug', 'like', $validated['slug'].'%')->where('id', '!=', $legalDocument->id)->count();
             if ($count > 0) {
-                $validated['slug'] = $validated['slug'] . '-' . ($count + 1);
+                $validated['slug'] = $validated['slug'].'-'.($count + 1);
             }
         }
 
@@ -71,11 +73,11 @@ class LegalDocumentController extends Controller
 
         if ($request->hasFile('file')) {
             if ($legalDocument->file_path) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($legalDocument->file_path);
+                Storage::disk('public')->delete($legalDocument->file_path);
             }
             $validated['file_path'] = $request->file('file')->store('legal_documents', 'public');
         }
-        
+
         unset($validated['file']);
 
         $legalDocument->update($validated);
@@ -86,9 +88,10 @@ class LegalDocumentController extends Controller
     public function destroy(LegalDocument $legalDocument)
     {
         if ($legalDocument->file_path) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($legalDocument->file_path);
+            Storage::disk('public')->delete($legalDocument->file_path);
         }
         $legalDocument->delete();
+
         return redirect()->route('admin.legal-documents.index')->with('success', 'Legal Document deleted successfully.');
     }
 }

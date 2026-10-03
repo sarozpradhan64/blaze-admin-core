@@ -14,11 +14,29 @@ class ServiceController extends Controller
 {
     public function __construct(protected AdminCoreConfiguration $config) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::with(['category', 'tags'])->orderBy('sort_order')->latest()->paginate(10);
+        $query = Service::with(['category', 'tags'])
+            ->search($request->search, ['title', 'short_description'])
+            ->filterStatus($request->status)
+            ->sort($request->sort_by, $request->sort_dir, 'sort_order', 'asc');
 
-        return view('admin-core::services.index', compact('services'));
+        if ($request->filled('category_id') && $request->category_id !== 'all') {
+            $query->where('service_category_id', $request->category_id);
+        }
+
+        if ($request->filled('tag') && $request->tag !== 'all') {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('name', $request->tag); // adjust based on tags structure
+            });
+        }
+
+        $services = $query->paginate($request->get('per_page', 10))->withQueryString();
+
+        $categories = ServiceCategory::all();
+        $tags = Service::with('tags')->get()->flatMap->tags->unique('id')->pluck('name', 'name');
+
+        return view('admin-core::services.index', compact('services', 'categories', 'tags'));
     }
 
     public function create()
