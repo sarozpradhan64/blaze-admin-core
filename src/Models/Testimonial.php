@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Testimonial extends Model
 {
-    use HasFactory, HasSortOrder, Filterable;
+    use Filterable, HasFactory, HasSortOrder;
 
     protected $table = 'testimonials';
 

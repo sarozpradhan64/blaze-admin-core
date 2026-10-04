@@ -56,6 +56,21 @@ class WebsiteSettingController extends Controller
             'label_tags',
             'label_faqs',
             'label_services_features',
+            'reviews_banner_title',
+            'reviews_banner_text',
+            'reviews_banner_image',
+            'reviews_seo_title',
+            'reviews_seo_description',
+            'team_banner_title',
+            'team_banner_text',
+            'team_banner_image',
+            'team_seo_title',
+            'team_seo_description',
+            'careers_banner_title',
+            'careers_banner_text',
+            'careers_banner_image',
+            'careers_seo_title',
+            'careers_seo_description',
         ];
 
         $settings = WebsiteSetting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
@@ -268,5 +283,56 @@ class WebsiteSettingController extends Controller
         }
 
         return back()->with('success', 'SEO settings updated.')->with('active_tab', 'seo');
+    }
+
+    public function updateSubpages(Request $request)
+    {
+        $validated = $request->validate([
+            'reviews_banner_title' => 'nullable|string|max:255',
+            'reviews_banner_text' => 'nullable|string|max:255',
+            'reviews_banner_image' => 'nullable|image|max:2048',
+            'reviews_seo_title' => 'nullable|string|max:255',
+            'reviews_seo_description' => 'nullable|string',
+            'team_banner_title' => 'nullable|string|max:255',
+            'team_banner_text' => 'nullable|string|max:255',
+            'team_banner_image' => 'nullable|image|max:2048',
+            'team_seo_title' => 'nullable|string|max:255',
+            'team_seo_description' => 'nullable|string',
+            'careers_banner_title' => 'nullable|string|max:255',
+            'careers_banner_text' => 'nullable|string|max:255',
+            'careers_banner_image' => 'nullable|image|max:2048',
+            'careers_seo_title' => 'nullable|string|max:255',
+            'careers_seo_description' => 'nullable|string',
+        ]);
+
+        $strings = [
+            'reviews_banner_title', 'reviews_banner_text', 'reviews_seo_title', 'reviews_seo_description',
+            'team_banner_title', 'team_banner_text', 'team_seo_title', 'team_seo_description',
+            'careers_banner_title', 'careers_banner_text', 'careers_seo_title', 'careers_seo_description',
+        ];
+
+        foreach ($strings as $key) {
+            WebsiteSetting::updateOrCreate(
+                ['key' => $key],
+                ['group' => 'subpages', 'value' => $validated[$key] ?? null, 'type' => 'string']
+            );
+        }
+
+        $images = ['reviews_banner_image', 'team_banner_image', 'careers_banner_image'];
+        foreach ($images as $key) {
+            if ($request->hasFile($key)) {
+                $old = WebsiteSetting::where('key', $key)->first();
+                if ($old?->value) {
+                    Storage::disk('public')->delete($old->value);
+                }
+                $path = $request->file($key)->store('subpages', 'public');
+                WebsiteSetting::updateOrCreate(
+                    ['key' => $key],
+                    ['group' => 'subpages', 'value' => $path, 'type' => 'string']
+                );
+            }
+        }
+
+        return back()->with('success', 'Subpage settings updated.')->with('active_tab', 'subpages');
     }
 }

@@ -60,6 +60,7 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
             Route::put('settings/about', [WebsiteSettingController::class, 'updateAbout'])->name('settings.about.update');
             Route::put('settings/system', [WebsiteSettingController::class, 'updateSystem'])->name('settings.system.update');
             Route::put('settings/seo', [WebsiteSettingController::class, 'updateSeo'])->name('settings.seo.update');
+            Route::put('settings/subpages', [WebsiteSettingController::class, 'updateSubpages'])->name('settings.subpages.update');
         }
 
         if ($configuration->enabled('users')) {

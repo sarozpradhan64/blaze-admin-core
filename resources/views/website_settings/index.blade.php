@@ -30,6 +30,10 @@
                 <x-lucide-search class="mr-2 size-4" />
                 SEO
             </x-ui.tabs-trigger>
+            <x-ui.tabs-trigger value="subpages">
+                <x-lucide-layout-template class="mr-2 size-4" />
+                Subpages
+            </x-ui.tabs-trigger>
         </x-ui.tabs-list>
 
         {{-- ── Homepage Tab ── --}}
@@ -876,6 +880,222 @@
                                 <x-lucide-save class="size-4" />
                             </x-slot:before>
                             Save SEO Settings
+                        </x-ui.button>
+                    </x-ui.card-footer>
+                </x-ui.card>
+            </form>
+        </x-ui.tabs-content>
+
+        {{-- ── Subpages Tab ── --}}
+        <x-ui.tabs-content value="subpages">
+            <form
+                action="{{ route('admin.settings.subpages.update') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="mt-4 space-y-6"
+            >
+                @csrf
+                @method('PUT')
+
+                {{-- Reviews Banner --}}
+                <x-ui.card>
+                    <x-ui.card-header>
+                        <div class="flex items-center gap-2">
+                            <x-lucide-star class="text-muted-foreground size-5" />
+                            <div>
+                                <x-ui.card-title>Reviews Page Banner</x-ui.card-title>
+                                <x-ui.card-description>Banner settings for the Customer Reviews page.</x-ui.card-description>
+                            </div>
+                        </div>
+                    </x-ui.card-header>
+                    <x-ui.card-content class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <x-ui.field>
+                                <x-ui.field-label>Banner Title</x-ui.field-label>
+                                <x-ui.input
+                                    name="reviews_banner_title"
+                                    value="{{ old('reviews_banner_title', $settings['reviews_banner_title'] ?? '') }}"
+                                    placeholder="Customer Reviews"
+                                />
+                            </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label>Banner Text</x-ui.field-label>
+                                <x-ui.input
+                                    name="reviews_banner_text"
+                                    value="{{ old('reviews_banner_text', $settings['reviews_banner_text'] ?? '') }}"
+                                    placeholder="Real stories and experiences..."
+                                />
+                            </x-ui.field>
+                        </div>
+                        <x-ui.field>
+                            <x-ui.field-label>Background Image</x-ui.field-label>
+                            @if (! empty($settings['reviews_banner_image']))
+                                <img
+                                    src="{{ Storage::url($settings['reviews_banner_image']) }}"
+                                    class="border-border mb-2 h-32 w-full rounded-md border object-cover"
+                                />
+                            @endif
+                            <x-ui.file-upload name="reviews_banner_image" accept="image/*" />
+                        </x-ui.field>
+                        
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="mb-4 text-sm font-semibold">SEO Meta Data</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <x-ui.field>
+                                    <x-ui.field-label>SEO Title</x-ui.field-label>
+                                    <x-ui.input
+                                        name="reviews_seo_title"
+                                        value="{{ old('reviews_seo_title', $settings['reviews_seo_title'] ?? '') }}"
+                                        placeholder="Customer Reviews - Neepa Adventure"
+                                    />
+                                </x-ui.field>
+                                <x-ui.field>
+                                    <x-ui.field-label>SEO Description</x-ui.field-label>
+                                    <x-ui.input
+                                        name="reviews_seo_description"
+                                        value="{{ old('reviews_seo_description', $settings['reviews_seo_description'] ?? '') }}"
+                                        placeholder="Read real reviews from our past travelers."
+                                    />
+                                </x-ui.field>
+                            </div>
+                        </div>
+                    </x-ui.card-content>
+                </x-ui.card>
+
+                {{-- Team Banner --}}
+                <x-ui.card>
+                    <x-ui.card-header>
+                        <div class="flex items-center gap-2">
+                            <x-lucide-users class="text-muted-foreground size-5" />
+                            <div>
+                                <x-ui.card-title>Team Page Banner</x-ui.card-title>
+                                <x-ui.card-description>Banner settings for the Our Team page.</x-ui.card-description>
+                            </div>
+                        </div>
+                    </x-ui.card-header>
+                    <x-ui.card-content class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <x-ui.field>
+                                <x-ui.field-label>Banner Title</x-ui.field-label>
+                                <x-ui.input
+                                    name="team_banner_title"
+                                    value="{{ old('team_banner_title', $settings['team_banner_title'] ?? '') }}"
+                                    placeholder="Meet Our Team"
+                                />
+                            </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label>Banner Text</x-ui.field-label>
+                                <x-ui.input
+                                    name="team_banner_text"
+                                    value="{{ old('team_banner_text', $settings['team_banner_text'] ?? '') }}"
+                                    placeholder="The guides and people behind..."
+                                />
+                            </x-ui.field>
+                        </div>
+                        <x-ui.field>
+                            <x-ui.field-label>Background Image</x-ui.field-label>
+                            @if (! empty($settings['team_banner_image']))
+                                <img
+                                    src="{{ Storage::url($settings['team_banner_image']) }}"
+                                    class="border-border mb-2 h-32 w-full rounded-md border object-cover"
+                                />
+                            @endif
+                            <x-ui.file-upload name="team_banner_image" accept="image/*" />
+                        </x-ui.field>
+
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="mb-4 text-sm font-semibold">SEO Meta Data</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <x-ui.field>
+                                    <x-ui.field-label>SEO Title</x-ui.field-label>
+                                    <x-ui.input
+                                        name="team_seo_title"
+                                        value="{{ old('team_seo_title', $settings['team_seo_title'] ?? '') }}"
+                                        placeholder="Our Team - Neepa Adventure"
+                                    />
+                                </x-ui.field>
+                                <x-ui.field>
+                                    <x-ui.field-label>SEO Description</x-ui.field-label>
+                                    <x-ui.input
+                                        name="team_seo_description"
+                                        value="{{ old('team_seo_description', $settings['team_seo_description'] ?? '') }}"
+                                        placeholder="Meet our experienced and dedicated team."
+                                    />
+                                </x-ui.field>
+                            </div>
+                        </div>
+                    </x-ui.card-content>
+                </x-ui.card>
+
+                {{-- Careers Banner --}}
+                <x-ui.card>
+                    <x-ui.card-header>
+                        <div class="flex items-center gap-2">
+                            <x-lucide-briefcase class="text-muted-foreground size-5" />
+                            <div>
+                                <x-ui.card-title>Careers Page Banner</x-ui.card-title>
+                                <x-ui.card-description>Banner settings for the Careers page.</x-ui.card-description>
+                            </div>
+                        </div>
+                    </x-ui.card-header>
+                    <x-ui.card-content class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <x-ui.field>
+                                <x-ui.field-label>Banner Title</x-ui.field-label>
+                                <x-ui.input
+                                    name="careers_banner_title"
+                                    value="{{ old('careers_banner_title', $settings['careers_banner_title'] ?? '') }}"
+                                    placeholder="Join Our Team"
+                                />
+                            </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label>Banner Text</x-ui.field-label>
+                                <x-ui.input
+                                    name="careers_banner_text"
+                                    value="{{ old('careers_banner_text', $settings['careers_banner_text'] ?? '') }}"
+                                    placeholder="Explore opportunities to work with us."
+                                />
+                            </x-ui.field>
+                        </div>
+                        <x-ui.field>
+                            <x-ui.field-label>Background Image</x-ui.field-label>
+                            @if (! empty($settings['careers_banner_image']))
+                                <img
+                                    src="{{ Storage::url($settings['careers_banner_image']) }}"
+                                    class="border-border mb-2 h-32 w-full rounded-md border object-cover"
+                                />
+                            @endif
+                            <x-ui.file-upload name="careers_banner_image" accept="image/*" />
+                        </x-ui.field>
+
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="mb-4 text-sm font-semibold">SEO Meta Data</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <x-ui.field>
+                                    <x-ui.field-label>SEO Title</x-ui.field-label>
+                                    <x-ui.input
+                                        name="careers_seo_title"
+                                        value="{{ old('careers_seo_title', $settings['careers_seo_title'] ?? '') }}"
+                                        placeholder="Careers - Neepa Adventure"
+                                    />
+                                </x-ui.field>
+                                <x-ui.field>
+                                    <x-ui.field-label>SEO Description</x-ui.field-label>
+                                    <x-ui.input
+                                        name="careers_seo_description"
+                                        value="{{ old('careers_seo_description', $settings['careers_seo_description'] ?? '') }}"
+                                        placeholder="Join our team and build a career with us."
+                                    />
+                                </x-ui.field>
+                            </div>
+                        </div>
+                    </x-ui.card-content>
+                    <x-ui.card-footer class="border-t pt-4 flex justify-end">
+                        <x-ui.button type="submit">
+                            <x-slot:before>
+                                <x-lucide-save class="size-4" />
+                            </x-slot:before>
+                            Save Subpage Settings
                         </x-ui.button>
                     </x-ui.card-footer>
                 </x-ui.card>

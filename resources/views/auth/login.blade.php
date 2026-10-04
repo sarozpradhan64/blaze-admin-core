@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>Admin Login — {{ config('app.name', 'Blaze Admin') }}</title>
+    <title>{{ $websiteSettings['admin_portal_title'] ?? config('app.name', 'Blaze Admin') }} — Admin Login</title>
     <link rel="preconnect" href="https://fonts.bunny.net" />
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -13,10 +13,14 @@
 <body class="bg-background text-foreground flex min-h-screen items-center justify-center font-sans antialiased">
     <div class="w-full max-w-sm px-4">
         <div class="mb-8 flex flex-col items-center gap-2">
-            <div class="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-lg">
-                <x-lucide-hard-hat class="size-6" />
-            </div>
-            <h1 class="text-xl font-semibold tracking-tight">Blaze Admin</h1>
+            @if (!empty($contact->logo) || !empty($websiteSettings['logo']))
+                <img src="{{ Storage::url($contact->logo ?? $websiteSettings['logo']) }}" alt="{{ $websiteSettings['admin_portal_title'] ?? config('app.name') }}" class="size-16 object-contain" />
+            @else
+                <div class="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-lg">
+                    <x-lucide-hard-hat class="size-6" />
+                </div>
+            @endif
+            <h1 class="text-xl font-semibold tracking-tight">{{ $websiteSettings['admin_portal_title'] ?? config('app.name', 'Blaze Admin') }}</h1>
             <p class="text-muted-foreground text-sm">Sign in to the admin dashboard</p>
         </div>
 
