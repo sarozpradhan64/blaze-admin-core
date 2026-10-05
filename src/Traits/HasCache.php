@@ -87,6 +87,13 @@ trait HasCache
         unset(static::$requestMemo[$baseKey]);
         Cache::forget($baseKey);
 
+        // Forget declared suffixes
+        foreach (static::getCacheSuffixes() as $s) {
+            $key = static::getCacheKey($s);
+            unset(static::$requestMemo[$key]);
+            Cache::forget($key);
+        }
+
         // Also clean up any suffixed memo keys for this class
         $prefix = $baseKey.'_';
         foreach (array_keys(static::$requestMemo) as $memoKey) {
@@ -95,5 +102,16 @@ trait HasCache
                 Cache::forget($memoKey);
             }
         }
+    }
+
+    /**
+     * Get the list of cache suffixes used by this model.
+     * Override this in the model if you use suffixes.
+     *
+     * @return array<int, string>
+     */
+    public static function getCacheSuffixes(): array
+    {
+        return [];
     }
 }

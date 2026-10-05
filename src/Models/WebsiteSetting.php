@@ -35,4 +35,9 @@ class WebsiteSetting extends Model
     {
         return static::cached()[$key] ?? $default;
     }
+
+    public static function getCacheSuffixes(): array
+    {
+        return ['all'];
+    }
 }

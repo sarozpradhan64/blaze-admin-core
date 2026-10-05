@@ -109,4 +109,9 @@ class Menu extends Model
 
         return new Collection($items->all());
     }
+
+    public static function getCacheSuffixes(): array
+    {
+        return ['tree'];
+    }
 }

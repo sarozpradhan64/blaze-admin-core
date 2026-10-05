@@ -33,4 +33,9 @@ class ContactInformation extends Model
 
         return $instance;
     }
+
+    public static function getCacheSuffixes(): array
+    {
+        return ['first'];
+    }
 }

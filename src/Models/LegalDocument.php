@@ -42,4 +42,9 @@ class LegalDocument extends Model
 
         return static::hydrate($data);
     }
+
+    public static function getCacheSuffixes(): array
+    {
+        return ['active'];
+    }
 }
