@@ -75,6 +75,14 @@
                                 @endif
                             </x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
+                    <x-ui.sidebar-menu-item>
+                        <x-ui.sidebar-menu-button
+                            href="{{ route('admin.newsletter-subscriptions.index') }}"
+                            :active="request()->routeIs('admin.newsletter-subscriptions.*')">
+                            <x-lucide-mail />
+                            <span>Subscribers</span>
+                        </x-ui.sidebar-menu-button>
+                    </x-ui.sidebar-menu-item>
                     @if ($configuration->enabled('testimonials'))
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
                                 href="{{ route('admin.testimonials.index') }}"

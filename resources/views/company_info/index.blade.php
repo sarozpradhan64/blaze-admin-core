@@ -267,7 +267,7 @@
                                 id="google_maps_iframe"
                                 name="google_maps_iframe"
                                 rows="3"
-                                placeholder='<iframe src="..."></iframe>'
+                                placeholder="&lt;iframe src=&quot;...&quot;&gt;&lt;/iframe&gt;"
                             >
                                 {{ old('google_maps_iframe', $contact->google_maps_iframe ?? '') }}</x-ui.textarea>
                             @error('google_maps_iframe')

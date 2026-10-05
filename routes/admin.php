@@ -18,6 +18,7 @@ use Blaze\AdminCore\Http\Controllers\LegalDocumentController;
 use Blaze\AdminCore\Http\Controllers\MediaUploadController;
 use Blaze\AdminCore\Http\Controllers\MenuController;
 use Blaze\AdminCore\Http\Controllers\MenuItemController;
+use Blaze\AdminCore\Http\Controllers\NewsletterSubscriptionController;
 use Blaze\AdminCore\Http\Controllers\PageController;
 use Blaze\AdminCore\Http\Controllers\ProfileController;
 use Blaze\AdminCore\Http\Controllers\ProjectCategoryController;
@@ -118,6 +119,9 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         if ($configuration->enabled('contact-messages')) {
             Route::resource('contact-messages', ContactMessageController::class)->except(['create', 'store', 'edit']);
         }
+
+        Route::resource('newsletter-subscriptions', NewsletterSubscriptionController::class)->only(['index', 'destroy']);
+
         if ($configuration->enabled('enquiries')) {
             Route::resource('enquiries', EnquiryController::class)->except(['create', 'store', 'edit']);
         }
