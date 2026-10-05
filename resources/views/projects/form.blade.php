@@ -19,12 +19,19 @@
         // }
     @endphp
 
-    <div class="max-w-5xl">
-        <div class="mb-6 flex items-center justify-between">
+    <div>
+        <div class="sticky top-0 z-10 -mx-4 mb-6 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:-mx-6 md:px-6">
             <h2 class="text-2xl font-bold tracking-tight">
                 {{ isset($project) ? 'Edit Project' : 'Add New Project' }}
             </h2>
+            <div class="flex items-center gap-2">
+                <x-ui.button variant="outline" href="{{ route('admin.projects.index') }}">Cancel</x-ui.button>
+                <x-ui.button type="submit" name="action" value="continue" variant="outline" form="project-general-form">Save & Continue</x-ui.button>
+                <x-ui.button type="submit" name="action" value="save" form="project-general-form">Save Project</x-ui.button>
+            </div>
         </div>
+
+        <div class="max-w-5xl">
 
         <x-ui.tabs value="general">
             <x-ui.tabs-list class="mb-4">
@@ -40,6 +47,7 @@
 
             <x-ui.tabs-content value="general">
                 <form
+                    id="project-general-form"
                     action="{{ isset($project) ? route('admin.projects.update', $project) : route('admin.projects.store') }}"
                     method="POST"
                     enctype="multipart/form-data"
@@ -270,18 +278,15 @@
                                         />
                                     </div>
                                 </x-ui.card-content>
-                                <x-ui.card-footer class="bg-muted/50 flex justify-end gap-2 border-t p-4">
-                                    <x-ui.button variant="outline" href="{{ route('admin.projects.index') }}">
-                                        Cancel</x-ui.button>
-                                    <x-ui.button type="submit">Save Project</x-ui.button>
-                                </x-ui.card-footer>
                             </x-ui.card>
                         </div>
                     </div>
+
                 </form>
             </x-ui.tabs-content>
 
 
         </x-ui.tabs>
+    </div>
     </div>
 </x-layouts.admin>

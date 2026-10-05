@@ -35,7 +35,7 @@ class DefaultMenuSeeder extends Seeder
                 'reference_id' => $aboutPage ? $aboutPage->id : null,
                 'sort_order' => 3,
                 'is_editable' => true,
-                'is_deletable' => true
+                'is_deletable' => true,
             ]
         );
 

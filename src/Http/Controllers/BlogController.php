@@ -33,7 +33,7 @@ class BlogController extends Controller
         $blogs = $query->paginate($request->get('per_page', 10))->withQueryString();
 
         $categories = BlogCategory::all();
-        $tags = Blog::with('tags')->get()->flatMap->tags->unique('id')->pluck('name', 'name');
+        $tags = Tag::whereHas('blogs')->pluck('name', 'name');
 
         return view('admin-core::blogs.index', compact('blogs', 'categories', 'tags'));
     }
@@ -88,6 +88,10 @@ class BlogController extends Controller
         $this->syncTags($blog, $tagsInput);
         if (method_exists($blog, 'syncFaqs')) {
             $blog->syncFaqs($faqs);
+        }
+
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.blogs.edit', $blog)->with('success', 'Blog created successfully.');
         }
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
@@ -149,6 +153,10 @@ class BlogController extends Controller
         $this->syncTags($blog, $tagsInput);
         if (method_exists($blog, 'syncFaqs')) {
             $blog->syncFaqs($faqs);
+        }
+
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.blogs.edit', $blog)->with('success', 'Blog updated successfully.');
         }
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog updated successfully.');

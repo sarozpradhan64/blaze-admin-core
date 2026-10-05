@@ -5,6 +5,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 use Blaze\AdminCore\AdminCoreConfiguration;
 use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\ServiceCategory;
+use Blaze\AdminCore\Models\Tag;
 use Blaze\AdminCore\Models\WebsiteSetting;
 use Blaze\AdminCore\Support\ServiceFormField;
 use Illuminate\Http\Request;
@@ -34,7 +35,7 @@ class ServiceController extends Controller
         $services = $query->paginate($request->get('per_page', 10))->withQueryString();
 
         $categories = ServiceCategory::all();
-        $tags = Service::with('tags')->get()->flatMap->tags->unique('id')->pluck('name', 'name');
+        $tags = Tag::whereHas('services')->pluck('name', 'name');
 
         return view('admin-core::services.index', compact('services', 'categories', 'tags'));
     }
@@ -112,7 +113,11 @@ class ServiceController extends Controller
             }
         }
 
-        return redirect()->route('admin.services.edit', $service)->with('success', 'Service created successfully. You can now add features and SEO.');
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.services.edit', $service)->with('success', 'Service created successfully.');
+        }
+
+        return redirect()->route('admin.services.index')->with('success', 'Service created successfully.');
     }
 
     public function edit(Service $service)
@@ -177,7 +182,11 @@ class ServiceController extends Controller
             $service->syncFaqs($faqs);
         }
 
-        return redirect()->back()->with('success', 'Service updated successfully.');
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.services.edit', $service)->with('success', 'Service updated successfully.');
+        }
+
+        return redirect()->route('admin.services.index')->with('success', 'Service updated successfully.');
     }
 
     public function updateFeatures(Request $request, Service $service)

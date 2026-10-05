@@ -3,18 +3,18 @@
 namespace Blaze\AdminCore\Models;
 
 use App\Models\User;
-use Blaze\AdminCore\Traits\HasSeo;
-use Blaze\AdminCore\Traits\HandlesMedia;
 use Blaze\AdminCore\Traits\Filterable;
+use Blaze\AdminCore\Traits\HandlesMedia;
+use Blaze\AdminCore\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Page extends Model
 {
+    use Filterable;
+    use HandlesMedia;
     use HasFactory;
     use HasSeo;
-    use HandlesMedia;
-    use Filterable;
 
     protected array $richTextFields = ['content'];
 

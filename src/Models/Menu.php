@@ -2,14 +2,17 @@
 
 namespace Blaze\AdminCore\Models;
 
+use Blaze\AdminCore\Traits\HasCache;
+use Blaze\AdminCore\Traits\HasSortOrder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Blaze\AdminCore\Traits\HasSortOrder;
 
 class Menu extends Model
 {
-    use HasFactory, HasSortOrder;
+    use HasCache, HasFactory, HasSortOrder;
 
     protected $fillable = [
         'title',
@@ -31,7 +34,7 @@ class Menu extends Model
         'is_deletable' => 'boolean',
     ];
 
-    public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Menu::class, 'parent_id');
     }
@@ -49,14 +52,61 @@ class Menu extends Model
 
         if ($this->type === 'page' && $this->reference_id) {
             $page = Page::find($this->reference_id);
+
             return $page ? route('pages.show', $page->slug) : '#';
         }
 
         if ($this->type === 'service_category' && $this->reference_id) {
             // Adjust this when ServiceCategory logic is fully known
-            return '/services/category/' . $this->reference_id;
+            return '/services/category/'.$this->reference_id;
         }
 
         return '#';
+    }
+
+    /**
+     * Retrieve the cached navigation menu tree (top-level menus with active children).
+     *
+     * @return Collection<int, self>
+     */
+    public static function cachedTree(): Collection
+    {
+        $data = static::rememberCache('tree', function () {
+            return static::whereNull('parent_id')
+                ->where('status', true)
+                ->orderBy('sort_order')
+                ->with(['children' => function ($query) {
+                    $query->where('status', true)->orderBy('sort_order');
+                }])
+                ->get()
+                ->toArray();
+        });
+
+        if (! is_array($data) || empty($data)) {
+            return new Collection;
+        }
+
+        $items = collect($data)->map(function ($menuData) {
+            $childrenData = $menuData['children'] ?? [];
+            unset($menuData['children']);
+
+            $menu = new static;
+            $menu->setRawAttributes($menuData, true);
+            $menu->exists = true;
+
+            $children = collect($childrenData)->map(function ($childData) {
+                $child = new static;
+                $child->setRawAttributes($childData, true);
+                $child->exists = true;
+
+                return $child;
+            });
+
+            $menu->setRelation('children', new Collection($children->all()));
+
+            return $menu;
+        });
+
+        return new Collection($items->all());
     }
 }

@@ -4,6 +4,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 
 use Blaze\AdminCore\Models\Project;
 use Blaze\AdminCore\Models\ProjectCategory;
+use Blaze\AdminCore\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,7 +30,7 @@ class ProjectController extends Controller
         $projects = $query->paginate($request->get('per_page', 10))->withQueryString();
 
         $categories = ProjectCategory::all();
-        $tags = Project::with('tags')->get()->flatMap->tags->unique('id')->pluck('name', 'name');
+        $tags = Tag::whereHas('projects')->pluck('name', 'name');
 
         return view('admin-core::projects.index', compact('projects', 'categories', 'tags'));
     }
@@ -72,6 +73,10 @@ class ProjectController extends Controller
 
         $project = Project::create($validated);
         $project->syncTagsFromString($tags);
+
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.projects.edit', $project)->with('success', 'Project created successfully.');
+        }
 
         return redirect()->route('admin.projects.index')->with('success', 'Project created successfully.');
     }
@@ -121,6 +126,10 @@ class ProjectController extends Controller
 
         $project->update($validated);
         $project->syncTagsFromString($tags);
+
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.projects.edit', $project)->with('success', 'Project updated successfully.');
+        }
 
         return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
     }

@@ -20,7 +20,7 @@ class MenuItemController extends Controller
         ]);
 
         $validated['sort_order'] = Menu::where('parent_id', $menu->id)->max('sort_order') + 1;
-        
+
         $menu->children()->create($validated);
 
         return redirect()->back()->with('success', 'Menu item added successfully.');
@@ -28,7 +28,7 @@ class MenuItemController extends Controller
 
     public function update(Request $request, Menu $item)
     {
-        if (!$item->is_editable) {
+        if (! $item->is_editable) {
             return redirect()->back()->with('error', 'This menu item cannot be edited.');
         }
 
@@ -48,7 +48,7 @@ class MenuItemController extends Controller
 
     public function destroy(Menu $item)
     {
-        if (!$item->is_deletable) {
+        if (! $item->is_deletable) {
             return redirect()->back()->with('error', 'This menu item cannot be deleted.');
         }
 

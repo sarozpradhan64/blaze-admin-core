@@ -13,10 +13,17 @@
         </x-ui.breadcrumb>
     </x-slot:header>
 
-    <div class="max-w-4xl">
-        <div class="mb-6 flex items-center justify-between">
+    <div>
+        <div class="sticky top-0 z-10 -mx-4 mb-6 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:-mx-6 md:px-6">
             <h2 class="text-2xl font-bold tracking-tight">{{ isset($service) ? 'Edit Service' : 'Add New Service' }}</h2>
+            <div class="flex items-center gap-2">
+                <x-ui.button variant="outline" href="{{ route('admin.services.index') }}">Cancel</x-ui.button>
+                <x-ui.button type="submit" name="action" value="continue" variant="outline" form="service-general-form">Save & Continue</x-ui.button>
+                <x-ui.button type="submit" name="action" value="save" form="service-general-form">Save Service</x-ui.button>
+            </div>
         </div>
+
+        <div class="max-w-4xl">
 
             <x-ui.tabs value="general">
                 <x-ui.tabs-list class="mb-6">
@@ -38,7 +45,7 @@
                 </x-ui.tabs-list>
 
                 <x-ui.tabs-content value="general" class="space-y-6">
-                    <form action="{{ isset($service) ? route('admin.services.update', $service) : route('admin.services.store') }}" method="POST" enctype="multipart/form-data">
+                    <form id="service-general-form" action="{{ isset($service) ? route('admin.services.update', $service) : route('admin.services.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @if (isset($service))
                             @method('PUT')
@@ -158,10 +165,7 @@
                         </div>
                     @endif
 
-                        <div class="mt-6 flex justify-end gap-2">
-                            <x-ui.button variant="outline" href="{{ route('admin.services.index') }}">Cancel</x-ui.button>
-                            <x-ui.button type="submit">Save General</x-ui.button>
-                        </div>
+
                     </form>
                 </x-ui.tabs-content>
 
@@ -253,4 +257,5 @@
                 @endif
             </x-ui.tabs>
         </div>
+    </div>
     </x-layouts.admin>

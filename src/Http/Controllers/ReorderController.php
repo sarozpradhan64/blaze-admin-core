@@ -5,6 +5,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\GalleryAlbum;
 use Blaze\AdminCore\Models\GalleryItem;
+use Blaze\AdminCore\Models\Menu;
 use Blaze\AdminCore\Models\Project;
 use Blaze\AdminCore\Models\ProjectCategory;
 use Blaze\AdminCore\Models\ProjectImage;
@@ -20,7 +21,7 @@ use Illuminate\Http\Request;
 class ReorderController extends Controller
 {
     private static array $models = [
-        'menus' => \Blaze\AdminCore\Models\Menu::class,
+        'menus' => Menu::class,
         'services' => Service::class,
         'service-categories' => ServiceCategory::class,
         'service-features' => ServiceFeature::class,

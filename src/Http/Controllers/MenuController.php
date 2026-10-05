@@ -39,7 +39,7 @@ class MenuController extends Controller
     public function edit(Menu $menu)
     {
         $menu->load(['children.children.children.children']); // Load nested items for builder
-        
+
         $pages = Page::where('status', true)->get(['id', 'title']);
         $serviceCategories = ServiceCategory::where('status', true)->get(['id', 'name']);
 
@@ -62,7 +62,7 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
-        if (!$menu->is_deletable) {
+        if (! $menu->is_deletable) {
             return redirect()->route('admin.menus.index')->with('error', 'This menu cannot be deleted.');
         }
 

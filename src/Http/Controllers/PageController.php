@@ -3,7 +3,6 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Blaze\AdminCore\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -60,6 +59,10 @@ class PageController extends Controller
             $page->updateQuietly(['featured_image' => $path]);
         }
 
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.pages.edit', $page)->with('success', 'Page created successfully.');
+        }
+
         return redirect()->route('admin.pages.index')->with('success', 'Page created successfully.');
     }
 
@@ -102,6 +105,10 @@ class PageController extends Controller
             $filename = 'featured_image_'.time().'.'.$file->extension();
             $path = $file->storeAs($page->getMediaDirectory().'/'.$page->id, $filename, 'public');
             $page->updateQuietly(['featured_image' => $path]);
+        }
+
+        if ($request->input('action') === 'continue') {
+            return redirect()->route('admin.pages.edit', $page)->with('success', 'Page updated successfully.');
         }
 
         return redirect()->route('admin.pages.index')->with('success', 'Page updated successfully.');
