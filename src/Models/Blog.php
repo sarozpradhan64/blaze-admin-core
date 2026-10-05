@@ -30,6 +30,17 @@ class Blog extends Model
         'status' => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope('type', function ($builder) {
+            $builder->where('type', 'blog');
+        });
+
+        static::creating(function ($blog) {
+            $blog->type = 'blog';
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(BlogCategory::class, 'blog_category_id');

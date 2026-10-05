@@ -65,6 +65,7 @@
                             id="remember"
                             name="remember"
                             class="border-input accent-primary size-4 rounded"
+                            @checked(old('remember'))
                         />
                         <label for="remember" class="text-muted-foreground cursor-pointer text-sm">Remember me</label>
                     </div>

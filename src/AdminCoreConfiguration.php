@@ -17,6 +17,8 @@ class AdminCoreConfiguration
             'settings' => true,
             'services' => true,
             'projects' => true,
+            'pages' => true,
+            'menus' => true,
             'blog' => true,
             'enquiries' => true,
             'contact-messages' => true,

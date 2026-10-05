@@ -4,6 +4,8 @@ namespace Blaze\AdminCore\Models;
 
 use App\Models\User;
 use Blaze\AdminCore\Traits\HasSeo;
+use Blaze\AdminCore\Traits\HandlesMedia;
+use Blaze\AdminCore\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,10 +13,29 @@ class Page extends Model
 {
     use HasFactory;
     use HasSeo;
+    use HandlesMedia;
+    use Filterable;
+
+    protected array $richTextFields = ['content'];
 
     protected $table = 'pages';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('type', function ($builder) {
+            $builder->where('type', 'page');
+        });
+
+        static::creating(function ($page) {
+            $page->type = 'page';
+        });
+    }
 
     public function creator()
     {

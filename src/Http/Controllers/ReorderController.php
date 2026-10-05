@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 class ReorderController extends Controller
 {
     private static array $models = [
+        'menus' => \Blaze\AdminCore\Models\Menu::class,
         'services' => Service::class,
         'service-categories' => ServiceCategory::class,
         'service-features' => ServiceFeature::class,

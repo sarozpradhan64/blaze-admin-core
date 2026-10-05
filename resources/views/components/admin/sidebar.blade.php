@@ -111,6 +111,14 @@
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.downloads.index') }}"
                                 :active="request()->routeIs('admin.downloads.*')"><x-lucide-download /><span>{{ $websiteSettings['label_downloads'] ?? 'Downloads' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
+                    @if ($configuration->enabled('pages'))
+                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.pages.index') }}"
+                                :active="request()->routeIs('admin.pages.*')"><x-lucide-file-text /><span>Pages</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                    @endif
+                    @if ($configuration->enabled('menus'))
+                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.menus.index') }}"
+                                :active="request()->routeIs('admin.menus.*')"><x-lucide-list /><span>Menus</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                    @endif
                     <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.legal-documents.index') }}"
                             :active="request()->routeIs('admin.legal-documents.*')"><x-lucide-scale /><span>Legal Documents</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @if ($configuration->enabled('company-info'))

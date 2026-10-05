@@ -50,18 +50,35 @@
                             This information is used on the website contact page and footer.</x-ui.card-description>
                     </x-ui.card-header>
                     <x-ui.card-content class="space-y-4 pt-2">
-                        {{-- Company Name --}}
-                        <x-ui.field>
-                            <x-ui.field-label for="company_name" required>Company Name</x-ui.field-label>
-                            <x-ui.input
-                                id="company_name"
-                                name="company_name"
-                                value="{{ old('company_name', $contact->company_name ?? '') }}"
-                            />
-                            @error('company_name')
-                                <x-ui.field-error>{{ $message }}</x-ui.field-error>
-                            @enderror
-                        </x-ui.field>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <x-ui.field>
+                                <x-ui.field-label for="company_name" required>Company Name</x-ui.field-label>
+                                <x-ui.input
+                                    id="company_name"
+                                    name="company_name"
+                                    value="{{ old('company_name', $contact->company_name ?? '') }}"
+                                />
+                                @error('company_name')
+                                    <x-ui.field-error>{{ $message }}</x-ui.field-error>
+                                @enderror
+                            </x-ui.field>
+
+                            <x-ui.field>
+                                <x-ui.field-label for="registration_number">
+                                    Registration / License Number
+                                    <span class="text-muted-foreground font-normal">(optional)</span>
+                                </x-ui.field-label>
+                                <x-ui.input
+                                    id="registration_number"
+                                    name="registration_number"
+                                    placeholder="e.g. 123456/078/079"
+                                    value="{{ old('registration_number', $contact->registration_number ?? '') }}"
+                                />
+                                @error('registration_number')
+                                    <x-ui.field-error>{{ $message }}</x-ui.field-error>
+                                @enderror
+                            </x-ui.field>
+                        </div>
 
                         {{-- Phone + Secondary Phone --}}
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -23,6 +23,7 @@ class CompanyInfoController extends Controller
     {
         $validated = $request->validate([
             'company_name' => 'required|string|max:255',
+            'registration_number' => 'nullable|string|max:100',
             'address' => 'required|string',
             'phone' => 'required|string|max:50',
             'secondary_phone' => 'nullable|string|max:50',

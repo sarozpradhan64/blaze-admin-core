@@ -16,6 +16,9 @@ use Blaze\AdminCore\Http\Controllers\JobCategoryController;
 use Blaze\AdminCore\Http\Controllers\JobController;
 use Blaze\AdminCore\Http\Controllers\LegalDocumentController;
 use Blaze\AdminCore\Http\Controllers\MediaUploadController;
+use Blaze\AdminCore\Http\Controllers\MenuController;
+use Blaze\AdminCore\Http\Controllers\MenuItemController;
+use Blaze\AdminCore\Http\Controllers\PageController;
 use Blaze\AdminCore\Http\Controllers\ProfileController;
 use Blaze\AdminCore\Http\Controllers\ProjectCategoryController;
 use Blaze\AdminCore\Http\Controllers\ProjectController;
@@ -96,6 +99,19 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
             Route::put('blogs/{blog}/seo', [BlogController::class, 'updateSeo'])->name('blogs.seo.update');
             Route::resource('blogs', BlogController::class);
             Route::resource('blog-categories', BlogCategoryController::class);
+        }
+
+        // Pages
+        if ($configuration->enabled('pages')) {
+            Route::put('pages/{page}/seo', [PageController::class, 'updateSeo'])->name('pages.seo.update');
+            Route::resource('pages', PageController::class);
+        }
+
+        // Menus
+        if ($configuration->enabled('menus')) {
+            Route::resource('menus', MenuController::class);
+            Route::resource('menus.items', MenuItemController::class)->shallow();
+            Route::post('menus/{menu}/reorder', [MenuItemController::class, 'reorder'])->name('menus.reorder');
         }
 
         // Core shared resources
