@@ -79,6 +79,7 @@
                     <x-ui.table-row>
                         <x-ui.sortable-th column="name">Name</x-ui.sortable-th>
                         <x-ui.table-head>Role / Company</x-ui.table-head>
+                        <x-ui.table-head>Review Content</x-ui.table-head>
                         <x-ui.sortable-th column="rating">Rating</x-ui.sortable-th>
                         <x-ui.sortable-th column="status">Status</x-ui.sortable-th>
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
@@ -90,6 +91,9 @@
                             <x-ui.table-cell class="font-medium">{{ $testimonial->name }}</x-ui.table-cell>
                             <x-ui.table-cell>
                                 {{ $testimonial->role }}{{ $testimonial->company ? ' @ '.$testimonial->company : '' }}</x-ui.table-cell>
+                            <x-ui.table-cell class="max-w-[200px] truncate" title="{{ strip_tags($testimonial->content) }}">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($testimonial->content), 40) }}
+                            </x-ui.table-cell>
                             <x-ui.table-cell>{{ $testimonial->rating }}/5</x-ui.table-cell>
                             <x-ui.table-cell>
                                 <div class="flex items-center gap-2">

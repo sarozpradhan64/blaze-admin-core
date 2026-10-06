@@ -78,8 +78,7 @@
                             </div>
                             <x-ui.field>
                                 <x-ui.field-label for="content" required>Review Content</x-ui.field-label>
-                                <x-ui.rich-text-editor name="content">
-                                    {!! old('content', $testimonial->content ?? '') !!}</x-ui.rich-text-editor>
+                                <x-ui.rich-text-editor name="content" :value="old('content', $testimonial->content ?? '')" />
                                 <x-ui.field-error name="content" />
                             </x-ui.field>
                         </x-ui.card-content>
