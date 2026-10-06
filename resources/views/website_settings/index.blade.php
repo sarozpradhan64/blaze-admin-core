@@ -703,6 +703,31 @@
                 <x-ui.card class="mt-6">
                     <x-ui.card-header>
                         <div class="flex items-center gap-2">
+                            <x-lucide-code class="size-5 text-muted-foreground" />
+                            <div>
+                                <x-ui.card-title>Custom Scripts</x-ui.card-title>
+                                <x-ui.card-description>Inject custom third-party scripts (like Tawk.to, Meta Pixel, etc.) into the website.</x-ui.card-description>
+                            </div>
+                        </div>
+                    </x-ui.card-header>
+                    <x-ui.card-content class="space-y-4">
+                        <x-ui.field>
+                            <x-ui.field-label>Footer Scripts</x-ui.field-label>
+                            <x-ui.textarea
+                                name="custom_footer_scripts"
+                                rows="6"
+                                placeholder="<!-- Paste your custom scripts here... -->"
+                            >{{ old('custom_footer_scripts', $settings['custom_footer_scripts'] ?? '') }}</x-ui.textarea>
+                            <x-ui.field-description>
+                                These scripts will be placed right before the closing &lt;/body&gt; tag on all pages. Perfect for chat widgets or tracking scripts.
+                            </x-ui.field-description>
+                        </x-ui.field>
+                    </x-ui.card-content>
+                </x-ui.card>
+
+                <x-ui.card class="mt-6">
+                    <x-ui.card-header>
+                        <div class="flex items-center gap-2">
                             <x-lucide-menu class="size-5 text-muted-foreground" />
                             <div>
                                 <x-ui.card-title>Sidebar Modules</x-ui.card-title>

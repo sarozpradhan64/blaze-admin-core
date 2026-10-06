@@ -71,6 +71,7 @@ class WebsiteSettingController extends Controller
             'careers_banner_image',
             'careers_seo_title',
             'careers_seo_description',
+            'custom_footer_scripts',
         ];
 
         $settings = WebsiteSetting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
@@ -234,13 +235,14 @@ class WebsiteSettingController extends Controller
             'label_tags' => 'nullable|string|max:255',
             'label_faqs' => 'nullable|string|max:255',
             'label_services_features' => 'nullable|string|max:255',
+            'custom_footer_scripts' => 'nullable|string',
         ]);
 
         $keys = [
             'admin_portal_title', 'label_services', 'label_projects', 'label_enquiries',
             'label_contact_messages', 'label_testimonials', 'label_team_members', 'label_gallery',
-            'label_blog', 'label_downloads', 'label_company_info', 'label_tags', 'label_faqs',
-            'label_services_features',
+            'label_gallery', 'label_blog', 'label_downloads', 'label_company_info',
+            'label_tags', 'label_faqs', 'label_services_features', 'custom_footer_scripts',
         ];
 
         foreach ($keys as $key) {
