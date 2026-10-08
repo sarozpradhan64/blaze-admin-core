@@ -151,24 +151,44 @@
                         </div>
 
                         {{-- WhatsApp --}}
-                        <x-ui.field>
-                            <x-ui.field-label for="whatsapp">
-                                WhatsApp
-                                <span class="text-muted-foreground font-normal">(optional)</span></x-ui.field-label>
-                            <x-ui.input
-                                id="whatsapp"
-                                name="whatsapp"
-                                placeholder="+1 234 567 8900"
-                                value="{{ old('whatsapp', $contact->whatsapp ?? '') }}"
-                            >
-                                <x-slot:leading>
-                                    <x-lucide-message-circle class="size-4" />
-                                </x-slot:leading>
-                            </x-ui.input>
-                            @error('whatsapp')
-                                <x-ui.field-error>{{ $message }}</x-ui.field-error>
-                            @enderror
-                        </x-ui.field>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <x-ui.field>
+                                <x-ui.field-label for="whatsapp">
+                                    WhatsApp Number
+                                    <span class="text-muted-foreground font-normal">(optional)</span></x-ui.field-label>
+                                <x-ui.input
+                                    id="whatsapp"
+                                    name="whatsapp"
+                                    placeholder="+1 234 567 8900"
+                                    value="{{ old('whatsapp', $contact->whatsapp ?? '') }}"
+                                >
+                                    <x-slot:leading>
+                                        <x-lucide-message-circle class="size-4" />
+                                    </x-slot:leading>
+                                </x-ui.input>
+                                @error('whatsapp')
+                                    <x-ui.field-error>{{ $message }}</x-ui.field-error>
+                                @enderror
+                            </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label for="whatsapp_name">
+                                    WhatsApp Contact Name
+                                    <span class="text-muted-foreground font-normal">(optional)</span></x-ui.field-label>
+                                <x-ui.input
+                                    id="whatsapp_name"
+                                    name="whatsapp_name"
+                                    placeholder="e.g. John Doe"
+                                    value="{{ old('whatsapp_name', $contact->whatsapp_name ?? '') }}"
+                                >
+                                    <x-slot:leading>
+                                        <x-lucide-user class="size-4" />
+                                    </x-slot:leading>
+                                </x-ui.input>
+                                @error('whatsapp_name')
+                                    <x-ui.field-error>{{ $message }}</x-ui.field-error>
+                                @enderror
+                            </x-ui.field>
+                        </div>
 
                         {{-- Address --}}
                         <x-ui.field>
