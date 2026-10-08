@@ -190,6 +190,46 @@
                             </x-ui.field>
                         </div>
 
+                        {{-- Viber --}}
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <x-ui.field>
+                                <x-ui.field-label for="viber">
+                                    Viber Number
+                                    <span class="text-muted-foreground font-normal">(optional)</span></x-ui.field-label>
+                                <x-ui.input
+                                    id="viber"
+                                    name="viber"
+                                    placeholder="+1 234 567 8900"
+                                    value="{{ old('viber', $contact->viber ?? '') }}"
+                                >
+                                    <x-slot:leading>
+                                        <x-lucide-phone-forwarded class="size-4" />
+                                    </x-slot:leading>
+                                </x-ui.input>
+                                @error('viber')
+                                    <x-ui.field-error>{{ $message }}</x-ui.field-error>
+                                @enderror
+                            </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label for="viber_name">
+                                    Viber Contact Name
+                                    <span class="text-muted-foreground font-normal">(optional)</span></x-ui.field-label>
+                                <x-ui.input
+                                    id="viber_name"
+                                    name="viber_name"
+                                    placeholder="e.g. John Doe"
+                                    value="{{ old('viber_name', $contact->viber_name ?? '') }}"
+                                >
+                                    <x-slot:leading>
+                                        <x-lucide-user class="size-4" />
+                                    </x-slot:leading>
+                                </x-ui.input>
+                                @error('viber_name')
+                                    <x-ui.field-error>{{ $message }}</x-ui.field-error>
+                                @enderror
+                            </x-ui.field>
+                        </div>
+
                         {{-- Address --}}
                         <x-ui.field>
                             <x-ui.field-label for="address" required>Address</x-ui.field-label>
