@@ -58,7 +58,7 @@ class CompanyInfoController extends Controller
         }
 
         unset($validated['logo'], $validated['favicon']);
-        
+
         ContactInformation::updateOrCreate(
             ['id' => optional(ContactInformation::first())->id],
             $validated

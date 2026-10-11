@@ -61,6 +61,10 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         if ($configuration->enabled('settings')) {
             Route::get('settings', [WebsiteSettingController::class, 'index'])->name('settings.index');
             Route::put('settings/homepage', [WebsiteSettingController::class, 'updateHomepage'])->name('settings.homepage.update');
+            Route::post('settings/homepage-sections', [WebsiteSettingController::class, 'storeHomepageSection'])->name('settings.homepage-sections.store');
+            Route::put('settings/homepage-sections/{homepageSection}', [WebsiteSettingController::class, 'updateHomepageSection'])->name('settings.homepage-sections.update');
+            Route::patch('settings/homepage-sections/{homepageSection}/toggle', [WebsiteSettingController::class, 'toggleHomepageSectionStatus'])->name('settings.homepage-sections.toggle');
+            Route::delete('settings/homepage-sections/{homepageSection}', [WebsiteSettingController::class, 'destroyHomepageSection'])->name('settings.homepage-sections.destroy');
             Route::put('settings/about', [WebsiteSettingController::class, 'updateAbout'])->name('settings.about.update');
             Route::put('settings/system', [WebsiteSettingController::class, 'updateSystem'])->name('settings.system.update');
             Route::put('settings/seo', [WebsiteSettingController::class, 'updateSeo'])->name('settings.seo.update');

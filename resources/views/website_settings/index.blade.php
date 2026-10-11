@@ -12,7 +12,7 @@
         <p class="text-muted-foreground mt-1 text-sm">Manage your website configuration.</p>
     </div>
 
-    <x-ui.tabs value="{{ session('active_tab', 'homepage') }}" class="max-w-3xl">
+    <x-ui.tabs value="{{ session('active_tab', 'homepage') }}" class="w-full">
         <x-ui.tabs-list>
             <x-ui.tabs-trigger value="homepage">
                 <x-lucide-layout class="mr-2 size-4" />
@@ -38,14 +38,17 @@
 
         {{-- ── Homepage Tab ── --}}
         <x-ui.tabs-content value="homepage">
-            <form
-                action="{{ route('admin.settings.homepage.update') }}"
-                method="POST"
-                enctype="multipart/form-data"
-                class="mt-4 space-y-6"
-            >
-                @csrf
-                @method('PUT')
+            <div class="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+                {{-- Left Side: Hero and Who We Are Settings --}}
+                <div class="lg:col-span-5 space-y-6">
+                    <form
+                        action="{{ route('admin.settings.homepage.update') }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        class="space-y-6"
+                    >
+                        @csrf
+                        @method('PUT')
 
                 {{-- Hero Section --}}
                 <x-ui.card>
@@ -337,7 +340,431 @@
                     </x-ui.card>
                 </div>
             </form>
-        </x-ui.tabs-content>
+        </div>
+
+        {{-- Right Side: Homepage Sections Management --}}
+        <div class="lg:col-span-7 space-y-6" x-data="homepageSectionsManager(@js($homepageSections), @js($availableServices))">
+            <x-ui.card class="border shadow-sm">
+                <x-ui.card-header class="pb-3 border-b bg-muted/20">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <x-lucide-layers class="text-primary size-5" />
+                            <div>
+                                <x-ui.card-title class="text-base font-semibold">Homepage Management</x-ui.card-title>
+                                <x-ui.card-description class="text-xs">
+                                    Reorder sections, toggle visibility, and manage curated trips.
+                                </x-ui.card-description>
+                            </div>
+                        </div>
+                        <x-ui.button
+                            type="button"
+                            size="sm"
+                            @click="openAddModal"
+                            class="shadow-sm"
+                        >
+                            <x-slot:before>
+                                <x-lucide-plus class="size-4" />
+                            </x-slot:before>
+                            Add Section
+                        </x-ui.button>
+                    </div>
+                </x-ui.card-header>
+
+                <x-ui.card-content class="pt-4 px-4 pb-4">
+                    {{-- Missing Sections Quick Add Badges --}}
+                    <div x-show="missingStandardSections.length > 0" class="mb-4 p-3 rounded-lg border border-dashed border-primary/30 bg-primary/5 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                                <x-lucide-sparkles class="size-3.5 text-primary" />
+                                Quick Add Missing Sections:
+                            </span>
+                            <span class="text-[11px] text-muted-foreground">Click any badge to restore</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <template x-for="item in missingStandardSections" :key="item.type">
+                                <button
+                                    type="button"
+                                    @click="quickAddSection(item)"
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border transition-all hover:scale-[1.02] shadow-xs cursor-pointer"
+                                    :class="item.badgeClass"
+                                >
+                                    <x-lucide-plus class="size-3" />
+                                    <span x-text="`Add ${item.name}`"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 flex items-center justify-between text-xs text-muted-foreground bg-muted/40 px-3 py-2 rounded-md">
+                        <span class="flex items-center gap-1.5 font-medium">
+                            <x-lucide-grip-vertical class="size-3.5 text-muted-foreground" />
+                            Drag items to reorder homepage layout
+                        </span>
+                        <span class="font-semibold" x-text="`${sections.length} Sections`"></span>
+                    </div>
+
+                    {{-- Sortable List Container --}}
+                    <div
+                        id="homepage-sections-sortable"
+                        class="space-y-2.5"
+                    >
+                        <template x-for="(section, index) in sections" :key="section.id">
+                            <div
+                                class="group border border-border bg-card hover:border-primary/40 rounded-lg p-3 transition-all shadow-sm flex items-center gap-3 relative"
+                                :data-id="section.id"
+                            >
+                                {{-- Drag Handle --}}
+                                <div
+                                    data-drag-handle
+                                    class="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-1 rounded hover:bg-muted"
+                                    title="Drag to reorder"
+                                >
+                                    <x-lucide-grip-vertical class="size-4" />
+                                </div>
+
+                                {{-- Order Badge --}}
+                                <div
+                                    class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold"
+                                    x-text="index + 1"
+                                ></div>
+
+                                {{-- Info --}}
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <h4
+                                            class="font-medium text-sm text-foreground truncate"
+                                            x-text="section.title"
+                                        ></h4>
+                                        <span
+                                            class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border"
+                                            :class="getTypeBadgeClass(section.section_type)"
+                                            x-text="getTypeLabel(section.section_type)"
+                                        ></span>
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                                        <template x-if="section.subtitle">
+                                            <span class="truncate max-w-[200px]" x-text="section.subtitle"></span>
+                                        </template>
+                                        <template x-if="section.settings && section.settings.service_ids && section.settings.service_ids.length > 0">
+                                            <span class="inline-flex items-center gap-1 text-primary font-medium">
+                                                <x-lucide-compass class="size-3" />
+                                                <span x-text="`${section.settings.service_ids.length} trips linked`"></span>
+                                            </span>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                {{-- Actions --}}
+                                <div class="flex items-center gap-1 shrink-0">
+                                    {{-- Toggle Visibility Form --}}
+                                    <form
+                                        :action="`{{ url('admin/settings/homepage-sections') }}/${section.id}/toggle`"
+                                        method="POST"
+                                        class="inline-block"
+                                    >
+                                        @csrf
+                                        @method('PATCH')
+                                        <button
+                                            type="submit"
+                                            class="p-1.5 rounded-md transition-colors"
+                                            :class="section.status ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : 'text-muted-foreground hover:bg-muted'"
+                                            :title="section.status ? 'Visible on Homepage (Click to hide)' : 'Hidden (Click to show)'"
+                                        >
+                                            <span x-show="section.status">
+                                                <x-lucide-eye class="size-4" />
+                                            </span>
+                                            <span x-show="!section.status">
+                                                <x-lucide-eye-off class="size-4" />
+                                            </span>
+                                        </button>
+                                    </form>
+
+                                    {{-- Edit Button --}}
+                                    <button
+                                        type="button"
+                                        @click="openEditModal(section)"
+                                        class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                                        title="Edit Section"
+                                    >
+                                        <x-lucide-pencil class="size-4" />
+                                    </button>
+
+                                    {{-- Delete Button --}}
+                                    <form
+                                        :action="`{{ url('admin/settings/homepage-sections') }}/${section.id}`"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to remove this section? You can quickly re-add it anytime.');"
+                                        class="inline-block"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+                                        <button
+                                            type="submit"
+                                            class="p-1.5 text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                                            title="Delete Section"
+                                        >
+                                            <x-lucide-trash-2 class="size-4" />
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </x-ui.card-content>
+            </x-ui.card>
+
+            {{-- ADD SECTION MODAL --}}
+            <div
+                x-show="isAddOpen"
+                style="display: none;"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+                x-transition.opacity
+            >
+                <div
+                    @click.away="isAddOpen = false"
+                    class="w-full max-w-lg rounded-xl border bg-background p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+                    x-show="isAddOpen"
+                    x-transition
+                >
+                    <div class="flex items-center justify-between border-b pb-4 mb-5">
+                        <div class="flex items-center gap-2">
+                            <div class="p-2 rounded-lg bg-primary/10 text-primary">
+                                <x-lucide-layers class="size-5" />
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-foreground">Add Homepage Section</h3>
+                                <p class="text-xs text-muted-foreground">Add a new curated trips block or content section.</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            @click="isAddOpen = false"
+                            class="text-muted-foreground hover:text-foreground p-1 rounded-md"
+                        >
+                            <x-lucide-x class="size-5" />
+                        </button>
+                    </div>
+
+                    <form action="{{ route('admin.settings.homepage-sections.store') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <x-ui.field>
+                            <x-ui.field-label required>Section Title</x-ui.field-label>
+                            <x-ui.input
+                                name="title"
+                                x-model="addForm.title"
+                                placeholder="E.g., Our Best-Selling Trips for 2026 or Our Featured Trips for 2026"
+                                required
+                            />
+                        </x-ui.field>
+
+                        <x-ui.field>
+                            <x-ui.field-label>Section Subtitle / Tagline</x-ui.field-label>
+                            <x-ui.input
+                                name="subtitle"
+                                x-model="addForm.subtitle"
+                                placeholder="E.g., Curated Himalayan routes handpicked by senior guides"
+                            />
+                        </x-ui.field>
+
+                        <input type="hidden" name="section_type" :value="addForm.section_type">
+
+                        {{-- Service Picker (Active when section_type === 'custom_services') --}}
+                        <div x-show="addForm.section_type === 'custom_services'" class="border border-border/70 bg-muted/20 p-4 rounded-lg space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                                    <x-lucide-compass class="size-4 text-primary" />
+                                    Choose Service Records (Trips)
+                                </label>
+                                <span class="text-xs text-muted-foreground" x-text="`${addForm.service_ids.length} selected`"></span>
+                            </div>
+                            <p class="text-xs text-muted-foreground">Select the treks or tours to showcase in this section:</p>
+
+                            <div class="max-h-48 overflow-y-auto space-y-1.5 border rounded-md p-2 bg-background">
+                                <template x-for="service in availableServices" :key="service.id">
+                                    <label class="flex items-center gap-2.5 p-2 rounded hover:bg-muted/50 cursor-pointer text-sm transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            name="service_ids[]"
+                                            :value="service.id"
+                                            x-model="addForm.service_ids"
+                                            class="rounded border-input text-primary focus:ring-primary size-4"
+                                        />
+                                        <span class="font-medium text-foreground text-xs" x-text="service.title"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <x-ui.field>
+                                <x-ui.field-label>Button Text (Optional)</x-ui.field-label>
+                                <x-ui.input
+                                    name="button_text"
+                                    x-model="addForm.button_text"
+                                    placeholder="E.g., View All Trips"
+                                />
+                            </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label>Button URL (Optional)</x-ui.field-label>
+                                <x-ui.input
+                                    name="button_url"
+                                    x-model="addForm.button_url"
+                                    placeholder="E.g., /treks"
+                                />
+                            </x-ui.field>
+                        </div>
+
+                        <div class="flex justify-end gap-2 pt-4 border-t">
+                            <x-ui.button
+                                type="button"
+                                variant="outline"
+                                @click="isAddOpen = false"
+                            >
+                                Cancel
+                            </x-ui.button>
+                            <x-ui.button type="submit">
+                                <x-slot:before>
+                                    <x-lucide-plus class="size-4" />
+                                </x-slot:before>
+                                Create Section
+                            </x-ui.button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- EDIT SECTION MODAL --}}
+            <div
+                x-show="isEditOpen"
+                style="display: none;"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+                x-transition.opacity
+            >
+                <div
+                    @click.away="isEditOpen = false"
+                    class="w-full max-w-lg rounded-xl border bg-background p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+                    x-show="isEditOpen"
+                    x-transition
+                >
+                    <div class="flex items-center justify-between border-b pb-4 mb-5">
+                        <div class="flex items-center gap-2">
+                            <div class="p-2 rounded-lg bg-primary/10 text-primary">
+                                <x-lucide-pencil class="size-5" />
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-foreground">Edit Homepage Section</h3>
+                                <p class="text-xs text-muted-foreground">Update title, subtitle, and linked trip records.</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            @click="isEditOpen = false"
+                            class="text-muted-foreground hover:text-foreground p-1 rounded-md"
+                        >
+                            <x-lucide-x class="size-5" />
+                        </button>
+                    </div>
+
+                    <form
+                        :action="`{{ url('admin/settings/homepage-sections') }}/${editForm.id}`"
+                        method="POST"
+                        class="space-y-4"
+                    >
+                        @csrf
+                        @method('PUT')
+
+                        <x-ui.field>
+                            <x-ui.field-label required>Section Title</x-ui.field-label>
+                            <x-ui.input
+                                name="title"
+                                x-model="editForm.title"
+                                required
+                            />
+                        </x-ui.field>
+
+                        <x-ui.field>
+                            <x-ui.field-label>Section Subtitle / Tagline</x-ui.field-label>
+                            <x-ui.input
+                                name="subtitle"
+                                x-model="editForm.subtitle"
+                            />
+                        </x-ui.field>
+
+                        <input type="hidden" name="section_type" :value="editForm.section_type">
+
+                        {{-- Service Picker (Active when section_type === 'custom_services') --}}
+                        <div x-show="editForm.section_type === 'custom_services'" class="border border-border/70 bg-muted/20 p-4 rounded-lg space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                                    <x-lucide-compass class="size-4 text-primary" />
+                                    Choose Service Records (Trips)
+                                </label>
+                                <span class="text-xs text-muted-foreground" x-text="`${editForm.service_ids.length} selected`"></span>
+                            </div>
+                            <p class="text-xs text-muted-foreground">Select the treks or tours to showcase in this section:</p>
+
+                            <div class="max-h-48 overflow-y-auto space-y-1.5 border rounded-md p-2 bg-background">
+                                <template x-for="service in availableServices" :key="service.id">
+                                    <label class="flex items-center gap-2.5 p-2 rounded hover:bg-muted/50 cursor-pointer text-sm transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            name="service_ids[]"
+                                            :value="service.id"
+                                            :checked="editForm.service_ids.includes(service.id) || editForm.service_ids.includes(String(service.id))"
+                                            @change="
+                                                let val = parseInt(service.id);
+                                                if ($event.target.checked) {
+                                                    if (!editForm.service_ids.includes(val)) editForm.service_ids.push(val);
+                                                } else {
+                                                    editForm.service_ids = editForm.service_ids.filter(id => id != val);
+                                                }
+                                            "
+                                            class="rounded border-input text-primary focus:ring-primary size-4"
+                                        />
+                                        <span class="font-medium text-foreground text-xs" x-text="service.title"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <x-ui.field>
+                                <x-ui.field-label>Button Text (Optional)</x-ui.field-label>
+                                <x-ui.input
+                                    name="button_text"
+                                    x-model="editForm.button_text"
+                                />
+                            </x-ui.field>
+                            <x-ui.field>
+                                <x-ui.field-label>Button URL (Optional)</x-ui.field-label>
+                                <x-ui.input
+                                    name="button_url"
+                                    x-model="editForm.button_url"
+                                />
+                            </x-ui.field>
+                        </div>
+
+                        <div class="flex justify-end gap-2 pt-4 border-t">
+                            <x-ui.button
+                                type="button"
+                                variant="outline"
+                                @click="isEditOpen = false"
+                            >
+                                Cancel
+                            </x-ui.button>
+                            <x-ui.button type="submit">
+                                <x-slot:before>
+                                    <x-lucide-save class="size-4" />
+                                </x-slot:before>
+                                Save Changes
+                            </x-ui.button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-ui.tabs-content>
 
         {{-- ── About Us Tab ── --}}
         <x-ui.tabs-content value="about">
@@ -1183,6 +1610,231 @@
             },
             removeValue(i) {
                 this.values.splice(i, 1);
+            },
+        };
+    }
+
+    function homepageSectionsManager(initialSections, services) {
+        return {
+            sections: initialSections,
+            availableServices: services,
+            isAddOpen: false,
+            isEditOpen: false,
+            addForm: {
+                title: '',
+                subtitle: '',
+                section_type: 'custom_services',
+                service_ids: [],
+                button_text: '',
+                button_url: '',
+            },
+            editForm: {
+                id: null,
+                title: '',
+                subtitle: '',
+                section_type: 'custom_services',
+                service_ids: [],
+                button_text: '',
+                button_url: '',
+            },
+            init() {
+                this.$nextTick(() => {
+                    const el = document.getElementById('homepage-sections-sortable');
+                    if (el && window.Sortable) {
+                        Sortable.create(el, {
+                            handle: '[data-drag-handle]',
+                            animation: 150,
+                            ghostClass: 'opacity-40',
+                            onEnd: () => {
+                                const ids = [...el.querySelectorAll('[data-id]')].map(
+                                    (item) => parseInt(item.dataset.id)
+                                );
+                                // Re-sync local sections array order
+                                const reordered = [];
+                                ids.forEach(id => {
+                                    const match = this.sections.find(s => s.id === id);
+                                    if (match) reordered.push(match);
+                                });
+                                this.sections = reordered;
+
+                                fetch('{{ route('admin.reorder', 'homepage-sections') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    },
+                                    body: JSON.stringify({ ids }),
+                                }).then(res => {
+                                    if (!res.ok) {
+                                        console.error('Reorder failed');
+                                    }
+                                });
+                            },
+                        });
+                    }
+                });
+            },
+            standardDefinitions: [
+                {
+                    type: 'signature_treks',
+                    name: 'Signature Treks',
+                    title: 'Signature Treks',
+                    subtitle: 'Curated Himalayan Routes',
+                    button_text: 'All Treks',
+                    button_url: '/treks',
+                    badgeClass: 'bg-blue-500/10 text-blue-700 border-blue-300 dark:border-blue-800 hover:bg-blue-500/20',
+                },
+                {
+                    type: 'departures',
+                    name: 'Departures',
+                    title: '2026/27 Guaranteed Departures',
+                    subtitle: 'Limited Slots',
+                    button_text: 'Explore All Schedules',
+                    button_url: '/schedules',
+                    badgeClass: 'bg-emerald-500/10 text-emerald-700 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-500/20',
+                },
+                {
+                    type: 'why_trek',
+                    name: 'Why Trek / Standards',
+                    title: 'Built on Guide Heritage & Clinical Safety',
+                    subtitle: 'The Neepa Standard',
+                    button_text: 'Learn More',
+                    button_url: '/about-us',
+                    badgeClass: 'bg-purple-500/10 text-purple-700 border-purple-300 dark:border-purple-800 hover:bg-purple-500/20',
+                },
+                {
+                    type: 'team_guides',
+                    name: 'Guides & Leaders',
+                    title: 'Meet Our Trek Leaders',
+                    subtitle: 'The Mountain Guardians',
+                    button_text: 'Meet All Guides',
+                    button_url: '/about-us/team',
+                    badgeClass: 'bg-cyan-500/10 text-cyan-700 border-cyan-300 dark:border-cyan-800 hover:bg-cyan-500/20',
+                },
+                {
+                    type: 'reviews',
+                    name: 'Reviews & Feedback',
+                    title: 'Hear From Our Clients',
+                    subtitle: 'Voices from the Pass',
+                    button_text: 'Write a Review',
+                    button_url: '/write-review',
+                    badgeClass: 'bg-rose-500/10 text-rose-700 border-rose-300 dark:border-rose-800 hover:bg-rose-500/20',
+                },
+                {
+                    type: 'blogs',
+                    name: 'Blogs & Guides',
+                    title: 'Latest Travel Guides',
+                    subtitle: 'Get Inspired',
+                    button_text: 'View All Posts',
+                    button_url: '/blogs',
+                    badgeClass: 'bg-indigo-500/10 text-indigo-700 border-indigo-300 dark:border-indigo-800 hover:bg-indigo-500/20',
+                },
+                {
+                    type: 'cta',
+                    name: 'CTA Banner',
+                    title: 'Ready to Walk Among the Himalayan Giants?',
+                    subtitle: 'Fast Response Trek Desk',
+                    button_text: 'Talk to an Expert',
+                    button_url: '/plan-your-trek',
+                    badgeClass: 'bg-amber-500/10 text-amber-700 border-amber-300 dark:border-amber-800 hover:bg-amber-500/20',
+                },
+            ],
+            get missingStandardSections() {
+                const existingTypes = this.sections.map(s => s.section_type);
+                return this.standardDefinitions.filter(d => !existingTypes.includes(d.type));
+            },
+            quickAddSection(item) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route('admin.settings.homepage-sections.store') }}';
+
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = '_token';
+                csrf.value = '{{ csrf_token() }}';
+                form.appendChild(csrf);
+
+                const titleInput = document.createElement('input');
+                titleInput.type = 'hidden';
+                titleInput.name = 'title';
+                titleInput.value = item.title;
+                form.appendChild(titleInput);
+
+                const subtitleInput = document.createElement('input');
+                subtitleInput.type = 'hidden';
+                subtitleInput.name = 'subtitle';
+                subtitleInput.value = item.subtitle;
+                form.appendChild(subtitleInput);
+
+                const typeInput = document.createElement('input');
+                typeInput.type = 'hidden';
+                typeInput.name = 'section_type';
+                typeInput.value = item.type;
+                form.appendChild(typeInput);
+
+                const btnTextInput = document.createElement('input');
+                btnTextInput.type = 'hidden';
+                btnTextInput.name = 'button_text';
+                btnTextInput.value = item.button_text;
+                form.appendChild(btnTextInput);
+
+                const btnUrlInput = document.createElement('input');
+                btnUrlInput.type = 'hidden';
+                btnUrlInput.name = 'button_url';
+                btnUrlInput.value = item.button_url;
+                form.appendChild(btnUrlInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            },
+            openAddModal() {
+                this.addForm = {
+                    title: '',
+                    subtitle: '',
+                    section_type: 'custom_services',
+                    service_ids: [],
+                    button_text: 'Explore All Trips',
+                    button_url: '/treks',
+                };
+                this.isAddOpen = true;
+            },
+            openEditModal(section) {
+                const serviceIds = (section.settings && section.settings.service_ids) 
+                    ? [...section.settings.service_ids].map(id => parseInt(id))
+                    : [];
+                this.editForm = {
+                    id: section.id,
+                    title: section.title || '',
+                    subtitle: section.subtitle || '',
+                    section_type: section.section_type || 'custom_services',
+                    service_ids: serviceIds,
+                    button_text: section.button_text || '',
+                    button_url: section.button_url || '',
+                };
+                this.isEditOpen = true;
+            },
+            getTypeLabel(type) {
+                const labels = {
+                    custom_services: 'Curated Trips',
+                    signature_treks: 'Signature Treks',
+                    departures: 'Departures',
+                    why_trek: 'Why Trek',
+                    team_guides: 'Guides',
+                    reviews: 'Reviews',
+                    blogs: 'Blog / Guides',
+                    cta: 'CTA Banner',
+                };
+                return labels[type] || type;
+            },
+            getTypeBadgeClass(type) {
+                if (type === 'custom_services') return 'bg-amber-500/10 text-amber-600 border-amber-500/20';
+                if (type === 'signature_treks') return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+                if (type === 'departures') return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
+                if (type === 'why_trek') return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
+                if (type === 'team_guides') return 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20';
+                if (type === 'reviews') return 'bg-rose-500/10 text-rose-600 border-rose-500/20';
+                if (type === 'blogs') return 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20';
+                return 'bg-muted text-muted-foreground border-border';
             },
         };
     }

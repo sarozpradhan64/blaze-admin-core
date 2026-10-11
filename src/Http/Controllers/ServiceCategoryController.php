@@ -12,7 +12,13 @@ class ServiceCategoryController extends Controller
 {
     public function index()
     {
-        $categories = ServiceCategory::with('parent')->withCount('services')->orderBy('sort_order')->latest()->paginate(10);
+        $categories = ServiceCategory::whereNull('parent_id')
+            ->with(['children' => function ($query) {
+                $query->withCount('services')->orderBy('sort_order');
+            }])
+            ->withCount('services')
+            ->orderBy('sort_order')
+            ->get();
 
         return view('admin-core::service_categories.index', compact('categories'));
     }

@@ -44,15 +44,15 @@
                         </x-ui.field>
 
                         <x-ui.field>
-                            <x-ui.field-label for="parent_id" required>Parent Category</x-ui.field-label>
-                            <x-ui.select name="parent_id">
+                            <x-ui.field-label for="parent_id">Parent Category</x-ui.field-label>
+                            <x-ui.select name="parent_id" :value="old('parent_id', $category->parent_id ?? '')">
                                 <x-ui.select-trigger>
                                     <x-ui.select-value placeholder="Select a parent category" />
                                 </x-ui.select-trigger>
                                 <x-ui.select-content>
                                     <x-ui.select-item value="">None</x-ui.select-item>
                                     @foreach ($categories as $parentCategory)
-                                        <x-ui.select-item value="{{ $parentCategory->id }}" :selected="old('parent_id', $category->parent_id ?? '') == $parentCategory->id">
+                                        <x-ui.select-item value="{{ $parentCategory->id }}">
                                             {{ $parentCategory->name }}
                                         </x-ui.select-item>
                                     @endforeach

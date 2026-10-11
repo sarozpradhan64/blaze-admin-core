@@ -30,7 +30,6 @@
                     <x-ui.table-row>
                         <x-ui.table-head class="w-8"></x-ui.table-head>
                         <x-ui.table-head>Name</x-ui.table-head>
-                        <x-ui.table-head>Parent</x-ui.table-head>
                         <x-ui.table-head>Slug</x-ui.table-head>
                         <x-ui.table-head>Services</x-ui.table-head>
                         <x-ui.table-head>Status</x-ui.table-head>
@@ -39,7 +38,7 @@
                 </x-ui.table-header>
                 <x-admin::sortable-tbody resource="service-categories">
                     @forelse ($categories as $category)
-                        <x-ui.table-row data-id="{{ $category->id }}">
+                        <x-ui.table-row data-id="{{ $category->id }}" class="bg-muted/10 font-medium">
                             <x-ui.table-cell class="w-8">
                                 <button
                                     type="button"
@@ -49,10 +48,28 @@
                                     <x-lucide-grip-vertical class="size-4" />
                                 </button>
                             </x-ui.table-cell>
-                            <x-ui.table-cell class="font-medium">{{ $category->name }}</x-ui.table-cell>
-                            <x-ui.table-cell>{{ $category->parent?->name ?? 'None' }}</x-ui.table-cell>
+                            <x-ui.table-cell>
+                                <div class="flex items-center gap-2">
+                                    <x-lucide-folder class="size-4 text-primary shrink-0" />
+                                    <span class="font-semibold text-foreground">{{ $category->name }}</span>
+                                    @if($category->children->isNotEmpty())
+                                        <span class="text-xs text-muted-foreground font-normal">
+                                            ({{ $category->children->count() }} {{ \Illuminate\Support\Str::plural('sub-category', $category->children->count()) }})
+                                        </span>
+                                    @endif
+                                </div>
+                            </x-ui.table-cell>
                             <x-ui.table-cell class="text-muted-foreground">{{ $category->slug }}</x-ui.table-cell>
-                            <x-ui.table-cell>{{ $category->services_count }}</x-ui.table-cell>
+                            <x-ui.table-cell>
+                                <a
+                                    href="{{ route('admin.services.index', ['category_id' => $category->id]) }}"
+                                    class="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary transition-colors hover:underline"
+                                    title="View services in {{ $category->name }}"
+                                >
+                                    {{ $category->services_count }}
+                                    <x-lucide-external-link class="size-3 text-muted-foreground" />
+                                </a>
+                            </x-ui.table-cell>
                             <x-ui.table-cell>
                                 <x-ui.badge variant="{{ $category->status ? 'default' : 'secondary' }}">
                                     {{ $category->status ? 'Active' : 'Draft' }}
@@ -86,6 +103,69 @@
                                 </div>
                             </x-ui.table-cell>
                         </x-ui.table-row>
+
+                        @foreach ($category->children as $child)
+                            <x-ui.table-row data-id="{{ $child->id }}" class="hover:bg-muted/30">
+                                <x-ui.table-cell class="w-8">
+                                    <button
+                                        type="button"
+                                        data-drag-handle
+                                        class="text-muted-foreground hover:text-foreground cursor-grab"
+                                    >
+                                        <x-lucide-grip-vertical class="size-4" />
+                                    </button>
+                                </x-ui.table-cell>
+                                <x-ui.table-cell>
+                                    <div class="flex items-center gap-2 pl-6">
+                                        <x-lucide-corner-down-right class="size-4 text-muted-foreground shrink-0" />
+                                        <span class="font-normal">{{ $child->name }}</span>
+                                    </div>
+                                </x-ui.table-cell>
+                                <x-ui.table-cell class="text-muted-foreground">{{ $child->slug }}</x-ui.table-cell>
+                                <x-ui.table-cell>
+                                    <a
+                                        href="{{ route('admin.services.index', ['category_id' => $child->id]) }}"
+                                        class="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary transition-colors hover:underline"
+                                        title="View services in {{ $child->name }}"
+                                    >
+                                        {{ $child->services_count }}
+                                        <x-lucide-external-link class="size-3 text-muted-foreground" />
+                                    </a>
+                                </x-ui.table-cell>
+                                <x-ui.table-cell>
+                                    <x-ui.badge variant="{{ $child->status ? 'default' : 'secondary' }}">
+                                        {{ $child->status ? 'Active' : 'Draft' }}
+                                    </x-ui.badge>
+                                </x-ui.table-cell>
+                                <x-ui.table-cell class="text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <x-ui.button
+                                            variant="ghost"
+                                            size="icon"
+                                            href="{{ route('admin.service-categories.edit', $child) }}"
+                                        >
+                                            <x-lucide-edit class="size-4" />
+                                        </x-ui.button>
+                                        <form
+                                            action="{{ route('admin.service-categories.destroy', $child) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Are you sure?');"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
+                                            <x-ui.button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                type="submit"
+                                            >
+                                                <x-lucide-trash-2 class="size-4" />
+                                            </x-ui.button>
+                                        </form>
+                                    </div>
+                                </x-ui.table-cell>
+                            </x-ui.table-row>
+                        @endforeach
                     @empty
                         <x-ui.table-row>
                             <x-ui.table-cell colspan="6" class="text-muted-foreground py-6 text-center">
@@ -96,7 +176,7 @@
                 </x-admin::sortable-tbody>
             </x-ui.table>
         </x-ui.card-content>
-        @if ($categories->hasPages())
+        @if (method_exists($categories, 'hasPages') && $categories->hasPages())
             <x-ui.card-footer class="border-t p-4"> {{ $categories->links() }} </x-ui.card-footer>
         @endif
     </x-ui.card>

@@ -99,17 +99,14 @@
                                 <x-ui.card-content class="space-y-4">
                                     <x-ui.field>
                                         <x-ui.field-label for="service_category_id" required>Category</x-ui.field-label>
-                                        <x-ui.select name="service_category_id">
+                                        <x-ui.select name="service_category_id" :value="old('service_category_id', $service->service_category_id ?? '')">
                                             <x-ui.select-trigger>
                                                 <x-ui.select-value placeholder="Select a category" />
                                             </x-ui.select-trigger>
                                             <x-ui.select-content>
                                                 <x-ui.select-item value="">None</x-ui.select-item>
                                                 @foreach ($categories as $cat)
-                                                    <x-ui.select-item value="{{ $cat->id }}" :selected="old(
-                                                        'service_category_id',
-                                                        $service->service_category_id ?? '',
-                                                    ) == $cat->id">
+                                                    <x-ui.select-item value="{{ $cat->id }}">
                                                         {{ $cat->name }}
                                                     </x-ui.select-item>
                                                 @endforeach

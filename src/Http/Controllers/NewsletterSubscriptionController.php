@@ -13,7 +13,7 @@ class NewsletterSubscriptionController extends Controller
         $query = NewsletterSubscription::query();
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('email', 'like', '%' . $request->search . '%');
+            $query->where('email', 'like', '%'.$request->search.'%');
         }
 
         if ($request->has('status') && $request->status !== 'all') {
@@ -28,6 +28,7 @@ class NewsletterSubscriptionController extends Controller
     public function destroy(NewsletterSubscription $newsletterSubscription)
     {
         $newsletterSubscription->delete();
+
         return back()->with('success', 'Subscription removed successfully.');
     }
 }

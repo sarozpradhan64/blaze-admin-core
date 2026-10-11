@@ -3,6 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use Blaze\AdminCore\AdminCoreConfiguration;
+use Blaze\AdminCore\Models\HomepageSection;
+use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\WebsiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -75,8 +77,10 @@ class WebsiteSettingController extends Controller
         ];
 
         $settings = WebsiteSetting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
+        $homepageSections = HomepageSection::orderBy('sort_order')->get();
+        $availableServices = Service::where('status', true)->orderBy('sort_order')->get(['id', 'title']);
 
-        return view('admin-core::website_settings.index', compact('settings'));
+        return view('admin-core::website_settings.index', compact('settings', 'homepageSections', 'availableServices'));
     }
 
     public function updateHomepage(Request $request)
@@ -336,5 +340,82 @@ class WebsiteSettingController extends Controller
         }
 
         return back()->with('success', 'Subpage settings updated.')->with('active_tab', 'subpages');
+    }
+
+    public function storeHomepageSection(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'section_type' => 'nullable|string|max:100',
+            'service_ids' => 'nullable|array',
+            'service_ids.*' => 'integer|exists:services,id',
+            'button_text' => 'nullable|string|max:100',
+            'button_url' => 'nullable|string|max:500',
+        ]);
+
+        $maxOrder = HomepageSection::max('sort_order') ?? 0;
+
+        HomepageSection::create([
+            'title' => $validated['title'],
+            'subtitle' => $validated['subtitle'] ?? null,
+            'section_type' => $validated['section_type'] ?? 'custom_services',
+            'button_text' => $validated['button_text'] ?? null,
+            'button_url' => $validated['button_url'] ?? null,
+            'settings' => [
+                'service_ids' => array_map('intval', $validated['service_ids'] ?? []),
+            ],
+            'sort_order' => $maxOrder + 1,
+            'status' => true,
+        ]);
+
+        return back()->with('success', 'Homepage section added successfully.')->with('active_tab', 'homepage');
+    }
+
+    public function updateHomepageSection(Request $request, HomepageSection $homepageSection)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'section_type' => 'nullable|string|max:100',
+            'service_ids' => 'nullable|array',
+            'service_ids.*' => 'integer|exists:services,id',
+            'button_text' => 'nullable|string|max:100',
+            'button_url' => 'nullable|string|max:500',
+            'status' => 'nullable|boolean',
+        ]);
+
+        $settings = $homepageSection->settings ?? [];
+        if (isset($validated['service_ids'])) {
+            $settings['service_ids'] = array_map('intval', $validated['service_ids']);
+        }
+
+        $homepageSection->update([
+            'title' => $validated['title'],
+            'subtitle' => $validated['subtitle'] ?? null,
+            'section_type' => $validated['section_type'] ?? $homepageSection->section_type,
+            'button_text' => $validated['button_text'] ?? null,
+            'button_url' => $validated['button_url'] ?? null,
+            'settings' => $settings,
+            'status' => $request->has('status') ? $request->boolean('status') : $homepageSection->status,
+        ]);
+
+        return back()->with('success', 'Homepage section updated successfully.')->with('active_tab', 'homepage');
+    }
+
+    public function toggleHomepageSectionStatus(HomepageSection $homepageSection)
+    {
+        $homepageSection->update([
+            'status' => ! $homepageSection->status,
+        ]);
+
+        return back()->with('success', 'Section visibility updated.')->with('active_tab', 'homepage');
+    }
+
+    public function destroyHomepageSection(HomepageSection $homepageSection)
+    {
+        $homepageSection->delete();
+
+        return back()->with('success', 'Homepage section deleted.')->with('active_tab', 'homepage');
     }
 }
