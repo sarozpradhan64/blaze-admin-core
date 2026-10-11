@@ -18,5 +18,9 @@ trait HasSortOrder
         foreach ($ids as $position => $id) {
             static::where('id', $id)->update(['sort_order' => $position + 1]);
         }
+
+        if (method_exists(static::class, 'flushCache')) {
+            static::flushCache();
+        }
     }
 }

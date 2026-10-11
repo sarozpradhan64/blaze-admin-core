@@ -400,7 +400,7 @@
                             <x-lucide-grip-vertical class="size-3.5 text-muted-foreground" />
                             Drag items to reorder homepage layout
                         </span>
-                        <span class="font-semibold" x-text="`${sections.length} Sections`"></span>
+                        <span class="font-semibold">{{ $homepageSections->count() }} Sections</span>
                     </div>
 
                     {{-- Sortable List Container --}}
@@ -408,10 +408,10 @@
                         id="homepage-sections-sortable"
                         class="space-y-2.5"
                     >
-                        <template x-for="(section, index) in sections" :key="section.id">
+                        @forelse ($homepageSections as $index => $section)
                             <div
                                 class="group border border-border bg-card hover:border-primary/40 rounded-lg p-3 transition-all shadow-sm flex items-center gap-3 relative"
-                                :data-id="section.id"
+                                data-id="{{ $section->id }}"
                             >
                                 {{-- Drag Handle --}}
                                 <div
@@ -424,33 +424,32 @@
 
                                 {{-- Order Badge --}}
                                 <div
+                                    data-order-badge
                                     class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold"
-                                    x-text="index + 1"
-                                ></div>
+                                >{{ $index + 1 }}</div>
 
                                 {{-- Info --}}
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
-                                        <h4
-                                            class="font-medium text-sm text-foreground truncate"
-                                            x-text="section.title"
-                                        ></h4>
+                                        <h4 class="font-medium text-sm text-foreground truncate">
+                                            {{ $section->title }}
+                                        </h4>
                                         <span
                                             class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border"
-                                            :class="getTypeBadgeClass(section.section_type)"
-                                            x-text="getTypeLabel(section.section_type)"
-                                        ></span>
+                                            :class="getTypeBadgeClass('{{ $section->section_type }}')"
+                                            x-text="getTypeLabel('{{ $section->section_type }}')"
+                                        >{{ $section->section_type }}</span>
                                     </div>
                                     <div class="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                                        <template x-if="section.subtitle">
-                                            <span class="truncate max-w-[200px]" x-text="section.subtitle"></span>
-                                        </template>
-                                        <template x-if="section.settings && section.settings.service_ids && section.settings.service_ids.length > 0">
+                                        @if ($section->subtitle)
+                                            <span class="truncate max-w-[200px]">{{ $section->subtitle }}</span>
+                                        @endif
+                                        @if (! empty($section->settings['service_ids']))
                                             <span class="inline-flex items-center gap-1 text-primary font-medium">
                                                 <x-lucide-compass class="size-3" />
-                                                <span x-text="`${section.settings.service_ids.length} trips linked`"></span>
+                                                <span>{{ count($section->settings['service_ids']) }} trips linked</span>
                                             </span>
-                                        </template>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -458,7 +457,7 @@
                                 <div class="flex items-center gap-1 shrink-0">
                                     {{-- Toggle Visibility Form --}}
                                     <form
-                                        :action="`{{ url('admin/settings/homepage-sections') }}/${section.id}/toggle`"
+                                        action="{{ route('admin.settings.homepage-sections.toggle', $section) }}"
                                         method="POST"
                                         class="inline-block"
                                     >
@@ -466,23 +465,21 @@
                                         @method('PATCH')
                                         <button
                                             type="submit"
-                                            class="p-1.5 rounded-md transition-colors"
-                                            :class="section.status ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : 'text-muted-foreground hover:bg-muted'"
-                                            :title="section.status ? 'Visible on Homepage (Click to hide)' : 'Hidden (Click to show)'"
+                                            class="p-1.5 rounded-md transition-colors {{ $section->status ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30' : 'text-muted-foreground hover:bg-muted' }}"
+                                            title="{{ $section->status ? 'Visible on Homepage (Click to hide)' : 'Hidden (Click to show)' }}"
                                         >
-                                            <span x-show="section.status">
+                                            @if ($section->status)
                                                 <x-lucide-eye class="size-4" />
-                                            </span>
-                                            <span x-show="!section.status">
+                                            @else
                                                 <x-lucide-eye-off class="size-4" />
-                                            </span>
+                                            @endif
                                         </button>
                                     </form>
 
                                     {{-- Edit Button --}}
                                     <button
                                         type="button"
-                                        @click="openEditModal(section)"
+                                        @click="openEditModal(@js($section))"
                                         class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
                                         title="Edit Section"
                                     >
@@ -491,7 +488,7 @@
 
                                     {{-- Delete Button --}}
                                     <form
-                                        :action="`{{ url('admin/settings/homepage-sections') }}/${section.id}`"
+                                        action="{{ route('admin.settings.homepage-sections.destroy', $section) }}"
                                         method="POST"
                                         onsubmit="return confirm('Are you sure you want to remove this section? You can quickly re-add it anytime.');"
                                         class="inline-block"
@@ -508,7 +505,11 @@
                                     </form>
                                 </div>
                             </div>
-                        </template>
+                        @empty
+                            <div class="p-6 text-center text-sm text-muted-foreground">
+                                No homepage sections yet. Click "Add Section" or restore standard sections above.
+                            </div>
+                        @endforelse
                     </div>
                 </x-ui.card-content>
             </x-ui.card>
@@ -1640,22 +1641,21 @@
             init() {
                 this.$nextTick(() => {
                     const el = document.getElementById('homepage-sections-sortable');
-                    if (el && window.Sortable) {
-                        Sortable.create(el, {
+                    const sortableLib = window.Sortable || (typeof Sortable !== 'undefined' ? Sortable : null);
+                    if (el && sortableLib) {
+                        sortableLib.create(el, {
                             handle: '[data-drag-handle]',
+                            draggable: '[data-id]',
                             animation: 150,
                             ghostClass: 'opacity-40',
                             onEnd: () => {
                                 const ids = [...el.querySelectorAll('[data-id]')].map(
                                     (item) => parseInt(item.dataset.id)
                                 );
-                                // Re-sync local sections array order
-                                const reordered = [];
-                                ids.forEach(id => {
-                                    const match = this.sections.find(s => s.id === id);
-                                    if (match) reordered.push(match);
+                                // Re-sync visual badge numbers
+                                el.querySelectorAll('[data-order-badge]').forEach((badge, idx) => {
+                                    badge.textContent = idx + 1;
                                 });
-                                this.sections = reordered;
 
                                 fetch('{{ route('admin.reorder', 'homepage-sections') }}', {
                                     method: 'POST',
@@ -1675,15 +1675,6 @@
                 });
             },
             standardDefinitions: [
-                {
-                    type: 'signature_treks',
-                    name: 'Signature Treks',
-                    title: 'Signature Treks',
-                    subtitle: 'Curated Himalayan Routes',
-                    button_text: 'All Treks',
-                    button_url: '/treks',
-                    badgeClass: 'bg-blue-500/10 text-blue-700 border-blue-300 dark:border-blue-800 hover:bg-blue-500/20',
-                },
                 {
                     type: 'departures',
                     name: 'Departures',
