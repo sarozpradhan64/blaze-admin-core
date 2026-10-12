@@ -10,14 +10,23 @@ class MenuItemController extends Controller
 {
     public function store(Request $request, Menu $menu)
     {
+        if ($menu->type === 'service_category') {
+            return redirect()->back()->with('error', 'Cannot add items under a service category menu item.');
+        }
+
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
             'type' => ['required', 'string', 'in:custom_url,page,service_category'],
             'url' => ['nullable', 'string', 'required_if:type,custom_url'],
             'reference_id' => ['nullable', 'integer', 'required_unless:type,custom_url'],
         ]);
+
+        if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
+            $cat = \Blaze\AdminCore\Models\ServiceCategory::find($validated['reference_id']);
+            $validated['title'] = $cat?->name ?? 'Category';
+        }
 
         $validated['sort_order'] = Menu::where('parent_id', $menu->id)->max('sort_order') + 1;
 
@@ -33,13 +42,18 @@ class MenuItemController extends Controller
         }
 
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
             'type' => ['required', 'string', 'in:custom_url,page,service_category'],
             'url' => ['nullable', 'string', 'required_if:type,custom_url'],
             'reference_id' => ['nullable', 'integer', 'required_unless:type,custom_url'],
         ]);
+
+        if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
+            $cat = \Blaze\AdminCore\Models\ServiceCategory::find($validated['reference_id']);
+            $validated['title'] = $cat?->name ?? 'Category';
+        }
 
         $item->update($validated);
 

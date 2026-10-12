@@ -46,69 +46,6 @@
                 
                 <div class="space-y-4">
                     <x-ui.field>
-                        <x-ui.field-label for="title" required>Title</x-ui.field-label>
-                        <x-ui.input id="title" name="title" x-model="formData.title" required />
-                    </x-ui.field>
-
-                    <x-ui.field>
-                        <x-ui.field-label for="subtitle">Subtitle</x-ui.field-label>
-                        <x-ui.input id="subtitle" name="subtitle" x-model="formData.subtitle" />
-                    </x-ui.field>
-
-                    <x-ui.field>
-                        <x-ui.field-label for="icon">Icon</x-ui.field-label>
-                        <div class="relative" x-data="{ open: false, search: '' }" @click.outside="open = false">
-                            <div 
-                                class="flex h-10 w-full cursor-pointer items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                                @click="open = !open; if(open) { $nextTick(() => $refs.searchInput.focus()); if(icons.length === 0) fetchIcons(); }"
-                            >
-                                <div class="flex items-center gap-2">
-                                    <template x-if="formData.icon">
-                                        <img :src="'/admin/lucide-icon/' + formData.icon" class="size-4" alt="Icon" />
-                                    </template>
-                                    <span x-text="formData.icon || 'Select an icon...'" :class="!formData.icon && 'text-muted-foreground'"></span>
-                                </div>
-                                <x-lucide-chevron-down class="size-4 opacity-50" />
-                            </div>
-                            
-                            <input type="hidden" name="icon" x-model="formData.icon">
-
-                            <div x-show="open" style="display: none;" class="absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none">
-                                <div class="flex items-center border-b px-3">
-                                    <x-lucide-search class="mr-2 size-4 shrink-0 opacity-50" />
-                                    <input 
-                                        x-ref="searchInput"
-                                        type="text" 
-                                        class="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50" 
-                                        placeholder="Search icons..." 
-                                        x-model="search"
-                                    >
-                                </div>
-                                <div class="max-h-[300px] overflow-y-auto p-1">
-                                    <div x-show="isLoadingIcons" class="py-6 text-center text-sm text-muted-foreground">
-                                        Loading icons...
-                                    </div>
-                                    <div class="grid grid-cols-4 gap-1 sm:grid-cols-6">
-                                        <template x-for="icon in filteredIcons" :key="icon">
-                                            <div 
-                                                class="flex cursor-pointer flex-col items-center justify-center rounded-sm p-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
-                                                :class="formData.icon === icon ? 'bg-accent text-accent-foreground' : ''"
-                                                @click="formData.icon = icon; open = false;"
-                                            >
-                                                <img :src="'/admin/lucide-icon/' + icon" class="mb-1 size-5" alt="icon" loading="lazy" />
-                                                <span class="text-[10px] w-full truncate text-center" x-text="icon"></span>
-                                            </div>
-                                        </template>
-                                    </div>
-                                    <div x-show="!isLoadingIcons && filteredIcons.length === 0" class="py-6 text-center text-sm text-muted-foreground">
-                                        No icons found.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </x-ui.field>
-
-                    <x-ui.field>
                         <x-ui.field-label for="type" required>Type</x-ui.field-label>
                         <select name="type" id="type" x-model="formData.type" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                             <option value="custom_url">Custom URL</option>
@@ -117,35 +54,121 @@
                         </select>
                     </x-ui.field>
 
-                    <div x-show="formData.type === 'custom_url'">
-                        <x-ui.field>
-                            <x-ui.field-label for="url">URL</x-ui.field-label>
-                            <x-ui.input id="url" name="url" x-model="formData.url" />
-                        </x-ui.field>
-                    </div>
-
-                    <div x-show="formData.type === 'page'">
-                        <x-ui.field>
-                            <x-ui.field-label for="reference_id_page" required>Page</x-ui.field-label>
-                            <select id="reference_id_page" x-model="formData.reference_id" :name="formData.type === 'page' ? 'reference_id' : ''" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                                <option value="">Select a page...</option>
-                                @foreach($pages as $page)
-                                    <option value="{{ $page->id }}">{{ $page->title }}</option>
-                                @endforeach
-                            </select>
-                        </x-ui.field>
-                    </div>
-
+                    {{-- Service Category Selection (No other fields required when selected) --}}
                     <div x-show="formData.type === 'service_category'">
                         <x-ui.field>
                             <x-ui.field-label for="reference_id_category" required>Service Category</x-ui.field-label>
-                            <select id="reference_id_category" x-model="formData.reference_id" :name="formData.type === 'service_category' ? 'reference_id' : ''" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                            <select 
+                                id="reference_id_category" 
+                                x-model="formData.reference_id" 
+                                :name="formData.type === 'service_category' ? 'reference_id' : ''"
+                                @change="if (formData.type === 'service_category') {
+                                    const opt = $event.target.options[$event.target.selectedIndex];
+                                    if (opt && opt.value) {
+                                        formData.title = opt.text.replace(/^[^-—→]*[→—]\s*/, '').replace(/\(Already added\)/, '').trim();
+                                    }
+                                }"
+                                class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
                                 <option value="">Select a category...</option>
+                                @php
+                                    $usedCategoryIds = $menu->children()->where('type', 'service_category')->pluck('reference_id')->filter()->all();
+                                @endphp
                                 @foreach($serviceCategories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @php
+                                        $isUsed = in_array($category->id, $usedCategoryIds);
+                                    @endphp
+                                    <option value="{{ $category->id }}" x-bind:disabled="editMode && formData.reference_id == '{{ $category->id }}' ? false : {{ $isUsed ? 'true' : 'false' }}">
+                                        {{ $category->parent ? $category->parent->name . ' → ' : '' }}{{ $category->name }}{{ $isUsed ? ' (Already added)' : '' }}
+                                    </option>
                                 @endforeach
                             </select>
                         </x-ui.field>
+                    </div>
+
+                    {{-- Fields for non-service-category types --}}
+                    <div x-show="formData.type !== 'service_category'" class="space-y-4">
+                        <x-ui.field>
+                            <x-ui.field-label for="title" required>Title</x-ui.field-label>
+                            <x-ui.input id="title" name="title" x-model="formData.title" x-bind:required="formData.type !== 'service_category'" />
+                        </x-ui.field>
+
+                        <x-ui.field>
+                            <x-ui.field-label for="subtitle">Subtitle</x-ui.field-label>
+                            <x-ui.input id="subtitle" name="subtitle" x-model="formData.subtitle" />
+                        </x-ui.field>
+
+                        <x-ui.field>
+                            <x-ui.field-label for="icon">Icon</x-ui.field-label>
+                            <div class="relative" x-data="{ open: false, search: '' }" @click.outside="open = false">
+                                <div 
+                                    class="flex h-10 w-full cursor-pointer items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                    @click="open = !open; if(open) { $nextTick(() => $refs.searchInput.focus()); if(icons.length === 0) fetchIcons(); }"
+                                >
+                                    <div class="flex items-center gap-2">
+                                        <template x-if="formData.icon">
+                                            <img :src="'/admin/lucide-icon/' + formData.icon" class="size-4" alt="Icon" />
+                                        </template>
+                                        <span x-text="formData.icon || 'Select an icon...'" :class="!formData.icon && 'text-muted-foreground'"></span>
+                                    </div>
+                                    <x-lucide-chevron-down class="size-4 opacity-50" />
+                                </div>
+                                
+                                <input type="hidden" name="icon" x-model="formData.icon">
+
+                                <div x-show="open" style="display: none;" class="absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none">
+                                    <div class="flex items-center border-b px-3">
+                                        <x-lucide-search class="mr-2 size-4 shrink-0 opacity-50" />
+                                        <input 
+                                            x-ref="searchInput"
+                                            type="text" 
+                                            class="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50" 
+                                            placeholder="Search icons..." 
+                                            x-model="search"
+                                        >
+                                    </div>
+                                    <div class="max-h-[300px] overflow-y-auto p-1">
+                                        <div x-show="isLoadingIcons" class="py-6 text-center text-sm text-muted-foreground">
+                                            Loading icons...
+                                        </div>
+                                        <div class="grid grid-cols-4 gap-1 sm:grid-cols-6">
+                                            <template x-for="icon in filteredIcons" :key="icon">
+                                                <div 
+                                                    class="flex cursor-pointer flex-col items-center justify-center rounded-sm p-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                                                    :class="formData.icon === icon ? 'bg-accent text-accent-foreground' : ''"
+                                                    @click="formData.icon = icon; open = false;"
+                                                >
+                                                    <img :src="'/admin/lucide-icon/' + icon" class="mb-1 size-5" alt="icon" loading="lazy" />
+                                                    <span class="text-[10px] w-full truncate text-center" x-text="icon"></span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div x-show="!isLoadingIcons && filteredIcons.length === 0" class="py-6 text-center text-sm text-muted-foreground">
+                                            No icons found.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </x-ui.field>
+
+                        <div x-show="formData.type === 'custom_url'">
+                            <x-ui.field>
+                                <x-ui.field-label for="url">URL</x-ui.field-label>
+                                <x-ui.input id="url" name="url" x-model="formData.url" />
+                            </x-ui.field>
+                        </div>
+
+                        <div x-show="formData.type === 'page'">
+                            <x-ui.field>
+                                <x-ui.field-label for="reference_id_page" required>Page</x-ui.field-label>
+                                <select id="reference_id_page" x-model="formData.reference_id" :name="formData.type === 'page' ? 'reference_id' : ''" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                    <option value="">Select a page...</option>
+                                    @foreach($pages as $page)
+                                        <option value="{{ $page->id }}">{{ $page->title }}</option>
+                                    @endforeach
+                                </select>
+                            </x-ui.field>
+                        </div>
                     </div>
                 </div>
 
@@ -190,9 +213,9 @@
                     this.isLoadingIcons = false;
                 }
             },
-            openAddModal() {
+            openAddModal(parentId = null) {
                 this.editMode = false;
-                this.formAction = '{{ route('admin.menus.items.store', $menu) }}';
+                this.formAction = parentId ? '/admin/menus/' + parentId + '/items' : '{{ route('admin.menus.items.store', $menu) }}';
                 this.formData = { title: '', subtitle: '', icon: '', type: 'custom_url', url: '', reference_id: '' };
                 this.showModal = true;
             },

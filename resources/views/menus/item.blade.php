@@ -13,16 +13,26 @@
             </div>
         @endif
         <div class="flex flex-col">
-            <span class="font-medium">{{ $item->title }}</span>
+            <div class="flex items-center gap-1.5">
+                <span class="font-medium">{{ $item->title }}</span>
+                @if($item->type === 'service_category')
+                    <span class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">Dynamic Category</span>
+                @endif
+            </div>
             <span class="text-xs text-muted-foreground">
                 @if($item->subtitle) {{ $item->subtitle }} &bull; @endif
                 {{ ucfirst(str_replace('_', ' ', $item->type)) }} {{ $item->reference_id ? '(#'.$item->reference_id.')' : '' }}
             </span>
         </div>
     </div>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1">
+        @if($item->type !== 'service_category')
+        <x-ui.button variant="ghost" size="icon" type="button" @click="openAddModal({{ $item->id }})" title="Add sub-item">
+            <x-lucide-plus class="size-4" />
+        </x-ui.button>
+        @endif
         @if($item->is_editable)
-        <x-ui.button variant="ghost" size="icon" type="button" @click="openEditModal({{ json_encode($item) }})">
+        <x-ui.button variant="ghost" size="icon" type="button" @click="openEditModal({{ json_encode($item) }})" title="Edit">
             <x-lucide-edit class="size-4" />
         </x-ui.button>
         @endif

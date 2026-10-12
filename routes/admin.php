@@ -4,6 +4,7 @@ use Blaze\AdminCore\AdminCoreConfiguration;
 use Blaze\AdminCore\Http\Controllers\AuthController;
 use Blaze\AdminCore\Http\Controllers\BlogCategoryController;
 use Blaze\AdminCore\Http\Controllers\BlogController;
+use Blaze\AdminCore\Http\Controllers\CacheController;
 use Blaze\AdminCore\Http\Controllers\CompanyInfoController;
 use Blaze\AdminCore\Http\Controllers\ContactMessageController;
 use Blaze\AdminCore\Http\Controllers\DownloadController;
@@ -53,6 +54,8 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         Route::get('/', function () {
             return view('admin-core::dashboard');
         })->name('dashboard');
+
+        Route::post('cache/clear', [CacheController::class, 'clear'])->name('cache.clear');
 
         Route::post('media/upload', [MediaUploadController::class, 'upload'])->name('media.upload');
         Route::delete('media/delete', [MediaUploadController::class, 'delete'])->name('media.delete');

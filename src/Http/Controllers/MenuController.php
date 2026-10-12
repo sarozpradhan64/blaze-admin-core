@@ -40,8 +40,11 @@ class MenuController extends Controller
     {
         $menu->load(['children.children.children.children']); // Load nested items for builder
 
-        $pages = Page::where('status', true)->get(['id', 'title']);
-        $serviceCategories = ServiceCategory::where('status', true)->get(['id', 'name']);
+        $pages = Page::where('status', true)->orderBy('title')->get(['id', 'title']);
+        $serviceCategories = ServiceCategory::where('status', true)
+            ->with('parent')
+            ->orderBy('sort_order')
+            ->get(['id', 'name', 'parent_id']);
 
         return view('admin-core::menus.form', compact('menu', 'pages', 'serviceCategories'));
     }
