@@ -59,7 +59,7 @@ class ServiceController extends Controller
         $validated = $request->validate(array_merge(
             [
                 'title' => 'required|string|max:255',
-                'service_category_id' => 'nullable|exists:service_categories,id',
+                'service_category_id' => 'required|exists:service_categories,id',
                 'short_description' => 'nullable|string',
                 'description' => 'required|string',
                 'icon' => 'nullable|string|max:255',
@@ -136,7 +136,7 @@ class ServiceController extends Controller
         $validated = $request->validate(array_merge(
             [
                 'title' => 'required|string|max:255',
-                'service_category_id' => 'nullable|exists:service_categories,id',
+                'service_category_id' => 'required|exists:service_categories,id',
                 'short_description' => 'nullable|string',
                 'description' => 'required|string',
                 'icon' => 'nullable|string|max:255',

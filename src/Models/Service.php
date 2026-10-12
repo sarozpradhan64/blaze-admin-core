@@ -56,4 +56,16 @@ class Service extends Model
     {
         return $this->morphOne(SeoMetadata::class, 'seoable');
     }
+
+    public function getUrlAttribute(): string
+    {
+        $categorySlug = $this->relationLoaded('category') && $this->category
+            ? $this->category->slug
+            : ($this->category()->first()?->slug ?? 'trekking');
+
+        return route('services.show', [
+            'categorySlug' => $categorySlug,
+            'serviceSlug' => $this->slug,
+        ]);
+    }
 }
