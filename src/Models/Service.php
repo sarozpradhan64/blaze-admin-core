@@ -47,6 +47,11 @@ class Service extends Model
         return $this->hasMany(Enquiry::class);
     }
 
+    public function testimonials()
+    {
+        return $this->belongsToMany(Testimonial::class, 'service_testimonial');
+    }
+
     public function seoMetadata()
     {
         return $this->morphOne(SeoMetadata::class, 'seoable');

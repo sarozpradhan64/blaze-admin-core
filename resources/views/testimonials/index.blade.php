@@ -90,7 +90,21 @@
                         <x-ui.table-row>
                             <x-ui.table-cell class="font-medium">{{ $testimonial->name }}</x-ui.table-cell>
                             <x-ui.table-cell>
-                                {{ $testimonial->role }}{{ $testimonial->company ? ' @ '.$testimonial->company : '' }}</x-ui.table-cell>
+                                <div>{{ $testimonial->role }}{{ $testimonial->company ? ' @ '.$testimonial->company : '' }}</div>
+                                @if ($testimonial->services->isNotEmpty())
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        @foreach ($testimonial->services->take(2) as $svc)
+                                            <span class="inline-flex items-center gap-1 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">
+                                                <x-lucide-compass class="size-3" />
+                                                {{ \Illuminate\Support\Str::limit($svc->title, 18) }}
+                                            </span>
+                                        @endforeach
+                                        @if ($testimonial->services->count() > 2)
+                                            <span class="text-[10px] text-muted-foreground self-center">+{{ $testimonial->services->count() - 2 }}</span>
+                                        @endif
+                                    </div>
+                                @endif
+                            </x-ui.table-cell>
                             <x-ui.table-cell class="max-w-[200px] truncate" title="{{ strip_tags($testimonial->content) }}">
                                 {{ \Illuminate\Support\Str::limit(strip_tags($testimonial->content), 40) }}
                             </x-ui.table-cell>

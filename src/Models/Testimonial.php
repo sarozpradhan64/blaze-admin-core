@@ -14,4 +14,14 @@ class Testimonial extends Model
     protected $table = 'testimonials';
 
     protected $guarded = [];
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'service_testimonial');
+    }
 }

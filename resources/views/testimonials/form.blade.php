@@ -87,6 +87,47 @@
 
                 <div class="space-y-6">
                     <x-ui.card>
+                        <x-ui.card-header>
+                            <x-ui.card-title>Associated Trips / Services</x-ui.card-title>
+                            <x-ui.card-description>Link this review to one or more treks or tours.</x-ui.card-description>
+                        </x-ui.card-header>
+                        <x-ui.card-content class="space-y-3">
+                            @php
+                                $selectedServiceIds = collect(old('service_id', isset($testimonial) ? $testimonial->services->pluck('id')->toArray() : []))
+                                    ->map(fn($v) => (string) $v)
+                                    ->values()
+                                    ->all();
+                            @endphp
+                            @if(isset($services) && $services->isNotEmpty())
+                                <x-ui.field>
+                                    <div x-data="slimSelect">
+                                        <select
+                                            name="service_id[]"
+                                            id="service_id"
+                                            multiple
+                                            class="slim-select w-full"
+                                            placeholder="Select trips/services..."
+                                        >
+                                            @foreach ($services as $service)
+                                                <option
+                                                    value="{{ $service->id }}"
+                                                    {{ in_array((string) $service->id, $selectedServiceIds) ? 'selected' : '' }}
+                                                >
+                                                    {{ $service->title }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <x-ui.field-description>Search and select one or more trips where this review will be displayed.</x-ui.field-description>
+                                </x-ui.field>
+                            @else
+                                <p class="text-xs text-muted-foreground">No services found.</p>
+                            @endif
+                            <x-ui.field-error name="service_id" />
+                        </x-ui.card-content>
+                    </x-ui.card>
+
+                    <x-ui.card>
                         <x-ui.card-header><x-ui.card-title>Avatar Photo</x-ui.card-title></x-ui.card-header>
                         <x-ui.card-content>
                             <x-ui.file-upload
