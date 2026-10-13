@@ -154,6 +154,7 @@ class Menu extends Model
                         $s = new Service;
                         $s->setRawAttributes($sData, true);
                         $s->exists = true;
+
                         return $s;
                     });
                     $category->setRelation('services', new Collection($services->all()));
@@ -170,6 +171,7 @@ class Menu extends Model
                             $s = new Service;
                             $s->setRawAttributes($sData, true);
                             $s->exists = true;
+
                             return $s;
                         });
                         $sc->setRelation('services', new Collection($subServices->all()));
@@ -185,9 +187,11 @@ class Menu extends Model
                                 $s = new Service;
                                 $s->setRawAttributes($sData, true);
                                 $s->exists = true;
+
                                 return $s;
                             });
                             $nsc->setRelation('services', new Collection($nServices->all()));
+
                             return $nsc;
                         });
                         $sc->setRelation('children', new Collection($nestedSubCats->all()));
@@ -218,6 +222,7 @@ class Menu extends Model
                             $s = new Service;
                             $s->setRawAttributes($sData, true);
                             $s->exists = true;
+
                             return $s;
                         });
                         $category->setRelation('services', new Collection($services->all()));

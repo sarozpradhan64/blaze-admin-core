@@ -43,6 +43,8 @@ class GalleryAlbumController extends Controller
 
     public function edit(GalleryAlbum $galleryAlbum)
     {
+        $galleryAlbum->load('items');
+
         return view('admin-core::gallery_albums.form', ['album' => $galleryAlbum]);
     }
 

@@ -27,6 +27,8 @@ class AdminCoreConfiguration
             'gallery' => true,
             'downloads' => true,
             'company-info' => true,
+            'affiliations' => true,
+            'payment-methods' => true,
         ];
     }
 

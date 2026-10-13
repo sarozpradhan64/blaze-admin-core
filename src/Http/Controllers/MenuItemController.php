@@ -4,6 +4,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Menu;
+use Blaze\AdminCore\Models\ServiceCategory;
 use Illuminate\Http\Request;
 
 class MenuItemController extends Controller
@@ -24,7 +25,7 @@ class MenuItemController extends Controller
         ]);
 
         if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
-            $cat = \Blaze\AdminCore\Models\ServiceCategory::find($validated['reference_id']);
+            $cat = ServiceCategory::find($validated['reference_id']);
             $validated['title'] = $cat?->name ?? 'Category';
         }
 
@@ -51,7 +52,7 @@ class MenuItemController extends Controller
         ]);
 
         if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
-            $cat = \Blaze\AdminCore\Models\ServiceCategory::find($validated['reference_id']);
+            $cat = ServiceCategory::find($validated['reference_id']);
             $validated['title'] = $cat?->name ?? 'Category';
         }
 

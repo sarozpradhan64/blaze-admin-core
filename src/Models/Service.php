@@ -10,6 +10,7 @@ use Blaze\AdminCore\Traits\HasSortOrder;
 use Blaze\AdminCore\Traits\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
 
 class Service extends Model
 {
@@ -42,6 +43,11 @@ class Service extends Model
         return $this->belongsToMany(Project::class);
     }
 
+    public function galleryAlbum()
+    {
+        return $this->belongsTo(GalleryAlbum::class, 'gallery_album_id');
+    }
+
     public function enquiries()
     {
         return $this->hasMany(Enquiry::class);
@@ -57,8 +63,12 @@ class Service extends Model
         return $this->morphOne(SeoMetadata::class, 'seoable');
     }
 
-    public function getUrlAttribute(): string
+    public function getUrlAttribute(): ?string
     {
+        if (! $this->slug || ! Route::has('services.show')) {
+            return null;
+        }
+
         $categorySlug = $this->relationLoaded('category') && $this->category
             ? $this->category->slug
             : ($this->category()->first()?->slug ?? 'trekking');

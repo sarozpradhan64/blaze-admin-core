@@ -1,6 +1,7 @@
 <?php
 
 use Blaze\AdminCore\AdminCoreConfiguration;
+use Blaze\AdminCore\Http\Controllers\AffiliationController;
 use Blaze\AdminCore\Http\Controllers\AuthController;
 use Blaze\AdminCore\Http\Controllers\BlogCategoryController;
 use Blaze\AdminCore\Http\Controllers\BlogController;
@@ -21,6 +22,7 @@ use Blaze\AdminCore\Http\Controllers\MenuController;
 use Blaze\AdminCore\Http\Controllers\MenuItemController;
 use Blaze\AdminCore\Http\Controllers\NewsletterSubscriptionController;
 use Blaze\AdminCore\Http\Controllers\PageController;
+use Blaze\AdminCore\Http\Controllers\PaymentMethodController;
 use Blaze\AdminCore\Http\Controllers\ProfileController;
 use Blaze\AdminCore\Http\Controllers\ProjectCategoryController;
 use Blaze\AdminCore\Http\Controllers\ProjectController;
@@ -88,6 +90,9 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
         if ($configuration->enabled('services')) {
             Route::put('services/{service}/features', [ServiceController::class, 'updateFeatures'])->name('services.features.update');
             Route::put('services/{service}/seo', [ServiceController::class, 'updateSeo'])->name('services.seo.update');
+            Route::post('services/{service}/gallery', [ServiceController::class, 'uploadGallery'])->name('services.gallery.upload');
+            Route::delete('services/{service}/gallery/{galleryItem}', [ServiceController::class, 'deleteGalleryItem'])->name('services.gallery.delete');
+            Route::put('services/{service}/gallery-album', [ServiceController::class, 'linkGalleryAlbum'])->name('services.gallery-album.link');
             Route::resource('services', ServiceController::class);
             Route::resource('service-categories', ServiceCategoryController::class);
             Route::resource('service-features', ServiceFeatureController::class);
@@ -147,6 +152,16 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
             Route::resource('downloads', DownloadController::class);
         }
         Route::resource('legal-documents', LegalDocumentController::class);
+
+        if ($configuration->enabled('affiliations')) {
+            Route::patch('affiliations/{affiliation}/toggle', [AffiliationController::class, 'toggle'])->name('affiliations.toggle');
+            Route::resource('affiliations', AffiliationController::class);
+        }
+
+        if ($configuration->enabled('payment-methods')) {
+            Route::patch('payment-methods/{paymentMethod}/toggle', [PaymentMethodController::class, 'toggle'])->name('payment-methods.toggle');
+            Route::resource('payment-methods', PaymentMethodController::class);
+        }
 
         // Company Info (Contact Information + Social Links)
         if ($configuration->enabled('company-info')) {

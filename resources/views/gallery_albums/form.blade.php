@@ -27,6 +27,10 @@
                     General
                 </x-ui.tabs-trigger>
                 @if(isset($album))
+                <x-ui.tabs-trigger value="photos">
+                    <x-lucide-images class="size-4 mr-2" />
+                    Album Photos ({{ $album->items->count() }})
+                </x-ui.tabs-trigger>
                 <x-ui.tabs-trigger value="seo">
                     <x-lucide-search class="size-4 mr-2" />
                     SEO Metadata
@@ -116,6 +120,73 @@
             </x-ui.tabs-content>
 
             @if(isset($album))
+            <x-ui.tabs-content value="photos" class="space-y-6">
+                <x-ui.card>
+                    <x-ui.card-header class="flex flex-row items-center justify-between pb-4">
+                        <div>
+                            <x-ui.card-title>Album Photos ({{ $album->items->count() }})</x-ui.card-title>
+                            <x-ui.card-description>Drag photos to reorder them in this album.</x-ui.card-description>
+                        </div>
+                        <x-ui.button href="{{ route('admin.gallery-items.create', ['album_id' => $album->id]) }}" size="sm">
+                            <x-slot:before>
+                                <x-lucide-plus class="size-4" />
+                            </x-slot:before>
+                            Add Image
+                        </x-ui.button>
+                    </x-ui.card-header>
+                    <x-ui.card-content>
+                        @if($album->items->isNotEmpty())
+                            <div 
+                                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+                                x-data="sortableList({
+                                    reorderUrl: '{{ route('admin.reorder', 'gallery-items') }}',
+                                    csrfToken: '{{ csrf_token() }}'
+                                })"
+                            >
+                                @foreach($album->items as $idx => $item)
+                                    <div 
+                                        class="group relative rounded-lg overflow-hidden border border-border bg-card shadow-sm transition-all hover:shadow-md hover:border-primary/50"
+                                        data-id="{{ $item->id }}"
+                                    >
+                                        <div 
+                                            class="aspect-video w-full bg-muted relative cursor-grab active:cursor-grabbing select-none"
+                                            data-drag-handle
+                                            title="Drag to reorder"
+                                        >
+                                            <img src="{{ Storage::disk('public')->url($item->file_path) }}" alt="{{ $item->title }}" class="h-full w-full object-cover pointer-events-none" />
+                                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none"></div>
+                                            <span class="absolute top-1.5 left-1.5 bg-black/75 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-sm">
+                                                <x-lucide-grip-vertical class="size-3 text-white/70" />
+                                                <span data-sortable-index>#{{ $idx + 1 }}</span>
+                                            </span>
+                                        </div>
+                                        <div class="p-2 flex items-center justify-between gap-1 text-xs">
+                                            <span class="truncate font-medium text-foreground text-[11px]" title="{{ $item->title }}">{{ $item->title ?: 'Photo #' . ($idx + 1) }}</span>
+                                            <div class="flex items-center gap-1">
+                                                <a href="{{ route('admin.gallery-items.edit', $item) }}" class="text-muted-foreground hover:text-foreground p-1 rounded" title="Edit">
+                                                    <x-lucide-edit class="size-3.5" />
+                                                </a>
+                                                <form action="{{ route('admin.gallery-items.destroy', $item) }}" method="POST" onsubmit="return confirm('Remove this image from album?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors cursor-pointer" title="Delete">
+                                                        <x-lucide-trash-2 class="size-3.5" />
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="p-8 text-center border rounded-lg bg-muted/10 text-muted-foreground text-sm">
+                                No photos in this album yet. <a href="{{ route('admin.gallery-items.create', ['album_id' => $album->id]) }}" class="text-primary hover:underline font-semibold">Add an image</a> to get started.
+                            </div>
+                        @endif
+                    </x-ui.card-content>
+                </x-ui.card>
+            </x-ui.tabs-content>
+
             <x-ui.tabs-content value="seo">
                 <form action="{{ route('admin.gallery-albums.seo.update', $album) }}" method="POST" enctype="multipart/form-data">
                     @csrf

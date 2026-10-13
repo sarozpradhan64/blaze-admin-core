@@ -22,7 +22,7 @@ class GalleryAlbum extends Model
 
     public function items()
     {
-        return $this->hasMany(GalleryItem::class);
+        return $this->hasMany(GalleryItem::class)->orderBy('sort_order');
     }
 
     public function seoMetadata()

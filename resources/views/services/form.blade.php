@@ -15,7 +15,20 @@
 
     <div>
         <div class="sticky top-0 z-10 -mx-4 mb-6 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:-mx-6 md:px-6">
-            <h2 class="text-2xl font-bold tracking-tight">{{ isset($service) ? 'Edit Service' : 'Add New Service' }}</h2>
+            <div class="flex items-center gap-2">
+                <h2 class="text-2xl font-bold tracking-tight">{{ isset($service) ? 'Edit Service' : 'Add New Service' }}</h2>
+                @if(isset($service) && $service->url)
+                    <a
+                        href="{{ $service->url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-muted-foreground hover:text-primary transition-colors inline-flex items-center"
+                        title="View on site"
+                    >
+                        <x-lucide-external-link class="size-5 shrink-0" />
+                    </a>
+                @endif
+            </div>
             <div class="flex items-center gap-2">
                 <x-ui.button variant="outline" href="{{ route('admin.services.index') }}">Cancel</x-ui.button>
                 <x-ui.button type="submit" name="action" value="continue" variant="outline" form="service-general-form">Save & Continue</x-ui.button>
@@ -25,7 +38,7 @@
 
         <div class="max-w-4xl">
 
-            <x-ui.tabs value="general">
+            <x-ui.tabs value="{{ request('tab', 'general') }}">
                 <x-ui.tabs-list class="mb-6">
                     <x-ui.tabs-trigger value="general">
                         <x-lucide-layout-dashboard class="size-4 mr-2" />
@@ -36,6 +49,10 @@
                         <x-ui.tabs-trigger value="features">
                             <x-lucide-list-checks class="size-4 mr-2" />
                             {{ $featuresLabel }}
+                        </x-ui.tabs-trigger>
+                        <x-ui.tabs-trigger value="gallery">
+                            <x-lucide-images class="size-4 mr-2" />
+                            Gallery / Cover Images
                         </x-ui.tabs-trigger>
                         <x-ui.tabs-trigger value="seo">
                             <x-lucide-search class="size-4 mr-2" />
@@ -238,6 +255,128 @@
                             <x-ui.button type="submit">Save Features</x-ui.button>
                         </div>
                         </form>
+                    </x-ui.tabs-content>
+
+                    <x-ui.tabs-content value="gallery" class="space-y-6">
+                        <x-ui.card>
+                            <x-ui.card-header>
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div>
+                                        <x-ui.card-title>Cover &amp; Detail Page Gallery</x-ui.card-title>
+                                        <x-ui.card-description>
+                                            Upload cover and showcase photos. These images automatically sync to the site's Gallery and display in the service detail mosaic (first 3 images with "+N" card for additional photos).
+                                        </x-ui.card-description>
+                                    </div>
+                                    @if($service->galleryAlbum)
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-muted-foreground">Linked Album:</span>
+                                            <span class="text-xs font-semibold px-2 py-1 bg-muted rounded-md">{{ $service->galleryAlbum->title }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </x-ui.card-header>
+                            <x-ui.card-content class="space-y-6">
+                                {{-- Upload Multiple Images Form --}}
+                                <form action="{{ route('admin.services.gallery.upload', $service) }}" method="POST" enctype="multipart/form-data" class="space-y-4 rounded-xl border border-dashed border-border p-6 bg-muted/20">
+                                    @csrf
+                                    <div class="flex flex-col items-center justify-center text-center space-y-3">
+                                        <div class="p-3 bg-primary/10 text-primary rounded-full">
+                                            <x-lucide-upload-cloud class="size-8" />
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label for="gallery-file-input" class="text-sm font-semibold cursor-pointer text-primary hover:underline">
+                                                Choose images to upload
+                                            </label>
+                                            <input id="gallery-file-input" type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="block w-full text-xs text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-primary-foreground hover:file:opacity-90 cursor-pointer" required />
+                                            <p class="text-xs text-muted-foreground">PNG, JPG, WEBP or GIF up to 10MB each</p>
+                                        </div>
+                                        <x-ui.button type="submit" size="sm">
+                                            <x-slot:before><x-lucide-upload class="size-4" /></x-slot:before>
+                                            Upload Selected Photos
+                                        </x-ui.button>
+                                    </div>
+                                </form>
+
+                                {{-- Current Gallery Images Grid with Drag-to-Reorder --}}
+                                <div>
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="text-sm font-semibold text-foreground">
+                                                Current Photos ({{ $service->galleryAlbum?->items?->count() ?? 0 }})
+                                            </h3>
+                                            <span class="text-xs text-muted-foreground/80 font-normal">(Drag cards to reorder)</span>
+                                        </div>
+                                        <span class="text-xs text-muted-foreground">The first 3 photos (#1, #2, #3) will display on the service detail page header.</span>
+                                    </div>
+
+                                    @if($service->galleryAlbum && $service->galleryAlbum->items->isNotEmpty())
+                                        <div 
+                                            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+                                            x-data="sortableList({
+                                                reorderUrl: '{{ route('admin.reorder', 'gallery-items') }}',
+                                                csrfToken: '{{ csrf_token() }}'
+                                            })"
+                                        >
+                                            @foreach($service->galleryAlbum->items as $idx => $item)
+                                                <div 
+                                                    class="group relative rounded-lg overflow-hidden border border-border bg-card shadow-sm transition-all hover:shadow-md hover:border-primary/50"
+                                                    data-id="{{ $item->id }}"
+                                                >
+                                                    <div 
+                                                        class="aspect-video w-full bg-muted relative cursor-grab active:cursor-grabbing select-none"
+                                                        data-drag-handle
+                                                        title="Drag to reorder"
+                                                    >
+                                                        <img src="{{ Storage::disk('public')->url($item->file_path) }}" alt="{{ $item->title }}" class="h-full w-full object-cover pointer-events-none" />
+                                                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors pointer-events-none"></div>
+                                                        <span class="absolute top-1.5 left-1.5 bg-black/75 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-sm">
+                                                            <x-lucide-grip-vertical class="size-3 text-white/70" />
+                                                            <span data-sortable-index>#{{ $idx + 1 }}</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="p-2 flex items-center justify-between gap-1 text-xs">
+                                                        <span class="truncate font-medium text-foreground text-[11px]" title="{{ $item->title }}">{{ $item->title ?: 'Photo #' . ($idx + 1) }}</span>
+                                                        <form action="{{ route('admin.services.gallery.delete', ['service' => $service, 'galleryItem' => $item]) }}" method="POST" onsubmit="return confirm('Remove this image from gallery?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors cursor-pointer" title="Delete photo">
+                                                                <x-lucide-trash-2 class="size-3.5" />
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="p-8 text-center border rounded-lg bg-muted/10 text-muted-foreground text-sm">
+                                            No gallery images uploaded yet for this service. Upload photos above to automatically create the linked album.
+                                        </div>
+                                    @endif
+                                </div>
+
+                                {{-- Optional: Link Existing Gallery Album --}}
+                                @if(isset($albums) && $albums->isNotEmpty())
+                                    <div class="pt-4 border-t">
+                                        <form action="{{ route('admin.services.gallery-album.link', $service) }}" method="POST" class="flex flex-col sm:flex-row items-end gap-3">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="flex-1 w-full">
+                                                <label class="text-xs font-semibold text-muted-foreground block mb-1">Or Link to Existing Gallery Album</label>
+                                                <select name="gallery_album_id" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm">
+                                                    <option value="">— Select Album —</option>
+                                                    @foreach($albums as $alb)
+                                                        <option value="{{ $alb->id }}" {{ $service->gallery_album_id == $alb->id ? 'selected' : '' }}>
+                                                            {{ $alb->title }} ({{ $alb->items->count() }} items)
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <x-ui.button type="submit" variant="outline" size="sm">Update Album Link</x-ui.button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </x-ui.card-content>
+                        </x-ui.card>
                     </x-ui.tabs-content>
 
                     <x-ui.tabs-content value="seo">

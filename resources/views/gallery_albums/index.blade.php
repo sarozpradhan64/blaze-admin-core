@@ -8,7 +8,10 @@
     </x-slot:header>
 
     <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold tracking-tight">Gallery Albums</h2>
+        <div class="flex items-center gap-2">
+            <h2 class="text-2xl font-bold tracking-tight">Gallery Albums</h2>
+            <span class="text-xs text-muted-foreground/80">(Drag rows to reorder)</span>
+        </div>
         <x-ui.button href="{{ route('admin.gallery-albums.create') }}">
             <x-slot:before>
                 <x-lucide-plus class="size-4" />
@@ -22,15 +25,19 @@
             <x-ui.table>
                 <x-ui.table-header>
                     <x-ui.table-row>
+                        <x-ui.table-head class="w-10"></x-ui.table-head>
                         <x-ui.table-head>Title</x-ui.table-head>
                         <x-ui.table-head>Items</x-ui.table-head>
                         <x-ui.table-head>Status</x-ui.table-head>
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
                     </x-ui.table-row>
                 </x-ui.table-header>
-                <x-ui.table-body>
+                <x-admin::sortable-tbody resource="gallery-albums">
                     @forelse ($albums as $album)
-                        <x-ui.table-row>
+                        <x-ui.table-row data-id="{{ $album->id }}">
+                            <x-ui.table-cell class="text-muted-foreground cursor-grab" data-drag-handle>
+                                <x-lucide-grip-vertical class="size-4" />
+                            </x-ui.table-cell>
                             <x-ui.table-cell class="font-medium">{{ $album->title }}</x-ui.table-cell>
                             <x-ui.table-cell>
                                 <a
@@ -72,11 +79,11 @@
                         </x-ui.table-row>
                     @empty
                         <x-ui.table-row>
-                            <x-ui.table-cell colspan="4" class="text-muted-foreground py-6 text-center">
+                            <x-ui.table-cell colspan="5" class="text-muted-foreground py-6 text-center">
                                 No albums found.</x-ui.table-cell>
                         </x-ui.table-row>
                     @endforelse
-                </x-ui.table-body>
+                </x-admin::sortable-tbody>
             </x-ui.table>
         </x-ui.card-content>
         <x-ui.card-footer class="border-t p-4">{{ $albums->links() }}</x-ui.card-footer>

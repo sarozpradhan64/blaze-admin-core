@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class ServiceCategory extends Model
 {
@@ -49,7 +50,7 @@ class ServiceCategory extends Model
         $ids = [(int) $this->id];
         $toCheck = [$this->id];
 
-        while (!empty($toCheck)) {
+        while (! empty($toCheck)) {
             $next = self::whereIn('parent_id', $toCheck)->pluck('id')->all();
             if (empty($next)) {
                 break;
@@ -64,9 +65,9 @@ class ServiceCategory extends Model
     /**
      * Get all ancestor categories from top-level down to the immediate parent.
      *
-     * @return \Illuminate\Support\Collection<int, self>
+     * @return Collection<int, self>
      */
-    public function ancestors(): \Illuminate\Support\Collection
+    public function ancestors(): Collection
     {
         $ancestors = collect();
         $current = $this->parent;

@@ -3,10 +3,12 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Blaze\AdminCore\Models\Affiliation;
 use Blaze\AdminCore\Models\GalleryAlbum;
 use Blaze\AdminCore\Models\GalleryItem;
 use Blaze\AdminCore\Models\HomepageSection;
 use Blaze\AdminCore\Models\Menu;
+use Blaze\AdminCore\Models\PaymentMethod;
 use Blaze\AdminCore\Models\Project;
 use Blaze\AdminCore\Models\ProjectCategory;
 use Blaze\AdminCore\Models\ProjectImage;
@@ -36,6 +38,8 @@ class ReorderController extends Controller
         'testimonials' => Testimonial::class,
         'gallery-albums' => GalleryAlbum::class,
         'gallery-items' => GalleryItem::class,
+        'affiliations' => Affiliation::class,
+        'payment-methods' => PaymentMethod::class,
     ];
 
     public function __invoke(Request $request, string $resource)

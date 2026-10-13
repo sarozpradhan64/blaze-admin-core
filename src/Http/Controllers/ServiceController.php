@@ -3,6 +3,8 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use Blaze\AdminCore\AdminCoreConfiguration;
+use Blaze\AdminCore\Models\GalleryAlbum;
+use Blaze\AdminCore\Models\GalleryItem;
 use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\ServiceCategory;
 use Blaze\AdminCore\Models\Tag;
@@ -10,6 +12,7 @@ use Blaze\AdminCore\Models\WebsiteSetting;
 use Blaze\AdminCore\Support\ServiceFormField;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
@@ -125,8 +128,12 @@ class ServiceController extends Controller
         $categories = ServiceCategory::all();
         $extraFields = $this->config->serviceFormFields();
         $extraFeatureFields = $this->config->serviceFeatureFormFields();
+        $service->load(['galleryAlbum.items' => function ($q) {
+            $q->orderBy('sort_order');
+        }, 'features']);
+        $albums = GalleryAlbum::orderBy('title')->get();
 
-        return view('admin-core::services.form', compact('service', 'categories', 'extraFields', 'extraFeatureFields'));
+        return view('admin-core::services.form', compact('service', 'categories', 'extraFields', 'extraFeatureFields', 'albums'));
     }
 
     public function update(Request $request, Service $service)
@@ -253,6 +260,74 @@ class ServiceController extends Controller
         );
 
         return redirect()->back()->with('success', 'Service SEO updated successfully.');
+    }
+
+    public function uploadGallery(Request $request, Service $service)
+    {
+        $request->validate([
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp,gif|max:10240',
+        ]);
+
+        $album = $service->galleryAlbum;
+        if (! $album) {
+            $album = GalleryAlbum::create([
+                'title' => $service->title,
+                'slug' => Str::slug($service->title).'-gallery-'.$service->id,
+                'description' => "Gallery photos for {$service->title}",
+                'cover_image' => $service->featured_image,
+                'status' => true,
+                'sort_order' => (GalleryAlbum::max('sort_order') ?? 0) + 1,
+            ]);
+            $service->update(['gallery_album_id' => $album->id]);
+        }
+
+        $highestOrder = (int) ($album->items()->max('sort_order') ?? 0);
+
+        foreach ($request->file('images') as $file) {
+            $highestOrder++;
+            $path = $file->store('gallery/'.$album->id, 'public');
+            GalleryItem::create([
+                'gallery_album_id' => $album->id,
+                'title' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                'type' => 'image',
+                'file_path' => $path,
+                'sort_order' => $highestOrder,
+                'status' => true,
+            ]);
+
+            if (! $album->cover_image) {
+                $album->update(['cover_image' => $path]);
+            }
+        }
+
+        return redirect()->route('admin.services.edit', ['service' => $service, 'tab' => 'gallery'])
+            ->with('success', 'Cover images uploaded to gallery successfully.');
+    }
+
+    public function deleteGalleryItem(Service $service, GalleryItem $galleryItem)
+    {
+        if ($service->gallery_album_id && $galleryItem->gallery_album_id === $service->gallery_album_id) {
+            if ($galleryItem->file_path) {
+                Storage::disk('public')->delete($galleryItem->file_path);
+            }
+            $galleryItem->delete();
+        }
+
+        return redirect()->route('admin.services.edit', ['service' => $service, 'tab' => 'gallery'])
+            ->with('success', 'Image removed from gallery successfully.');
+    }
+
+    public function linkGalleryAlbum(Request $request, Service $service)
+    {
+        $validated = $request->validate([
+            'gallery_album_id' => 'nullable|exists:gallery_albums,id',
+        ]);
+
+        $service->update(['gallery_album_id' => $validated['gallery_album_id'] ?? null]);
+
+        return redirect()->route('admin.services.edit', ['service' => $service, 'tab' => 'gallery'])
+            ->with('success', 'Gallery album updated successfully.');
     }
 
     public function destroy(Service $service)

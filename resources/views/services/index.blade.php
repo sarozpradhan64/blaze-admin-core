@@ -159,7 +159,22 @@
                                     <x-lucide-grip-vertical class="size-4" />
                                 </button>
                             </x-ui.table-cell>
-                            <x-ui.table-cell class="font-medium">{{ $service->title }}</x-ui.table-cell>
+                            <x-ui.table-cell class="font-medium">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <span>{{ $service->title }}</span>
+                                    @if ($service->url)
+                                        <a
+                                            href="{{ $service->url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-muted-foreground hover:text-primary transition-colors inline-flex items-center"
+                                            title="View on site"
+                                        >
+                                            <x-lucide-external-link class="size-3.5 shrink-0" />
+                                        </a>
+                                    @endif
+                                </div>
+                            </x-ui.table-cell>
                             <x-ui.table-cell>{{ $service->category?->name ?? 'Uncategorized' }}</x-ui.table-cell>
                             <x-ui.table-cell>
                                 <div class="flex flex-wrap gap-1">
