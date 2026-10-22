@@ -26,9 +26,13 @@ class AdminCoreConfiguration
             'team-members' => true,
             'gallery' => true,
             'downloads' => true,
+            'company' => true,
             'company-info' => true,
             'affiliations' => true,
             'payment-methods' => true,
+            'legal-documents' => true,
+            'careers' => true,
+            'tags' => true,
         ];
     }
 

@@ -1222,6 +1222,10 @@
                             <x-ui.input name="label_downloads" value="{{ old('label_downloads', $settings['label_downloads'] ?? 'Downloads') }}" placeholder="Downloads" />
                         </x-ui.field>
                         @endif
+                        <x-ui.field>
+                            <x-ui.field-label>Company Menu Label</x-ui.field-label>
+                            <x-ui.input name="label_company" value="{{ old('label_company', $settings['label_company'] ?? 'Company') }}" placeholder="Company" />
+                        </x-ui.field>
                         @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->enabled('company-info'))
                         <x-ui.field>
                             <x-ui.field-label>Company Info Label</x-ui.field-label>

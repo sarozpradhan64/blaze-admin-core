@@ -83,15 +83,91 @@
                             <span>Subscribers</span>
                         </x-ui.sidebar-menu-button>
                     </x-ui.sidebar-menu-item>
-                    @if ($configuration->enabled('testimonials'))
-                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
-                                href="{{ route('admin.testimonials.index') }}"
-                                :active="request()->routeIs('admin.testimonials.*')"><x-lucide-message-circle-heart /><span>{{ $websiteSettings['label_testimonials'] ?? 'Testimonials' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
-                    @endif
-                    @if ($configuration->enabled('team-members'))
-                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
-                                href="{{ route('admin.team-members.index') }}"
-                                :active="request()->routeIs('admin.team-members.*')"><x-lucide-users /><span>{{ $websiteSettings['label_team_members'] ?? 'Team Members' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                    @php($customCompanyActive = collect($configuration->customSidebarItems()['company'] ?? [])->contains(fn($item) => request()->routeIs($item['activeRoute'])))
+                    @php($companyActive = request()->routeIs('admin.company-info.*') || request()->routeIs('admin.team-members.*') || request()->routeIs('admin.legal-documents.*') || request()->routeIs('admin.affiliations.*') || request()->routeIs('admin.payment-methods.*') || request()->routeIs('admin.testimonials.*') || request()->routeIs('admin.jobs.*') || request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.job-applications.*') || $customCompanyActive)
+                    @php($companyNewApps = \Blaze\AdminCore\Models\JobApplication::where('status', 'pending')->count())
+                    @if ($configuration->enabled('company'))
+                        <x-ui.sidebar-menu-item x-data="{ expanded: {{ $companyActive ? 'true' : 'false' }} }">
+                            <x-ui.sidebar-menu-button :active="$companyActive" @click.prevent="expanded = !expanded">
+                                <x-lucide-building-2 />
+                                <span>{{ $websiteSettings['label_company'] ?? 'Company' }}</span>
+                                @if ($companyNewApps > 0 && !$companyActive)
+                                    <x-ui.sidebar-menu-badge>{{ $companyNewApps }}</x-ui.sidebar-menu-badge>
+                                @endif
+                                <x-lucide-chevron-down class="ml-auto transition-transform" x-bind:class="{ 'rotate-180': expanded }" />
+                            </x-ui.sidebar-menu-button>
+                            <x-ui.sidebar-menu-sub x-show="expanded" x-collapse>
+                                @if ($configuration->enabled('company-info'))
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.company-info.index') }}" :active="request()->routeIs('admin.company-info.*')">
+                                            {{ $websiteSettings['label_company_info'] ?? 'Company Info' }}
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endif
+                                @if ($configuration->enabled('team-members'))
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.team-members.index') }}" :active="request()->routeIs('admin.team-members.*')">
+                                            {{ $websiteSettings['label_team_members'] ?? 'Team Members' }}
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endif
+                                @if ($configuration->enabled('legal-documents'))
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.legal-documents.index') }}" :active="request()->routeIs('admin.legal-documents.*')">
+                                            Legal Documents
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endif
+                                @if ($configuration->enabled('affiliations'))
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.affiliations.index') }}" :active="request()->routeIs('admin.affiliations.*')">
+                                            {{ $websiteSettings['label_affiliations'] ?? 'Affiliations' }}
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endif
+                                @if ($configuration->enabled('payment-methods'))
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.payment-methods.index') }}" :active="request()->routeIs('admin.payment-methods.*')">
+                                            {{ $websiteSettings['label_payment_methods'] ?? 'We Accept' }}
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endif
+                                @if ($configuration->enabled('testimonials'))
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.testimonials.index') }}" :active="request()->routeIs('admin.testimonials.*')">
+                                            {{ $websiteSettings['label_testimonials'] ?? 'Testimonials' }}
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endif
+                                @if ($configuration->enabled('careers'))
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.jobs.index') }}" :active="request()->routeIs('admin.jobs.*')">
+                                            Jobs
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.job-categories.index') }}" :active="request()->routeIs('admin.job-categories.*')">
+                                            Job Categories
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route('admin.job-applications.index') }}" :active="request()->routeIs('admin.job-applications.*')">
+                                            Job Applications
+                                            @if ($companyNewApps > 0)
+                                                <span class="ml-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">{{ $companyNewApps }}</span>
+                                            @endif
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endif
+                                @foreach($configuration->customSidebarItems()['company'] ?? [] as $customItem)
+                                    <x-ui.sidebar-menu-sub-item>
+                                        <x-ui.sidebar-menu-sub-button href="{{ route($customItem['route']) }}" :active="request()->routeIs($customItem['activeRoute'])">
+                                            {{ $customItem['label'] }}
+                                        </x-ui.sidebar-menu-sub-button>
+                                    </x-ui.sidebar-menu-sub-item>
+                                @endforeach
+                            </x-ui.sidebar-menu-sub>
+                        </x-ui.sidebar-menu-item>
                     @endif
                     @if ($configuration->enabled('gallery'))
                         @php($galleryActive = request()->routeIs('admin.gallery-*'))
@@ -127,55 +203,9 @@
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.menus.index') }}"
                                 :active="request()->routeIs('admin.menus.*')"><x-lucide-list /><span>Menus</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
-                    <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.legal-documents.index') }}"
-                            :active="request()->routeIs('admin.legal-documents.*')"><x-lucide-scale /><span>Legal Documents</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
-                    @if ($configuration->enabled('affiliations'))
-                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
-                                href="{{ route('admin.affiliations.index') }}"
-                                :active="request()->routeIs('admin.affiliations.*')"><x-lucide-badge-check /><span>{{ $websiteSettings['label_affiliations'] ?? 'Affiliations' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
-                    @endif
-                    @if ($configuration->enabled('payment-methods'))
-                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
-                                href="{{ route('admin.payment-methods.index') }}"
-                                :active="request()->routeIs('admin.payment-methods.*')"><x-lucide-credit-card /><span>{{ $websiteSettings['label_payment_methods'] ?? 'We Accept' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
-                    @endif
-                    @if ($configuration->enabled('company-info'))
-                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button
-                                href="{{ route('admin.company-info.index') }}"
-                                :active="request()->routeIs('admin.company-info.*')"><x-lucide-building-2 /><span>{{ $websiteSettings['label_company_info'] ?? 'Company Info' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
-                    @endif
-                    <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.tags.manage') }}"
-                            :active="request()->routeIs('admin.tags.manage')"><x-lucide-tags /><span>{{ $websiteSettings['label_tags'] ?? 'Tags' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
-                    
-                    @if ($configuration->enabled('careers') || true)
-                        @php($careersActive = request()->routeIs('admin.jobs.*') || request()->routeIs('admin.job-categories.*') || request()->routeIs('admin.job-applications.*'))
-                        @php($newApps = \Blaze\AdminCore\Models\JobApplication::where('status', 'pending')->count())
-                        <x-ui.sidebar-menu-item x-data="{ expanded: {{ $careersActive ? 'true' : 'false' }} }">
-                            <x-ui.sidebar-menu-button :active="$careersActive" @click.prevent="expanded = !expanded">
-                                <x-lucide-briefcase />
-                                <span>Careers</span>
-                                @if ($newApps > 0 && !$careersActive)
-                                    <x-ui.sidebar-menu-badge>{{ $newApps }}</x-ui.sidebar-menu-badge>
-                                @endif
-                                <x-lucide-chevron-down class="ml-auto transition-transform" x-bind:class="{ 'rotate-180': expanded }" />
-                            </x-ui.sidebar-menu-button>
-                            <x-ui.sidebar-menu-sub x-show="expanded" x-collapse>
-                                <x-ui.sidebar-menu-sub-item>
-                                    <x-ui.sidebar-menu-sub-button href="{{ route('admin.jobs.index') }}" :active="request()->routeIs('admin.jobs.*')">All Jobs</x-ui.sidebar-menu-sub-button>
-                                </x-ui.sidebar-menu-sub-item>
-                                <x-ui.sidebar-menu-sub-item>
-                                    <x-ui.sidebar-menu-sub-button href="{{ route('admin.job-categories.index') }}" :active="request()->routeIs('admin.job-categories.*')">Categories</x-ui.sidebar-menu-sub-button>
-                                </x-ui.sidebar-menu-sub-item>
-                                <x-ui.sidebar-menu-sub-item>
-                                    <x-ui.sidebar-menu-sub-button href="{{ route('admin.job-applications.index') }}" :active="request()->routeIs('admin.job-applications.*')">
-                                        Applications
-                                        @if ($newApps > 0)
-                                            <span class="ml-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">{{ $newApps }}</span>
-                                        @endif
-                                    </x-ui.sidebar-menu-sub-button>
-                                </x-ui.sidebar-menu-sub-item>
-                            </x-ui.sidebar-menu-sub>
-                        </x-ui.sidebar-menu-item>
+                    @if ($configuration->enabled('tags'))
+                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.tags.manage') }}"
+                                :active="request()->routeIs('admin.tags.manage')"><x-lucide-tags /><span>{{ $websiteSettings['label_tags'] ?? 'Tags' }}</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
 
                     <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.faqs.index') }}"
