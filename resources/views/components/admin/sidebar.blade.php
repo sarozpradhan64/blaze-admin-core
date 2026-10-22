@@ -224,7 +224,8 @@
                     @endif
                 </x-ui.sidebar-menu></x-ui.sidebar-group-content></x-ui.sidebar-group>
     </x-ui.sidebar-content>
-    <x-ui.sidebar-footer><x-ui.sidebar-menu>
+    <x-ui.sidebar-footer class="border-t border-sidebar-border bg-sidebar-accent/50">
+        <x-ui.sidebar-menu>
             @if ($configuration->enabled('profile'))
                 <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.profile.edit') }}"
                         :active="request()->routeIs('admin.profile.*')"><x-lucide-user-cog /><span>My
@@ -239,6 +240,7 @@
                         class="w-full text-destructive hover:text-destructive"><x-lucide-log-out /><span>Sign
                             Out</span></x-ui.sidebar-menu-button></form>
             </x-ui.sidebar-menu-item>
-        </x-ui.sidebar-menu></x-ui.sidebar-footer>
+        </x-ui.sidebar-menu>
+    </x-ui.sidebar-footer>
     <x-ui.sidebar-rail />
 </x-ui.sidebar>
