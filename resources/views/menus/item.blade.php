@@ -17,6 +17,8 @@
                 <span class="font-medium">{{ $item->title }}</span>
                 @if($item->type === 'service_category')
                     <span class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">Dynamic Category</span>
+                @elseif($item->type === 'service')
+                    <span class="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">Service</span>
                 @endif
             </div>
             <span class="text-xs text-muted-foreground">
@@ -26,7 +28,7 @@
         </div>
     </div>
     <div class="flex items-center gap-1">
-        @if($item->type !== 'service_category')
+        @if($item->type !== 'service_category' && $item->type !== 'service')
         <x-ui.button variant="ghost" size="icon" type="button" @click="openAddModal({{ $item->id }})" title="Add sub-item">
             <x-lucide-plus class="size-4" />
         </x-ui.button>

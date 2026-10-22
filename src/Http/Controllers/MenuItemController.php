@@ -4,6 +4,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Menu;
+use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\ServiceCategory;
 use Illuminate\Http\Request;
 
@@ -11,15 +12,15 @@ class MenuItemController extends Controller
 {
     public function store(Request $request, Menu $menu)
     {
-        if ($menu->type === 'service_category') {
-            return redirect()->back()->with('error', 'Cannot add items under a service category menu item.');
+        if ($menu->type === 'service_category' || $menu->type === 'service') {
+            return redirect()->back()->with('error', 'Cannot add items under a service category or service menu item.');
         }
 
         $validated = $request->validate([
-            'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category'],
+            'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category,service'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
-            'type' => ['required', 'string', 'in:custom_url,page,service_category'],
+            'type' => ['required', 'string', 'in:custom_url,page,service_category,service'],
             'url' => ['nullable', 'string', 'required_if:type,custom_url'],
             'reference_id' => ['nullable', 'integer', 'required_unless:type,custom_url'],
         ]);
@@ -27,6 +28,11 @@ class MenuItemController extends Controller
         if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
             $cat = ServiceCategory::find($validated['reference_id']);
             $validated['title'] = $cat?->name ?? 'Category';
+        }
+
+        if ($validated['type'] === 'service' && empty($validated['title']) && ! empty($validated['reference_id'])) {
+            $srv = Service::find($validated['reference_id']);
+            $validated['title'] = $srv?->title ?? 'Service';
         }
 
         $validated['sort_order'] = Menu::where('parent_id', $menu->id)->max('sort_order') + 1;
@@ -43,10 +49,10 @@ class MenuItemController extends Controller
         }
 
         $validated = $request->validate([
-            'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category'],
+            'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category,service'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
-            'type' => ['required', 'string', 'in:custom_url,page,service_category'],
+            'type' => ['required', 'string', 'in:custom_url,page,service_category,service'],
             'url' => ['nullable', 'string', 'required_if:type,custom_url'],
             'reference_id' => ['nullable', 'integer', 'required_unless:type,custom_url'],
         ]);
@@ -54,6 +60,11 @@ class MenuItemController extends Controller
         if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
             $cat = ServiceCategory::find($validated['reference_id']);
             $validated['title'] = $cat?->name ?? 'Category';
+        }
+
+        if ($validated['type'] === 'service' && empty($validated['title']) && ! empty($validated['reference_id'])) {
+            $srv = Service::find($validated['reference_id']);
+            $validated['title'] = $srv?->title ?? 'Service';
         }
 
         $item->update($validated);

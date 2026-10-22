@@ -66,7 +66,12 @@
 
             <div class="space-y-6 md:col-span-2">
                 @if (isset($menu))
-                    @include('admin-core::menus.builder', ['menu' => $menu, 'pages' => $pages ?? collect(), 'serviceCategories' => $serviceCategories ?? collect()])
+                    @include('admin-core::menus.builder', [
+                        'menu' => $menu,
+                        'pages' => $pages ?? collect(),
+                        'serviceCategories' => $serviceCategories ?? collect(),
+                        'services' => $services ?? collect(),
+                    ])
                 @else
                     <x-ui.card>
                         <x-ui.card-content class="text-muted-foreground py-10 text-center flex flex-col items-center justify-center min-h-[300px]">

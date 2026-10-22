@@ -49,6 +49,11 @@ class Menu extends Model
         return $this->belongsTo(ServiceCategory::class, 'reference_id');
     }
 
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class, 'reference_id');
+    }
+
     public function getUrlAttribute(): string
     {
         if ($this->type === 'custom_url') {
@@ -68,6 +73,18 @@ class Menu extends Model
 
             if ($category) {
                 return route('services.category', $category->slug);
+            }
+
+            return '#';
+        }
+
+        if ($this->type === 'service' && $this->reference_id) {
+            $service = $this->relationLoaded('service') && $this->service
+                ? $this->service
+                : Service::find($this->reference_id);
+
+            if ($service) {
+                return $service->url ?? '#';
             }
 
             return '#';

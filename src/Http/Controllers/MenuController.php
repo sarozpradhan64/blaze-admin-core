@@ -5,6 +5,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Blaze\AdminCore\Models\Menu;
 use Blaze\AdminCore\Models\Page;
+use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\ServiceCategory;
 use Illuminate\Http\Request;
 
@@ -42,11 +43,16 @@ class MenuController extends Controller
 
         $pages = Page::where('status', true)->orderBy('title')->get(['id', 'title']);
         $serviceCategories = ServiceCategory::where('status', true)
-            ->with('parent')
+            ->with(['parent', 'children' => fn ($q) => $q->where('status', true)->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get(['id', 'name', 'parent_id']);
 
-        return view('admin-core::menus.form', compact('menu', 'pages', 'serviceCategories'));
+        $services = Service::where('status', true)
+            ->with(['category.parent'])
+            ->orderBy('sort_order')
+            ->get(['id', 'title', 'service_category_id', 'slug']);
+
+        return view('admin-core::menus.form', compact('menu', 'pages', 'serviceCategories', 'services'));
     }
 
     public function update(Request $request, Menu $menu)

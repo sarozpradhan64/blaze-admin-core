@@ -36,12 +36,17 @@
 
     {{-- Add/Edit Modal --}}
     <div x-show="showModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div class="bg-background rounded-lg shadow-lg w-full max-w-md p-6" @click.outside="showModal = false">
+        <div class="bg-background rounded-lg shadow-lg w-full max-w-lg p-6" @click.outside="showModal = false">
             <h3 class="text-lg font-semibold mb-4" x-text="editMode ? 'Edit Menu Item' : 'Add Menu Item'"></h3>
             <form :action="formAction" method="POST">
                 @csrf
                 <template x-if="editMode">
                     <input type="hidden" name="_method" value="PUT">
+                </template>
+
+                {{-- Hidden title input when type is service_category or service so title is submitted --}}
+                <template x-if="formData.type === 'service_category' || formData.type === 'service'">
+                    <input type="hidden" name="title" x-model="formData.title">
                 </template>
                 
                 <div class="space-y-4">
@@ -51,46 +56,137 @@
                             <option value="custom_url">Custom URL</option>
                             <option value="page">Page</option>
                             <option value="service_category">Service Category</option>
+                            <option value="service">Service</option>
                         </select>
                     </x-ui.field>
 
-                    {{-- Service Category Selection (No other fields required when selected) --}}
+                    {{-- Service Category Selection (Grouped & Nested per Parent-Child Combination with SlimSelect) --}}
                     <div x-show="formData.type === 'service_category'">
                         <x-ui.field>
                             <x-ui.field-label for="reference_id_category" required>Service Category</x-ui.field-label>
-                            <select 
-                                id="reference_id_category" 
-                                x-model="formData.reference_id" 
-                                :name="formData.type === 'service_category' ? 'reference_id' : ''"
-                                @change="if (formData.type === 'service_category') {
-                                    const opt = $event.target.options[$event.target.selectedIndex];
-                                    if (opt && opt.value) {
-                                        formData.title = opt.text.replace(/^[^-—→]*[→—]\s*/, '').replace(/\(Already added\)/, '').trim();
-                                    }
-                                }"
-                                class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <option value="">Select a category...</option>
-                                @php
-                                    $usedCategoryIds = $menu->children()->where('type', 'service_category')->pluck('reference_id')->filter()->all();
-                                @endphp
-                                @foreach($serviceCategories as $category)
+                            <div class="w-full">
+                                <select 
+                                    id="reference_id_category" 
+                                    class="w-full"
+                                    :name="formData.type === 'service_category' ? 'reference_id' : ''"
+                                >
+                                    <option data-placeholder="true" value=""></option>
                                     @php
-                                        $isUsed = in_array($category->id, $usedCategoryIds);
+                                        $usedCategoryIds = $menu->children()->where('type', 'service_category')->pluck('reference_id')->filter()->all();
+                                        $parentCats = $serviceCategories->whereNull('parent_id')->sortBy('sort_order');
+                                        $handledCategoryIds = collect();
                                     @endphp
-                                    <option value="{{ $category->id }}" x-bind:disabled="editMode && formData.reference_id == '{{ $category->id }}' ? false : {{ $isUsed ? 'true' : 'false' }}">
-                                        {{ $category->parent ? $category->parent->name . ' → ' : '' }}{{ $category->name }}{{ $isUsed ? ' (Already added)' : '' }}
-                                    </option>
-                                @endforeach
-                            </select>
+                                    @foreach($parentCats as $parent)
+                                        @php
+                                            $handledCategoryIds->push($parent->id);
+                                            $isParentUsed = in_array($parent->id, $usedCategoryIds);
+                                            $children = $serviceCategories->where('parent_id', $parent->id)->sortBy('sort_order');
+                                        @endphp
+                                        <optgroup label="{{ $parent->name }}">
+                                            <option 
+                                                value="{{ $parent->id }}" 
+                                                data-title="{{ $parent->name }}"
+                                            >
+                                                {{ $parent->name }} (Main Category){{ $isParentUsed ? ' — (Already added)' : '' }}
+                                            </option>
+                                            @foreach($children as $child)
+                                                @php
+                                                    $handledCategoryIds->push($child->id);
+                                                    $isChildUsed = in_array($child->id, $usedCategoryIds);
+                                                    $grandChildren = $serviceCategories->where('parent_id', $child->id)->sortBy('sort_order');
+                                                @endphp
+                                                <option 
+                                                    value="{{ $child->id }}" 
+                                                    data-title="{{ $child->name }}"
+                                                >
+                                                    {{ $child->name }}{{ $isChildUsed ? ' — (Already added)' : '' }}
+                                                </option>
+                                                @foreach($grandChildren as $gc)
+                                                    @php
+                                                        $handledCategoryIds->push($gc->id);
+                                                        $isGcUsed = in_array($gc->id, $usedCategoryIds);
+                                                    @endphp
+                                                    <option 
+                                                        value="{{ $gc->id }}" 
+                                                        data-title="{{ $gc->name }}"
+                                                    >
+                                                        &nbsp;&nbsp;↳ {{ $gc->name }}{{ $isGcUsed ? ' — (Already added)' : '' }}
+                                                    </option>
+                                                @endforeach
+                                            @endforeach
+                                        </optgroup>
+                                    @endforeach
+
+                                    @php
+                                        $otherCats = $serviceCategories->whereNotIn('id', $handledCategoryIds);
+                                    @endphp
+                                    @if($otherCats->isNotEmpty())
+                                        <optgroup label="Other Categories">
+                                            @foreach($otherCats as $other)
+                                                @php
+                                                    $isOtherUsed = in_array($other->id, $usedCategoryIds);
+                                                @endphp
+                                                <option 
+                                                    value="{{ $other->id }}" 
+                                                    data-title="{{ $other->name }}"
+                                                >
+                                                    {{ $other->name }}{{ $isOtherUsed ? ' — (Already added)' : '' }}
+                                                </option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endif
+                                </select>
+                            </div>
                         </x-ui.field>
                     </div>
 
-                    {{-- Fields for non-service-category types --}}
-                    <div x-show="formData.type !== 'service_category'" class="space-y-4">
+                    {{-- Service Selection (Grouped & Nested per Parent-Child Combination with SlimSelect) --}}
+                    <div x-show="formData.type === 'service'">
+                        <x-ui.field>
+                            <x-ui.field-label for="reference_id_service" required>Service</x-ui.field-label>
+                            <div class="w-full">
+                                <select 
+                                    id="reference_id_service" 
+                                    class="w-full"
+                                    :name="formData.type === 'service' ? 'reference_id' : ''"
+                                >
+                                    <option data-placeholder="true" value=""></option>
+                                    @php
+                                        $usedServiceIds = $menu->children()->where('type', 'service')->pluck('reference_id')->filter()->all();
+                                        $servicesGrouped = ($services ?? collect())->groupBy(function($srv) {
+                                            $cat = $srv->category;
+                                            if (! $cat) return 'Uncategorized';
+                                            if ($cat->parent) {
+                                                return $cat->parent->name . ' → ' . $cat->name;
+                                            }
+                                            return $cat->name;
+                                        })->sortKeys();
+                                    @endphp
+                                    @foreach($servicesGrouped as $groupName => $srvList)
+                                        <optgroup label="{{ $groupName }}">
+                                            @foreach($srvList as $srv)
+                                                @php
+                                                    $isSrvUsed = in_array($srv->id, $usedServiceIds);
+                                                @endphp
+                                                <option 
+                                                    value="{{ $srv->id }}" 
+                                                    data-title="{{ $srv->title }}"
+                                                >
+                                                    {{ $srv->title }}{{ $isSrvUsed ? ' — (Already added)' : '' }}
+                                                </option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </x-ui.field>
+                    </div>
+
+                    {{-- Fields for non-service-category and non-service types --}}
+                    <div x-show="formData.type !== 'service_category' && formData.type !== 'service'" class="space-y-4">
                         <x-ui.field>
                             <x-ui.field-label for="title" required>Title</x-ui.field-label>
-                            <x-ui.input id="title" name="title" x-model="formData.title" x-bind:required="formData.type !== 'service_category'" />
+                            <x-ui.input id="title" name="title" x-model="formData.title" x-bind:required="formData.type !== 'service_category' && formData.type !== 'service'" />
                         </x-ui.field>
 
                         <x-ui.field>
@@ -187,6 +283,7 @@
             showModal: false,
             editMode: false,
             formAction: '{{ route('admin.menus.items.store', $menu) }}',
+            isSyncing: false,
             icons: [],
             isLoadingIcons: false,
             formData: {
@@ -213,24 +310,139 @@
                     this.isLoadingIcons = false;
                 }
             },
+            init() {
+                this.$watch('formData.type', (newType) => {
+                    this.$nextTick(() => {
+                        this.initSlimSelects();
+                        this.syncSlimSelects();
+                    });
+                });
+            },
+            initSlimSelects() {
+                const catEl = document.getElementById('reference_id_category');
+                if (catEl && !catEl._slimSelect && window.SlimSelect) {
+                    catEl._slimSelect = new window.SlimSelect({
+                        select: catEl,
+                        settings: {
+                            placeholderText: 'Select a service category...',
+                            searchPlaceholder: 'Search categories...',
+                            allowDeselect: true,
+                            closeOnSelect: true,
+                        },
+                        events: {
+                            afterChange: (newVal) => {
+                                if (this.isSyncing) return;
+                                const val = (newVal && newVal[0] && newVal[0].value) ? String(newVal[0].value) : '';
+                                this.formData.reference_id = val;
+                                if (val) {
+                                    const opt = catEl.querySelector(`option[value="${val}"]`);
+                                    if (opt && opt.dataset.title) {
+                                        this.formData.title = opt.dataset.title;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                const srvEl = document.getElementById('reference_id_service');
+                if (srvEl && !srvEl._slimSelect && window.SlimSelect) {
+                    srvEl._slimSelect = new window.SlimSelect({
+                        select: srvEl,
+                        settings: {
+                            placeholderText: 'Select a service / trek...',
+                            searchPlaceholder: 'Search services...',
+                            allowDeselect: true,
+                            closeOnSelect: true,
+                        },
+                        events: {
+                            afterChange: (newVal) => {
+                                if (this.isSyncing) return;
+                                const val = (newVal && newVal[0] && newVal[0].value) ? String(newVal[0].value) : '';
+                                this.formData.reference_id = val;
+                                if (val) {
+                                    const opt = srvEl.querySelector(`option[value="${val}"]`);
+                                    if (opt && opt.dataset.title) {
+                                        this.formData.title = opt.dataset.title;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            },
+            syncSlimSelects() {
+                this.isSyncing = true;
+                const catEl = document.getElementById('reference_id_category');
+                if (catEl) {
+                    const val = (this.formData.type === 'service_category' && this.formData.reference_id) ? String(this.formData.reference_id) : '';
+                    catEl.value = val;
+                    if (catEl._slimSelect) {
+                        try {
+                            if (val) {
+                                catEl._slimSelect.setSelected(val);
+                            } else {
+                                catEl._slimSelect.setSelected('');
+                            }
+                        } catch (e) {
+                            console.error('Error setting SlimSelect category:', e);
+                        }
+                    }
+                }
+                const srvEl = document.getElementById('reference_id_service');
+                if (srvEl) {
+                    const val = (this.formData.type === 'service' && this.formData.reference_id) ? String(this.formData.reference_id) : '';
+                    srvEl.value = val;
+                    if (srvEl._slimSelect) {
+                        try {
+                            if (val) {
+                                srvEl._slimSelect.setSelected(val);
+                            } else {
+                                srvEl._slimSelect.setSelected('');
+                            }
+                        } catch (e) {
+                            console.error('Error setting SlimSelect service:', e);
+                        }
+                    }
+                }
+                setTimeout(() => {
+                    this.isSyncing = false;
+                }, 150);
+            },
             openAddModal(parentId = null) {
                 this.editMode = false;
                 this.formAction = parentId ? '/admin/menus/' + parentId + '/items' : '{{ route('admin.menus.items.store', $menu) }}';
                 this.formData = { title: '', subtitle: '', icon: '', type: 'custom_url', url: '', reference_id: '' };
                 this.showModal = true;
+                this.$nextTick(() => {
+                    this.initSlimSelects();
+                    this.syncSlimSelects();
+                });
             },
             openEditModal(item) {
                 this.editMode = true;
                 this.formAction = '/admin/items/' + item.id;
                 this.formData = {
-                    title: item.title,
+                    title: item.title || '',
                     subtitle: item.subtitle || '',
                     icon: item.icon || '',
                     type: item.type,
                     url: item.url || '',
-                    reference_id: item.reference_id || ''
+                    reference_id: (item.reference_id !== null && item.reference_id !== undefined) ? String(item.reference_id) : ''
                 };
                 this.showModal = true;
+                this.$nextTick(() => {
+                    this.initSlimSelects();
+                    this.syncSlimSelects();
+                });
+                // Additional sync frames to ensure custom select finishes rendering
+                setTimeout(() => {
+                    this.initSlimSelects();
+                    this.syncSlimSelects();
+                }, 100);
+                setTimeout(() => {
+                    this.syncSlimSelects();
+                }, 250);
             }
         }
     }
