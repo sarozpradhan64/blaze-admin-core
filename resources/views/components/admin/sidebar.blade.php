@@ -222,6 +222,10 @@
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.settings.index') }}"
                                 :active="request()->routeIs('admin.settings.*')"><x-lucide-settings /><span>Settings</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
+                    @if ($configuration->enabled('help'))
+                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.help.index') }}"
+                                :active="request()->routeIs('admin.help.*')"><x-lucide-circle-help /><span>Help & Guide</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                    @endif
                 </x-ui.sidebar-menu></x-ui.sidebar-group-content></x-ui.sidebar-group>
     </x-ui.sidebar-content>
     <x-ui.sidebar-footer class="border-t border-sidebar-border bg-sidebar-accent/50">

@@ -33,6 +33,7 @@ class AdminCoreConfiguration
             'legal-documents' => true,
             'careers' => true,
             'tags' => true,
+            'help' => true,
         ];
     }
 

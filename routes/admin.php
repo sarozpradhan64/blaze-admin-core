@@ -13,6 +13,7 @@ use Blaze\AdminCore\Http\Controllers\EnquiryController;
 use Blaze\AdminCore\Http\Controllers\FaqController;
 use Blaze\AdminCore\Http\Controllers\GalleryAlbumController;
 use Blaze\AdminCore\Http\Controllers\GalleryItemController;
+use Blaze\AdminCore\Http\Controllers\HelpController;
 use Blaze\AdminCore\Http\Controllers\JobApplicationController;
 use Blaze\AdminCore\Http\Controllers\JobCategoryController;
 use Blaze\AdminCore\Http\Controllers\JobController;
@@ -197,6 +198,10 @@ Route::prefix('admin')->name('admin.')->middleware('web')->group(function () {
             Route::resource('jobs', JobController::class);
             Route::resource('job-applications', JobApplicationController::class)->except(['create', 'store', 'edit']);
             Route::put('job-applications/{job_application}/status', [JobApplicationController::class, 'updateStatus'])->name('job-applications.status.update');
+        }
+
+        if ($configuration->enabled('help')) {
+            Route::get('help', [HelpController::class, 'index'])->name('help.index');
         }
     });
 });
