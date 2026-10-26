@@ -186,10 +186,10 @@
                                 @click.prevent="expanded = !expanded"><x-lucide-file-text /><span>{{ $websiteSettings['label_blog'] ?? 'Blog' }}</span><x-lucide-chevron-down
                                     class="ml-auto transition-transform"
                                     x-bind:class="{ 'rotate-180': expanded }" /></x-ui.sidebar-menu-button><x-ui.sidebar-menu-sub
-                                x-show="expanded" x-collapse><x-ui.sidebar-menu-sub-item><x-ui.sidebar-menu-sub-button
+                                x-show="expanded" x-collapse><x-ui.sidebar-menu-sub-item><x-ui.sidebar-menu-sub-button 
                                         href="{{ route('admin.blogs.index') }}" :active="request()->routeIs('admin.blogs.*')">All {{ $websiteSettings['label_blog'] ?? 'Posts' }}</x-ui.sidebar-menu-sub-button></x-ui.sidebar-menu-sub-item><x-ui.sidebar-menu-sub-item><x-ui.sidebar-menu-sub-button
                                         href="{{ route('admin.blog-categories.index') }}"
-                                        :active="request()->routeIs('admin.blog-categories.*')">Categories</x-ui.sidebar-menu-sub-button></x-ui.sidebar-menu-sub-item></x-ui.sidebar-menu-sub></x-ui.sidebar-menu-item>
+                                        :active="request()->routeIs('admin.blog-categories.*')">{{ $websiteSettings['label_blog'] ?? 'Posts' }} Categories</x-ui.sidebar-menu-sub-button></x-ui.sidebar-menu-sub-item></x-ui.sidebar-menu-sub></x-ui.sidebar-menu-item>
                     @endif
                     @if ($configuration->enabled('downloads'))
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.downloads.index') }}"
