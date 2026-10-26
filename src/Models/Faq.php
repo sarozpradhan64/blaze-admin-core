@@ -2,6 +2,7 @@
 
 namespace Blaze\AdminCore\Models;
 
+use Blaze\AdminCore\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class Faq extends Model
 {
+    use Filterable;
     use HasFactory;
 
     protected $table = 'faqs';
@@ -17,9 +19,15 @@ class Faq extends Model
 
     protected $casts = [
         'status' => 'boolean',
+        'is_contact_page' => 'boolean',
         'sort_order' => 'integer',
         'usage_count' => 'integer',
     ];
+
+    public function scopeForContactPage($query)
+    {
+        return $query->where('status', true)->where('is_contact_page', true);
+    }
 
     public function services(): MorphToMany
     {

@@ -57,6 +57,19 @@
                             :checked="old('status', $faq->status ?? true)"
                         />
                     </div>
+
+                    <div class="flex items-center justify-between">
+                        <x-ui.label for="is_contact_page" class="flex flex-col space-y-1">
+                            <span>Display in Contact Page</span>
+                            <span class="text-muted-foreground text-xs font-normal">Show this FAQ in the Contact page FAQ accordion</span>
+                        </x-ui.label>
+                        <x-ui.switch
+                            id="is_contact_page"
+                            name="is_contact_page"
+                            value="1"
+                            :checked="old('is_contact_page', $faq->is_contact_page ?? false)"
+                        />
+                    </div>
                 </x-ui.card-content>
                 <x-ui.card-footer class="bg-muted/50 flex justify-end gap-2 border-t p-4">
                     <x-ui.button variant="outline" href="{{ route('admin.faqs.index') }}">Cancel</x-ui.button>

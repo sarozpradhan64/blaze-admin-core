@@ -28,15 +28,30 @@ class FaqController extends Controller
         }
 
         // For management UI
-        $search = trim((string) $request->query('search', ''));
-
         $faqs = Faq::query()
-            ->when($search !== '', fn ($query) => $query->where('question', 'like', '%'.$search.'%'))
-            ->orderBy('sort_order')
-            ->paginate(15)
+            ->search($request->query('search'), ['question', 'answer'])
+            ->filterStatus($request->query('status'))
+            ->when($request->filled('contact_page') && $request->query('contact_page') !== 'all', function ($query) use ($request) {
+                $isContact = in_array($request->query('contact_page'), ['yes', '1', 1, true, 'true'], true);
+                $query->where('is_contact_page', $isContact);
+            })
+            ->when($request->filled('usage') && $request->query('usage') !== 'all', function ($query) use ($request) {
+                if ($request->query('usage') === 'used') {
+                    $query->where('usage_count', '>', 0);
+                } elseif ($request->query('usage') === 'unused') {
+                    $query->where('usage_count', 0);
+                }
+            })
+            ->sort(
+                $request->query('sort_by'),
+                $request->query('sort_dir'),
+                defaultSort: 'sort_order',
+                defaultDirection: 'asc'
+            )
+            ->paginate((int) $request->query('per_page', 15))
             ->withQueryString();
 
-        return view('admin-core::faqs.index', compact('faqs', 'search'));
+        return view('admin-core::faqs.index', compact('faqs'));
     }
 
     public function create()
@@ -49,14 +64,16 @@ class FaqController extends Controller
         $validated = $request->validate([
             'question' => ['required', 'string', 'max:255'],
             'answer' => ['required', 'string'],
-            'status' => ['boolean'],
+            'status' => ['nullable', 'boolean'],
+            'is_contact_page' => ['nullable', 'boolean'],
         ]);
 
         Faq::create([
             'question' => $validated['question'],
             'answer' => $validated['answer'],
-            'status' => $request->has('status'),
-            'sort_order' => Faq::max('sort_order') + 1,
+            'status' => $request->boolean('status'),
+            'is_contact_page' => $request->boolean('is_contact_page'),
+            'sort_order' => (int) Faq::max('sort_order') + 1,
         ]);
 
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ created successfully.');
@@ -72,12 +89,15 @@ class FaqController extends Controller
         $validated = $request->validate([
             'question' => ['required', 'string', 'max:255'],
             'answer' => ['required', 'string'],
+            'status' => ['nullable', 'boolean'],
+            'is_contact_page' => ['nullable', 'boolean'],
         ]);
 
         $faq->update([
             'question' => $validated['question'],
             'answer' => $validated['answer'],
-            'status' => $request->has('status'),
+            'status' => $request->boolean('status'),
+            'is_contact_page' => $request->boolean('is_contact_page'),
         ]);
 
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ updated successfully.');
