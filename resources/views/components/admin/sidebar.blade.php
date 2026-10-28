@@ -60,7 +60,7 @@
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.enquiries.index') }}"
                                 :active="request()->routeIs('admin.enquiries.*')"><x-lucide-inbox /><span>{{ $websiteSettings['label_enquiries'] ?? 'Enquiries' }}</span>
                                 @if ($newEnquiries > 0)
-                                    <x-ui.sidebar-menu-badge>{{ $newEnquiries }}</x-ui.sidebar-menu-badge>
+                                    <span class="ml-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">{{ $newEnquiries }}</span>
                                 @endif
                             </x-ui.sidebar-menu-button>
                         </x-ui.sidebar-menu-item>
@@ -71,7 +71,7 @@
                                 href="{{ route('admin.contact-messages.index') }}"
                                 :active="request()->routeIs('admin.contact-messages.*')"><x-lucide-message-square /><span>{{ $websiteSettings['label_contact_messages'] ?? 'Contact Messages' }}</span>
                                 @if ($newMsgs > 0)
-                                    <x-ui.sidebar-menu-badge>{{ $newMsgs }}</x-ui.sidebar-menu-badge>
+                                    <span class="ml-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">{{ $newMsgs }}</span>
                                 @endif
                             </x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
@@ -92,7 +92,7 @@
                                 <x-lucide-building-2 />
                                 <span>{{ $websiteSettings['label_company'] ?? 'Company' }}</span>
                                 @if ($companyNewApps > 0 && !$companyActive)
-                                    <x-ui.sidebar-menu-badge>{{ $companyNewApps }}</x-ui.sidebar-menu-badge>
+                                    <span class="ml-auto mr-1 bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">{{ $companyNewApps }}</span>
                                 @endif
                                 <x-lucide-chevron-down class="ml-auto transition-transform" x-bind:class="{ 'rotate-180': expanded }" />
                             </x-ui.sidebar-menu-button>

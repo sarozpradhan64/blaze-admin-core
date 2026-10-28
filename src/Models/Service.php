@@ -63,19 +63,44 @@ class Service extends Model
         return $this->morphOne(SeoMetadata::class, 'seoable');
     }
 
+    /**
+     * In-memory cache for category slugs keyed by category ID to prevent N+1 queries.
+     *
+     * @var array<int, string>|null
+     */
+    protected static ?array $categorySlugCache = null;
+
+    /**
+     * In-memory cache for route existence check.
+     */
+    protected static ?bool $hasShowRoute = null;
+
     public function getUrlAttribute(): ?string
     {
-        if (! $this->slug || ! Route::has('services.show')) {
+        static::$hasShowRoute ??= Route::has('services.show');
+
+        if (! $this->slug || ! static::$hasShowRoute) {
             return null;
         }
 
-        $categorySlug = $this->relationLoaded('category') && $this->category
-            ? $this->category->slug
-            : ($this->category()->first()?->slug ?? 'trekking');
+        if ($this->relationLoaded('category') && $this->category) {
+            $categorySlug = $this->category->slug;
+        } elseif ($this->service_category_id) {
+            static::$categorySlugCache ??= ServiceCategory::pluck('slug', 'id')->all();
+            $categorySlug = static::$categorySlugCache[$this->service_category_id] ?? 'trekking';
+        } else {
+            $categorySlug = 'trekking';
+        }
 
         return route('services.show', [
             'categorySlug' => $categorySlug,
             'serviceSlug' => $this->slug,
         ]);
+    }
+
+    public static function flushCategorySlugCache(): void
+    {
+        static::$categorySlugCache = null;
+        static::$hasShowRoute = null;
     }
 }
