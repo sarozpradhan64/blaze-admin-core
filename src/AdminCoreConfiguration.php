@@ -2,7 +2,9 @@
 
 namespace Blaze\AdminCore;
 
+use Blaze\AdminCore\Models\Menu;
 use Blaze\AdminCore\Support\ServiceFormField;
+use Illuminate\Support\Str;
 
 class AdminCoreConfiguration
 {
@@ -49,6 +51,7 @@ class AdminCoreConfiguration
     {
         return [
             'hero_highlighted_text' => false,
+            'service_featured' => true,
         ];
     }
 
@@ -140,19 +143,19 @@ class AdminCoreConfiguration
     /**
      * Compute static root routes that are not currently linked to any top-level menu.
      *
-     * @param  iterable<\Blaze\AdminCore\Models\Menu>|null  $existingMenus
+     * @param  iterable<Menu>|null  $existingMenus
      * @return array<int, array{path: string, label: string, full_label: string}>
      */
     public function missingRootRoutes(?iterable $existingMenus = null): array
     {
-        $menus = $existingMenus ?? \Blaze\AdminCore\Models\Menu::all();
+        $menus = $existingMenus ?? Menu::all();
 
         $existingUrls = collect($menus)->pluck('url')->filter()->map(function ($u) {
             return trim(strtolower($u), '/');
         })->all();
 
         $existingTitleSlugs = collect($menus)->pluck('title')->filter()->map(function ($t) {
-            return \Illuminate\Support\Str::slug($t);
+            return Str::slug($t);
         })->all();
 
         return collect($this->staticRoutes())
@@ -195,4 +198,3 @@ class AdminCoreConfiguration
             ->all();
     }
 }
-

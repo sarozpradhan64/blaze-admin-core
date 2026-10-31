@@ -91,7 +91,11 @@ class ServiceController extends Controller
 
         $validated['slug'] = $this->uniqueSlug($validated['title'], 'services');
         $validated['status'] = $request->has('status');
-        $validated['is_featured'] = $request->has('is_featured');
+        if ($this->config->featureEnabled('service_featured')) {
+            $validated['is_featured'] = $request->has('is_featured');
+        } else {
+            $validated['is_featured'] = false;
+        }
 
         $this->applyExtraFields($validated, $request, $extraFields);
 
@@ -179,7 +183,11 @@ class ServiceController extends Controller
             $validated['slug'] = $this->uniqueSlug($validated['title'], 'services', $service->id);
         }
         $validated['status'] = $request->has('status');
-        $validated['is_featured'] = $request->has('is_featured');
+        if ($this->config->featureEnabled('service_featured')) {
+            $validated['is_featured'] = $request->has('is_featured');
+        } else {
+            unset($validated['is_featured']);
+        }
 
         $this->applyExtraFields($validated, $request, $extraFields);
 

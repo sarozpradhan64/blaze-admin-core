@@ -159,13 +159,15 @@
                                         <x-ui.switch id="status" name="status" value="1" :checked="old('status', $service->status ?? true)" />
                                     </div>
 
-                                    <div class="flex items-center justify-between">
-                                        <x-ui.label for="is_featured" class="flex flex-col space-y-1">
-                                            <span>Featured</span>
-                                            <span class="font-normal text-xs text-muted-foreground">Show on homepage</span>
-                                        </x-ui.label>
-                                        <x-ui.switch id="is_featured" name="is_featured" value="1" :checked="old('is_featured', $service->is_featured ?? false)" />
-                                    </div>
+                                    @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->featureEnabled('service_featured'))
+                                        <div class="flex items-center justify-between">
+                                            <x-ui.label for="is_featured" class="flex flex-col space-y-1">
+                                                <span>Featured</span>
+                                                <span class="font-normal text-xs text-muted-foreground">Show on homepage</span>
+                                            </x-ui.label>
+                                            <x-ui.switch id="is_featured" name="is_featured" value="1" :checked="old('is_featured', $service->is_featured ?? false)" />
+                                        </div>
+                                    @endif
                                 </x-ui.card-content>
                             </x-ui.card>
                         </div>

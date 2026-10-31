@@ -138,12 +138,14 @@
                                 <x-lucide-arrow-up-down class="size-3 text-muted-foreground" />
                             </a>
                         </x-ui.table-head>
-                        <x-ui.table-head>
-                            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'is_featured', 'sort_dir' => request('sort_by') === 'is_featured' && request('sort_dir') === 'asc' ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-foreground">
-                                Featured
-                                <x-lucide-arrow-up-down class="size-3 text-muted-foreground" />
-                            </a>
-                        </x-ui.table-head>
+                        @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->featureEnabled('service_featured'))
+                            <x-ui.table-head>
+                                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'is_featured', 'sort_dir' => request('sort_by') === 'is_featured' && request('sort_dir') === 'asc' ? 'desc' : 'asc']) }}" class="flex items-center gap-1 hover:text-foreground">
+                                    Featured
+                                    <x-lucide-arrow-up-down class="size-3 text-muted-foreground" />
+                                </a>
+                            </x-ui.table-head>
+                        @endif
                         <x-ui.table-head class="text-right">Actions</x-ui.table-head>
                     </x-ui.table-row>
                 </x-ui.table-header>
@@ -192,11 +194,13 @@
                                     {{ $service->status ? 'Active' : 'Draft' }}
                                 </x-ui.badge>
                             </x-ui.table-cell>
-                            <x-ui.table-cell>
-                                @if ($service->is_featured)
-                                    <x-lucide-check-circle class="text-primary size-4" />
-                                @endif
-                            </x-ui.table-cell>
+                            @if (app(\Blaze\AdminCore\AdminCoreConfiguration::class)->featureEnabled('service_featured'))
+                                <x-ui.table-cell>
+                                    @if ($service->is_featured)
+                                        <x-lucide-check-circle class="text-primary size-4" />
+                                    @endif
+                                </x-ui.table-cell>
+                            @endif
                             <x-ui.table-cell class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <x-ui.button
