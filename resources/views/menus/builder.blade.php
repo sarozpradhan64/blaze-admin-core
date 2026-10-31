@@ -79,7 +79,7 @@
                                 >
                                     <option data-placeholder="true" value=""></option>
                                     @php
-                                        $usedCategoryIds = $menu->children()->where('type', 'service_category')->pluck('reference_id')->filter()->all();
+                                        $usedCategoryIds = $usedCategoryIds ?? $menu->children->where('type', 'service_category')->pluck('reference_id')->filter()->all();
                                         $parentCats = $serviceCategories->whereNull('parent_id')->sortBy('sort_order');
                                         $handledCategoryIds = collect();
                                     @endphp
@@ -159,12 +159,14 @@
                                 >
                                     <option data-placeholder="true" value=""></option>
                                     @php
-                                        $usedServiceIds = $menu->children()->where('type', 'service')->pluck('reference_id')->filter()->all();
-                                        $servicesGrouped = ($services ?? collect())->groupBy(function($srv) {
-                                            $cat = $srv->category;
+                                        $usedServiceIds = $usedServiceIds ?? $menu->children->where('type', 'service')->pluck('reference_id')->filter()->all();
+                                        $categoriesById = ($serviceCategories ?? collect())->keyBy('id');
+                                        $servicesGrouped = ($services ?? collect())->groupBy(function($srv) use ($categoriesById) {
+                                            $cat = $categoriesById->get($srv->service_category_id);
                                             if (! $cat) return 'Uncategorized';
-                                            if ($cat->parent) {
-                                                return $cat->parent->name . ' → ' . $cat->name;
+                                            $parent = $cat->parent_id ? $categoriesById->get($cat->parent_id) : null;
+                                            if ($parent) {
+                                                return $parent->name . ' → ' . $cat->name;
                                             }
                                             return $cat->name;
                                         })->sortKeys();

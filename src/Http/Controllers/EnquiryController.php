@@ -5,15 +5,13 @@ namespace Blaze\AdminCore\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Blaze\AdminCore\Models\Enquiry;
-use Blaze\AdminCore\Models\Project;
-use Blaze\AdminCore\Models\Service;
 use Illuminate\Http\Request;
 
 class EnquiryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Enquiry::with(['service', 'project', 'assignee'])->latest();
+        $query = Enquiry::select(['id', 'name', 'email', 'subject', 'status', 'priority', 'created_at'])->latest();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -31,24 +29,33 @@ class EnquiryController extends Controller
 
         $enquiries = $query->paginate(15)->withQueryString();
 
+        $statsRow = Enquiry::toBase()
+            ->selectRaw("
+                count(*) as total,
+                count(case when status = 'new' then 1 end) as new_count,
+                count(case when status = 'in_progress' then 1 end) as in_progress,
+                count(case when priority = 'urgent' then 1 end) as urgent
+            ")
+            ->first();
+
         $stats = [
-            'total' => Enquiry::count(),
-            'new' => Enquiry::where('status', 'new')->count(),
-            'in_progress' => Enquiry::where('status', 'in_progress')->count(),
-            'urgent' => Enquiry::where('priority', 'urgent')->count(),
+            'total' => (int) ($statsRow->total ?? 0),
+            'new' => (int) ($statsRow->new_count ?? 0),
+            'in_progress' => (int) ($statsRow->in_progress ?? 0),
+            'urgent' => (int) ($statsRow->urgent ?? 0),
         ];
+
+        view()->share('newEnquiries', $stats['new']);
 
         return view('admin-core::enquiries.index', compact('enquiries', 'stats'));
     }
 
     public function show(Enquiry $enquiry)
     {
-        $enquiry->load(['service', 'project', 'assignee']);
-        $users = User::all();
-        $services = Service::all();
-        $projects = Project::all();
+        $enquiry->load(['service:id,title', 'project:id,title', 'assignee:id,name']);
+        $users = User::orderBy('name')->get(['id', 'name']);
 
-        return view('admin-core::enquiries.show', compact('enquiry', 'users', 'services', 'projects'));
+        return view('admin-core::enquiries.show', compact('enquiry', 'users'));
     }
 
     public function update(Request $request, Enquiry $enquiry)

@@ -107,6 +107,8 @@
                         'pages' => $pages ?? collect(),
                         'serviceCategories' => $serviceCategories ?? collect(),
                         'services' => $services ?? collect(),
+                        'usedCategoryIds' => $usedCategoryIds ?? [],
+                        'usedServiceIds' => $usedServiceIds ?? [],
                     ])
                 @else
                     <x-ui.card>

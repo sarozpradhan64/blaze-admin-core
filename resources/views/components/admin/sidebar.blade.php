@@ -56,7 +56,7 @@
                                         :active="request()->routeIs('admin.project-categories.*')">Categories</x-ui.sidebar-menu-sub-button></x-ui.sidebar-menu-sub-item></x-ui.sidebar-menu-sub></x-ui.sidebar-menu-item>
                     @endif
                     @if ($configuration->enabled('enquiries'))
-                        @php($newEnquiries = \Blaze\AdminCore\Models\Enquiry::where('status', 'new')->count())
+                        @php($newEnquiries = $newEnquiries ?? \Blaze\AdminCore\Models\Enquiry::where('status', 'new')->count())
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.enquiries.index') }}"
                                 :active="request()->routeIs('admin.enquiries.*')"><x-lucide-inbox /><span>{{ $websiteSettings['label_enquiries'] ?? 'Enquiries' }}</span>
                                 @if ($newEnquiries > 0)

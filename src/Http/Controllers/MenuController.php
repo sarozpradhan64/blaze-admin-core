@@ -12,12 +12,11 @@ use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
-    public function index(Request $request, AdminCoreConfiguration $config)
+    public function index(Request $request)
     {
         $menus = Menu::whereNull('parent_id')->orderBy('sort_order')->paginate($request->get('per_page', 50));
-        $missingRoutes = $config->missingRootRoutes(Menu::all());
 
-        return view('admin-core::menus.index', compact('menus', 'missingRoutes'));
+        return view('admin-core::menus.index', compact('menus'));
     }
 
     public function create(AdminCoreConfiguration $config)
@@ -48,20 +47,40 @@ class MenuController extends Controller
     {
         $menu->load(['children.children.children.children']); // Load nested items for builder
 
+        $allMenuItems = collect();
+        $collectDescendants = function ($parent) use (&$collectDescendants, &$allMenuItems) {
+            foreach ($parent->children as $child) {
+                $allMenuItems->push($child);
+                if ($child->relationLoaded('children')) {
+                    $collectDescendants($child);
+                }
+            }
+        };
+        $collectDescendants($menu);
+
+        $usedCategoryIds = $allMenuItems->where('type', 'service_category')->pluck('reference_id')->filter()->values()->all();
+        $usedServiceIds = $allMenuItems->where('type', 'service')->pluck('reference_id')->filter()->values()->all();
+
         $pages = Page::where('status', true)->orderBy('title')->get(['id', 'title']);
         $serviceCategories = ServiceCategory::where('status', true)
-            ->with(['parent', 'children' => fn ($q) => $q->where('status', true)->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get(['id', 'name', 'parent_id']);
 
         $services = Service::where('status', true)
-            ->with(['category.parent'])
             ->orderBy('sort_order')
             ->get(['id', 'title', 'service_category_id', 'slug']);
 
         $staticRoutes = $config->staticRoutes();
 
-        return view('admin-core::menus.form', compact('menu', 'pages', 'serviceCategories', 'services', 'staticRoutes'));
+        return view('admin-core::menus.form', compact(
+            'menu',
+            'pages',
+            'serviceCategories',
+            'services',
+            'staticRoutes',
+            'usedCategoryIds',
+            'usedServiceIds'
+        ));
     }
 
     public function update(Request $request, Menu $menu)
