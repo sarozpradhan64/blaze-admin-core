@@ -3,6 +3,7 @@
 namespace Blaze\AdminCore\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Blaze\AdminCore\AdminCoreConfiguration;
 use Blaze\AdminCore\Models\Menu;
 use Blaze\AdminCore\Models\Page;
 use Blaze\AdminCore\Models\Service;
@@ -11,33 +12,39 @@ use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, AdminCoreConfiguration $config)
     {
         $menus = Menu::whereNull('parent_id')->orderBy('sort_order')->paginate($request->get('per_page', 50));
+        $missingRoutes = $config->missingRootRoutes(Menu::all());
 
-        return view('admin-core::menus.index', compact('menus'));
+        return view('admin-core::menus.index', compact('menus', 'missingRoutes'));
     }
 
-    public function create()
+    public function create(AdminCoreConfiguration $config)
     {
-        return view('admin-core::menus.form');
+        $staticRoutes = $config->staticRoutes();
+
+        return view('admin-core::menus.form', compact('staticRoutes'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'url' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable'],
         ]);
 
         $validated['status'] = $request->has('status');
+        $validated['type'] = 'custom_url';
+        $validated['url'] = ! empty($validated['url']) ? $validated['url'] : '#';
 
         $menu = Menu::create($validated);
 
         return redirect()->route('admin.menus.edit', $menu)->with('success', 'Menu created successfully.');
     }
 
-    public function edit(Menu $menu)
+    public function edit(Menu $menu, AdminCoreConfiguration $config)
     {
         $menu->load(['children.children.children.children']); // Load nested items for builder
 
@@ -52,17 +59,26 @@ class MenuController extends Controller
             ->orderBy('sort_order')
             ->get(['id', 'title', 'service_category_id', 'slug']);
 
-        return view('admin-core::menus.form', compact('menu', 'pages', 'serviceCategories', 'services'));
+        $staticRoutes = $config->staticRoutes();
+
+        return view('admin-core::menus.form', compact('menu', 'pages', 'serviceCategories', 'services', 'staticRoutes'));
     }
 
     public function update(Request $request, Menu $menu)
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'url' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable'],
         ]);
 
         $validated['status'] = $request->has('status');
+        if ($request->has('url')) {
+            $validated['url'] = ! empty($validated['url']) ? $validated['url'] : '#';
+            if (empty($menu->type)) {
+                $validated['type'] = 'custom_url';
+            }
+        }
 
         $menu->update($validated);
 

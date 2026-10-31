@@ -16,7 +16,7 @@ class MenuItemController extends Controller
             return redirect()->back()->with('error', 'Cannot add items under a service category or service menu item.');
         }
 
-        $validated = $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category,service'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
@@ -24,6 +24,14 @@ class MenuItemController extends Controller
             'url' => ['nullable', 'string', 'required_if:type,custom_url'],
             'reference_id' => ['nullable', 'integer', 'required_unless:type,custom_url'],
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator, 'menu_item')
+                ->with('error', $validator->errors()->first());
+        }
+
+        $validated = $validator->validated();
 
         if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
             $cat = ServiceCategory::find($validated['reference_id']);
@@ -33,6 +41,19 @@ class MenuItemController extends Controller
         if ($validated['type'] === 'service' && empty($validated['title']) && ! empty($validated['reference_id'])) {
             $srv = Service::find($validated['reference_id']);
             $validated['title'] = $srv?->title ?? 'Service';
+        }
+
+        $rootMenu = $menu->rootMenu();
+        $treeIds = array_merge([$rootMenu->id], $rootMenu->descendantIds());
+
+        $titleExists = Menu::whereIn('id', $treeIds)
+            ->whereRaw('LOWER(TRIM(title)) = ?', [strtolower(trim($validated['title']))])
+            ->exists();
+
+        if ($titleExists) {
+            return redirect()->back()
+                ->withErrors(['title' => 'A menu item with the title "'.$validated['title'].'" already exists under this menu.'], 'menu_item')
+                ->with('error', 'A menu item with the title "'.$validated['title'].'" already exists under this menu.');
         }
 
         $validated['sort_order'] = Menu::where('parent_id', $menu->id)->max('sort_order') + 1;
@@ -48,7 +69,7 @@ class MenuItemController extends Controller
             return redirect()->back()->with('error', 'This menu item cannot be edited.');
         }
 
-        $validated = $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category,service'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
@@ -56,6 +77,14 @@ class MenuItemController extends Controller
             'url' => ['nullable', 'string', 'required_if:type,custom_url'],
             'reference_id' => ['nullable', 'integer', 'required_unless:type,custom_url'],
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator, 'menu_item')
+                ->with('error', $validator->errors()->first());
+        }
+
+        $validated = $validator->validated();
 
         if ($validated['type'] === 'service_category' && empty($validated['title']) && ! empty($validated['reference_id'])) {
             $cat = ServiceCategory::find($validated['reference_id']);
@@ -65,6 +94,20 @@ class MenuItemController extends Controller
         if ($validated['type'] === 'service' && empty($validated['title']) && ! empty($validated['reference_id'])) {
             $srv = Service::find($validated['reference_id']);
             $validated['title'] = $srv?->title ?? 'Service';
+        }
+
+        $rootMenu = $item->rootMenu();
+        $treeIds = array_merge([$rootMenu->id], $rootMenu->descendantIds());
+
+        $titleExists = Menu::whereIn('id', $treeIds)
+            ->where('id', '!=', $item->id)
+            ->whereRaw('LOWER(TRIM(title)) = ?', [strtolower(trim($validated['title']))])
+            ->exists();
+
+        if ($titleExists) {
+            return redirect()->back()
+                ->withErrors(['title' => 'A menu item with the title "'.$validated['title'].'" already exists under this menu.'], 'menu_item')
+                ->with('error', 'A menu item with the title "'.$validated['title'].'" already exists under this menu.');
         }
 
         $item->update($validated);

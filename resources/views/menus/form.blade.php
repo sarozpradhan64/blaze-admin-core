@@ -37,9 +37,45 @@
                         <x-ui.card-content class="space-y-4">
                             <x-ui.field>
                                 <x-ui.field-label for="title" required>Title</x-ui.field-label>
-                                <x-ui.input id="title" name="title" value="{{ old('title', $menu->title ?? '') }}" />
+                                <x-ui.input id="title" name="title" value="{{ old('title', $menu->title ?? request('title', '')) }}" />
                                 <x-ui.field-error name="title" />
                             </x-ui.field>
+
+                            @php
+                                $staticRoutes = $staticRoutes ?? app(\Blaze\AdminCore\AdminCoreConfiguration::class)->staticRoutes();
+                                $currentUrl = old('url', $menu->url ?? request('url', ''));
+                            @endphp
+                            <div class="space-y-2" x-data="{
+                                urlVal: '{{ addslashes($currentUrl) }}'
+                            }">
+                                <div class="flex items-center justify-between mb-1">
+                                    <x-ui.field-label for="url">Menu URL / Route</x-ui.field-label>
+                                    <span class="text-[11px] text-muted-foreground font-normal">Use # for dropdown-only</span>
+                                </div>
+                                <x-ui.input
+                                    id="url"
+                                    name="url"
+                                    x-model="urlVal"
+                                    placeholder="e.g. /projects or /contact or #"
+                                />
+                                @if(!empty($staticRoutes))
+                                    <div class="mt-2 space-y-1.5">
+                                        <div class="text-[11px] text-muted-foreground font-medium">
+                                            Choose from static routes:
+                                        </div>
+                                        <select
+                                            x-on:change="if ($event.target.value) { urlVal = $event.target.value; $event.target.value = ''; }"
+                                            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                        >
+                                            <option value="">-- Select a predefined route --</option>
+                                            @foreach($staticRoutes as $route)
+                                                <option value="{{ $route['path'] }}">{{ $route['label'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                                <x-ui.field-error name="url" />
+                            </div>
 
                             <x-ui.field>
                                 <div class="flex items-center justify-between">

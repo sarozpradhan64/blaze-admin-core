@@ -10,4 +10,10 @@ return [
      * When left null, defaults to AdminCoreConfiguration::homepageSectionDefinitions().
      */
     'homepage_sections' => null,
+
+    /**
+     * Optional custom static routes for menu links.
+     * When left null, defaults to AdminCoreConfiguration::staticRoutes().
+     */
+    'static_routes' => null,
 ];

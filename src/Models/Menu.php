@@ -44,6 +44,41 @@ class Menu extends Model
         return $this->hasMany(Menu::class, 'parent_id')->orderBy('sort_order');
     }
 
+    /**
+     * Resolve the top-level root menu for this menu or menu item.
+     */
+    public function rootMenu(): self
+    {
+        $current = $this;
+        while ($current->parent_id && $current->parent) {
+            $current = $current->parent;
+        }
+
+        return $current;
+    }
+
+    /**
+     * Get all descendant IDs of this menu item across all nesting levels.
+     *
+     * @return array<int>
+     */
+    public function descendantIds(): array
+    {
+        $ids = [];
+        $frontier = [$this->id];
+
+        while (! empty($frontier)) {
+            $childIds = static::whereIn('parent_id', $frontier)->pluck('id')->all();
+            if (empty($childIds)) {
+                break;
+            }
+            $ids = array_merge($ids, $childIds);
+            $frontier = $childIds;
+        }
+
+        return $ids;
+    }
+
     public function serviceCategory(): BelongsTo
     {
         return $this->belongsTo(ServiceCategory::class, 'reference_id');

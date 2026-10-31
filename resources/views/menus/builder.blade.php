@@ -1,4 +1,4 @@
-<x-ui.card x-data="menuBuilder()">
+<x-ui.card x-data="menuBuilder({{ $errors->menu_item->any() ? 'true' : 'false' }})">
     <x-ui.card-header class="flex flex-row items-center justify-between">
         <x-ui.card-title>Menu Items</x-ui.card-title>
         <x-ui.button type="button" size="sm" @click="openAddModal()">
@@ -38,6 +38,13 @@
     <div x-show="showModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
         <div class="bg-background rounded-lg shadow-lg w-full max-w-lg p-6" @click.outside="showModal = false">
             <h3 class="text-lg font-semibold mb-4" x-text="editMode ? 'Edit Menu Item' : 'Add Menu Item'"></h3>
+            @if($errors->menu_item->any())
+                <div class="mb-4 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                    @foreach($errors->menu_item->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
             <form :action="formAction" method="POST">
                 @csrf
                 <template x-if="editMode">
@@ -247,10 +254,26 @@
                             </div>
                         </x-ui.field>
 
+                        @php
+                            $staticRoutes = $staticRoutes ?? app(\Blaze\AdminCore\AdminCoreConfiguration::class)->staticRoutes();
+                        @endphp
                         <div x-show="formData.type === 'custom_url'">
                             <x-ui.field>
                                 <x-ui.field-label for="url">URL</x-ui.field-label>
-                                <x-ui.input id="url" name="url" x-model="formData.url" />
+                                <x-ui.input id="url" name="url" x-model="formData.url" placeholder="e.g. /projects or /about-us/team" />
+                                @if(!empty($staticRoutes))
+                                    <div class="mt-1.5">
+                                        <select
+                                            x-on:change="if ($event.target.value) { formData.url = $event.target.value; $event.target.value = ''; }"
+                                            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                        >
+                                            <option value="">-- Or choose from static routes --</option>
+                                            @foreach($staticRoutes as $route)
+                                                <option value="{{ $route['path'] }}">{{ $route['label'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                             </x-ui.field>
                         </div>
 
@@ -278,9 +301,9 @@
 </x-ui.card>
 
 <script>
-    function menuBuilder() {
+    function menuBuilder(hasErrors = false) {
         return {
-            showModal: false,
+            showModal: hasErrors,
             editMode: false,
             formAction: '{{ route('admin.menus.items.store', $menu) }}',
             isSyncing: false,
