@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class WebsiteSettingController extends Controller
 {
-    public function index()
+    public function index(AdminCoreConfiguration $configuration)
     {
         $keys = [
             'hero_title',
@@ -79,8 +79,14 @@ class WebsiteSettingController extends Controller
         $settings = WebsiteSetting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
         $homepageSections = HomepageSection::orderBy('sort_order')->get();
         $availableServices = Service::where('status', true)->orderBy('sort_order')->get(['id', 'title']);
+        $homepageSectionDefinitions = $configuration->homepageSectionDefinitions();
 
-        return view('admin-core::website_settings.index', compact('settings', 'homepageSections', 'availableServices'));
+        return view('admin-core::website_settings.index', compact(
+            'settings',
+            'homepageSections',
+            'availableServices',
+            'homepageSectionDefinitions'
+        ));
     }
 
     public function updateHomepage(Request $request)

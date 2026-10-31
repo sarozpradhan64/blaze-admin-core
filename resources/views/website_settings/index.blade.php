@@ -343,7 +343,10 @@
         </div>
 
         {{-- Right Side: Homepage Sections Management --}}
-        <div class="lg:col-span-7 space-y-6" x-data="homepageSectionsManager(@js($homepageSections), @js($availableServices))">
+        @php
+            $homepageSectionDefinitions = $homepageSectionDefinitions ?? app(\Blaze\AdminCore\AdminCoreConfiguration::class)->homepageSectionDefinitions();
+        @endphp
+        <div class="lg:col-span-7 space-y-6" x-data="homepageSectionsManager(@js($homepageSections), @js($availableServices), @js($homepageSectionDefinitions))">
             <x-ui.card class="border shadow-sm">
                 <x-ui.card-header class="pb-3 border-b bg-muted/20">
                     <div class="flex items-center justify-between">
@@ -1619,10 +1622,11 @@
         };
     }
 
-    function homepageSectionsManager(initialSections, services) {
+    function homepageSectionsManager(initialSections, services, standardDefs = []) {
         return {
             sections: initialSections,
             availableServices: services,
+            standardDefinitions: standardDefs || [],
             isAddOpen: false,
             isEditOpen: false,
             addForm: {
@@ -1678,62 +1682,6 @@
                     }
                 });
             },
-            standardDefinitions: [
-                {
-                    type: 'departures',
-                    name: 'Departures',
-                    title: '2026/27 Guaranteed Departures',
-                    subtitle: 'Limited Slots',
-                    button_text: 'Explore All Schedules',
-                    button_url: '/schedules',
-                    badgeClass: 'bg-emerald-500/10 text-emerald-700 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-500/20',
-                },
-                {
-                    type: 'why_trek',
-                    name: 'Why Trek / Standards',
-                    title: 'Built on Guide Heritage & Clinical Safety',
-                    subtitle: 'The Neepa Standard',
-                    button_text: 'Learn More',
-                    button_url: '/about-us',
-                    badgeClass: 'bg-purple-500/10 text-purple-700 border-purple-300 dark:border-purple-800 hover:bg-purple-500/20',
-                },
-                {
-                    type: 'team_guides',
-                    name: 'Guides & Leaders',
-                    title: 'Meet Our Trek Leaders',
-                    subtitle: 'The Mountain Guardians',
-                    button_text: 'Meet All Guides',
-                    button_url: '/about-us/team',
-                    badgeClass: 'bg-cyan-500/10 text-cyan-700 border-cyan-300 dark:border-cyan-800 hover:bg-cyan-500/20',
-                },
-                {
-                    type: 'reviews',
-                    name: 'Reviews & Feedback',
-                    title: 'Hear From Our Clients',
-                    subtitle: 'Voices from the Pass',
-                    button_text: 'Write a Review',
-                    button_url: '/write-review',
-                    badgeClass: 'bg-rose-500/10 text-rose-700 border-rose-300 dark:border-rose-800 hover:bg-rose-500/20',
-                },
-                {
-                    type: 'blogs',
-                    name: 'Blogs & Guides',
-                    title: 'Latest Travel Guides',
-                    subtitle: 'Get Inspired',
-                    button_text: 'View All Posts',
-                    button_url: '/blogs',
-                    badgeClass: 'bg-indigo-500/10 text-indigo-700 border-indigo-300 dark:border-indigo-800 hover:bg-indigo-500/20',
-                },
-                {
-                    type: 'cta',
-                    name: 'CTA Banner',
-                    title: 'Ready to Walk Among the Himalayan Giants?',
-                    subtitle: 'Fast Response Trek Desk',
-                    button_text: 'Talk to an Expert',
-                    button_url: '/plan-your-trek',
-                    badgeClass: 'bg-amber-500/10 text-amber-700 border-amber-300 dark:border-amber-800 hover:bg-amber-500/20',
-                },
-            ],
             get missingStandardSections() {
                 const existingTypes = this.sections.map(s => s.section_type);
                 return this.standardDefinitions.filter(d => !existingTypes.includes(d.type));
@@ -1752,13 +1700,13 @@
                 const titleInput = document.createElement('input');
                 titleInput.type = 'hidden';
                 titleInput.name = 'title';
-                titleInput.value = item.title;
+                titleInput.value = item.title || '';
                 form.appendChild(titleInput);
 
                 const subtitleInput = document.createElement('input');
                 subtitleInput.type = 'hidden';
                 subtitleInput.name = 'subtitle';
-                subtitleInput.value = item.subtitle;
+                subtitleInput.value = item.subtitle || '';
                 form.appendChild(subtitleInput);
 
                 const typeInput = document.createElement('input');
@@ -1770,13 +1718,13 @@
                 const btnTextInput = document.createElement('input');
                 btnTextInput.type = 'hidden';
                 btnTextInput.name = 'button_text';
-                btnTextInput.value = item.button_text;
+                btnTextInput.value = item.button_text || '';
                 form.appendChild(btnTextInput);
 
                 const btnUrlInput = document.createElement('input');
                 btnUrlInput.type = 'hidden';
                 btnUrlInput.name = 'button_url';
-                btnUrlInput.value = item.button_url;
+                btnUrlInput.value = item.button_url || '';
                 form.appendChild(btnUrlInput);
 
                 document.body.appendChild(form);
@@ -1809,24 +1757,16 @@
                 this.isEditOpen = true;
             },
             getTypeLabel(type) {
-                const labels = {
-                    custom_services: 'Curated Trips',
-                    departures: 'Departures',
-                    why_trek: 'Why Trek',
-                    team_guides: 'Guides',
-                    reviews: 'Reviews',
-                    blogs: 'Blog / Guides',
-                    cta: 'CTA Banner',
-                };
-                return labels[type] || type;
+                if (type === 'custom_services') return 'Curated Trips';
+                const found = this.standardDefinitions.find(d => d.type === type);
+                if (found && found.name) return found.name;
+                if (type === 'about_us' || type === 'who_are_we') return 'About Us';
+                return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
             },
             getTypeBadgeClass(type) {
                 if (type === 'custom_services') return 'bg-amber-500/10 text-amber-600 border-amber-500/20';
-                if (type === 'departures') return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
-                if (type === 'why_trek') return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
-                if (type === 'team_guides') return 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20';
-                if (type === 'reviews') return 'bg-rose-500/10 text-rose-600 border-rose-500/20';
-                if (type === 'blogs') return 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20';
+                const found = this.standardDefinitions.find(d => d.type === type);
+                if (found && found.badgeClass) return found.badgeClass;
                 return 'bg-muted text-muted-foreground border-border';
             },
         };

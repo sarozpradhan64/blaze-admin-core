@@ -89,4 +89,25 @@ class AdminCoreConfiguration
     {
         return [];
     }
+
+    /**
+     * Predefined / standard homepage section definitions that can be added and managed.
+     *
+     * Override this in the project's AdminCoreConfiguration subclass and return
+     * an array of section definitions, or define 'homepage_sections' in config/admin-core.php.
+     *
+     * @return array<int, array{
+     *     type: string,
+     *     name: string,
+     *     title: string,
+     *     subtitle?: string,
+     *     button_text?: string,
+     *     button_url?: string,
+     *     badgeClass?: string
+     * }>
+     */
+    public function homepageSectionDefinitions(): array
+    {
+        return config('admin-core.homepage_sections', []);
+    }
 }
