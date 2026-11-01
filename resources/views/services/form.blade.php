@@ -338,13 +338,18 @@
                                                     </div>
                                                     <div class="p-2 flex items-center justify-between gap-1 text-xs">
                                                         <span class="truncate font-medium text-foreground text-[11px]" title="{{ $item->title }}">{{ $item->title ?: 'Photo #' . ($idx + 1) }}</span>
-                                                        <form action="{{ route('admin.services.gallery.delete', ['service' => $service, 'galleryItem' => $item]) }}" method="POST" onsubmit="return confirm('Remove this image from gallery?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors cursor-pointer" title="Delete photo">
-                                                                <x-lucide-trash-2 class="size-3.5" />
+                                                        <div class="flex items-center gap-1">
+                                                            <button type="button" @click.stop="window.openImageViewer ? window.openImageViewer([{ url: '{{ Storage::disk('public')->url($item->file_path) }}', title: '{{ addslashes($item->title ?: ('Photo #' . ($idx + 1))) }}' }]) : window.open('{{ Storage::disk('public')->url($item->file_path) }}', '_blank')" class="text-muted-foreground hover:text-foreground hover:bg-muted p-1 rounded transition-colors cursor-pointer" title="View & Download">
+                                                                <x-lucide-maximize-2 class="size-3.5" />
                                                             </button>
-                                                        </form>
+                                                            <form action="{{ route('admin.services.gallery.delete', ['service' => $service, 'galleryItem' => $item]) }}" method="POST" onsubmit="return confirm('Remove this image from gallery?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors cursor-pointer" title="Delete photo">
+                                                                    <x-lucide-trash-2 class="size-3.5" />
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endforeach

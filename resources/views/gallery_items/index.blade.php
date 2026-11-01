@@ -20,6 +20,13 @@
         </x-ui.button>
     </div>
 
+    @php
+        $tablePhotos = collect($items->items() ?? $items)->filter(fn($i) => !empty($i->file_path))->values()->map(fn($i) => [
+            'url' => Storage::disk('public')->url($i->file_path),
+            'title' => $i->title ?: ($i->album?->title ? $i->album->title . ' Item' : 'Gallery Item'),
+        ]);
+    @endphp
+
     <x-ui.card>
         <x-ui.card-content class="p-0">
             <x-ui.table>
@@ -41,11 +48,21 @@
                                 <x-lucide-grip-vertical class="size-4" />
                             </x-ui.table-cell>
                             <x-ui.table-cell>
-                                <img
-                                    src="{{ Storage::disk('public')->url($item->file_path) }}"
-                                    alt="{{ $item->title }}"
-                                    class="size-10 rounded object-cover"
-                                />
+                                <button
+                                    type="button"
+                                    class="relative group rounded overflow-hidden block cursor-pointer border border-border"
+                                    onclick="window.openImageViewer({{ Js::from($tablePhotos) }}, {{ $loop->index }})"
+                                    title="View &amp; Download"
+                                >
+                                    <img
+                                        src="{{ Storage::disk('public')->url($item->file_path) }}"
+                                        alt="{{ $item->title }}"
+                                        class="size-10 object-cover group-hover:scale-110 transition-transform"
+                                    />
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
+                                        <x-lucide-maximize-2 class="size-3.5" />
+                                    </div>
+                                </button>
                             </x-ui.table-cell>
                             <x-ui.table-cell class="font-medium">{{ $item->title ?: '—' }}</x-ui.table-cell>
                             <x-ui.table-cell>
