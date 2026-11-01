@@ -5,6 +5,7 @@ namespace Blaze\AdminCore\Http\Controllers;
 use Blaze\AdminCore\Models\TeamMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TeamMemberController extends Controller
 {
@@ -32,7 +33,11 @@ class TeamMemberController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
             'role' => 'required|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
             'bio' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'facebook_url' => 'nullable|url|max:500',
@@ -44,11 +49,30 @@ class TeamMemberController extends Controller
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('team', 'public');
         }
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['is_guide'] = $request->boolean('is_guide');
+        $validated['featured'] = $request->boolean('featured');
+
+        if (! empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['slug']);
+        } else {
+            unset($validated['slug']);
+        }
+
+        if (! empty($validated['slug'])) {
+            $validated['slug'] = \Illuminate\Support\Str::slug($validated['slug']);
+        } else {
+            unset($validated['slug']);
+        }
 
         TeamMember::create($validated);
 
         return redirect()->route('admin.team-members.index')->with('success', 'Team Member added.');
+    }
+
+    public function show(TeamMember $teamMember)
+    {
+        return redirect()->route('admin.team-members.edit', $teamMember);
     }
 
     public function edit(TeamMember $teamMember)
@@ -60,7 +84,11 @@ class TeamMemberController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
             'role' => 'required|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
             'bio' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'facebook_url' => 'nullable|url|max:500',
@@ -77,7 +105,21 @@ class TeamMemberController extends Controller
         } else {
             unset($validated['image']);
         }
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['is_guide'] = $request->boolean('is_guide');
+        $validated['featured'] = $request->boolean('featured');
+
+        if (! empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['slug']);
+        } else {
+            unset($validated['slug']);
+        }
+
+        if (! empty($validated['slug'])) {
+            $validated['slug'] = \Illuminate\Support\Str::slug($validated['slug']);
+        } else {
+            unset($validated['slug']);
+        }
 
         $teamMember->update($validated);
 

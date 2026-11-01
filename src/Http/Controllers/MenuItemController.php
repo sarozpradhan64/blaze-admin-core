@@ -7,6 +7,7 @@ use Blaze\AdminCore\Models\Menu;
 use Blaze\AdminCore\Models\Service;
 use Blaze\AdminCore\Models\ServiceCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MenuItemController extends Controller
 {
@@ -16,7 +17,7 @@ class MenuItemController extends Controller
             return redirect()->back()->with('error', 'Cannot add items under a service category or service menu item.');
         }
 
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category,service'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
@@ -69,7 +70,7 @@ class MenuItemController extends Controller
             return redirect()->back()->with('error', 'This menu item cannot be edited.');
         }
 
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'title' => ['nullable', 'string', 'max:255', 'required_unless:type,service_category,service'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],

@@ -85,6 +85,12 @@ This document details all features, enhancements, refactors, and schema changes 
 - **Enquiry Optimization**: Streamlined `EnquiryController` index and show views, reducing redundant database queries.
 - **Customizable Admin Sidebar Component**: Dynamic module rendering, submenus, badge counters, and active route matching.
 
+### 12. Team Members & Public Profile Slugs
+- **Team Member Slugs**: Added unique `slug` column to `team_members` table (`2026_11_01_000001_add_slug_to_team_members_table.php`).
+- **Automated Slug Generation**: Automatic slug generation upon saving in `TeamMember` model, with collision handling (`name-1`, `name-2`).
+- **Public Profile Resolution**: Added `$member->url` accessor checking for `team.show` route availability.
+- **Admin Management & Previews**: Integrated external public preview link in the team members index table, and added editable `slug`, `department`, `email`, and `phone` form fields with controller validation and sanitization.
+
 ---
 
 ## 🗂️ Detailed Commit Log (`1.0` -> `HEAD`)

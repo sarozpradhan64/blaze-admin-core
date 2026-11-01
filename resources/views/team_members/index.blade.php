@@ -112,7 +112,25 @@
                                     </div>
                                 @endif
                             </x-ui.table-cell>
-                            <x-ui.table-cell class="font-medium">{{ $member->name }}</x-ui.table-cell>
+                            <x-ui.table-cell class="font-medium">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <span>{{ $member->name }}</span>
+                                    @if ($member->url)
+                                        <a
+                                            href="{{ $member->url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-muted-foreground hover:text-primary transition-colors inline-flex items-center"
+                                            title="View on site"
+                                        >
+                                            <x-lucide-external-link class="size-3.5 shrink-0" />
+                                        </a>
+                                    @endif
+                                </div>
+                                @if($member->slug)
+                                    <div class="text-xs text-muted-foreground font-mono font-normal">/{{ $member->slug }}</div>
+                                @endif
+                            </x-ui.table-cell>
                             <x-ui.table-cell class="text-muted-foreground">{{ $member->role }}</x-ui.table-cell>
                             <x-ui.table-cell>
                                 <x-ui.badge variant="{{ $member->is_active ? 'default' : 'secondary' }}">

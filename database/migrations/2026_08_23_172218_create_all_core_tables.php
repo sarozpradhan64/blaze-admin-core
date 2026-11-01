@@ -140,6 +140,7 @@ return new class extends Migration
         Schema::create('team_members', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug')->nullable()->unique();
             $table->string('designation');
             $table->string('department')->nullable();
             $table->text('bio')->nullable();
