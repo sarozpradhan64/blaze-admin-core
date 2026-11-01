@@ -59,22 +59,28 @@ class ServiceController extends Controller
     {
         $extraFields = $this->config->serviceFormFields();
 
-        $validated = $request->validate(array_merge(
+        $validated = $request->validate(
+            array_merge(
+                [
+                    'title' => 'required|string|max:255',
+                    'service_category_id' => 'required|exists:service_categories,id',
+                    'short_description' => 'nullable|string',
+                    'description' => 'required|string',
+                    'icon' => 'nullable|string|max:255',
+                    'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+                    'tags' => 'nullable|string|max:1000',
+                    'faqs' => 'nullable|array',
+                    'features' => 'nullable|array',
+                    'features.*.title' => 'required_with:features|string|max:255',
+                    'features.*.description' => 'nullable|string',
+                ],
+                $this->extraValidationRules($extraFields),
+            ),
             [
-                'title' => 'required|string|max:255',
-                'service_category_id' => 'required|exists:service_categories,id',
-                'short_description' => 'nullable|string',
-                'description' => 'required|string',
-                'icon' => 'nullable|string|max:255',
-                'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-                'tags' => 'nullable|string|max:1000',
-                'faqs' => 'nullable|array',
-                'features' => 'nullable|array',
-                'features.*.title' => 'required_with:features|string|max:255',
-                'features.*.description' => 'nullable|string',
+                '*.uploaded' => 'The :attribute failed to upload. The file may exceed the maximum allowed size.',
             ],
-            $this->extraValidationRules($extraFields),
-        ));
+            $this->extraCustomAttributes($extraFields),
+        );
 
         $tags = $validated['tags'] ?? null;
         unset($validated['tags']);
@@ -144,22 +150,28 @@ class ServiceController extends Controller
     {
         $extraFields = $this->config->serviceFormFields();
 
-        $validated = $request->validate(array_merge(
+        $validated = $request->validate(
+            array_merge(
+                [
+                    'title' => 'required|string|max:255',
+                    'service_category_id' => 'required|exists:service_categories,id',
+                    'short_description' => 'nullable|string',
+                    'description' => 'required|string',
+                    'icon' => 'nullable|string|max:255',
+                    'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+                    'tags' => 'nullable|string|max:1000',
+                    'faqs' => 'nullable|array',
+                    'features' => 'nullable|array',
+                    'features.*.title' => 'required_with:features|string|max:255',
+                    'features.*.description' => 'nullable|string',
+                ],
+                $this->extraValidationRules($extraFields),
+            ),
             [
-                'title' => 'required|string|max:255',
-                'service_category_id' => 'required|exists:service_categories,id',
-                'short_description' => 'nullable|string',
-                'description' => 'required|string',
-                'icon' => 'nullable|string|max:255',
-                'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-                'tags' => 'nullable|string|max:1000',
-                'faqs' => 'nullable|array',
-                'features' => 'nullable|array',
-                'features.*.title' => 'required_with:features|string|max:255',
-                'features.*.description' => 'nullable|string',
+                '*.uploaded' => 'The :attribute failed to upload. The file may exceed the maximum allowed size.',
             ],
-            $this->extraValidationRules($extraFields),
-        ));
+            $this->extraCustomAttributes($extraFields),
+        );
 
         $tags = $validated['tags'] ?? null;
         unset($validated['tags']);
@@ -189,7 +201,7 @@ class ServiceController extends Controller
             unset($validated['is_featured']);
         }
 
-        $this->applyExtraFields($validated, $request, $extraFields);
+        $this->applyExtraFields($validated, $request, $extraFields, $service);
 
         $service->update($validated);
         $service->syncTagsFromString($tags);
@@ -343,6 +355,12 @@ class ServiceController extends Controller
         if ($service->featured_image) {
             Storage::disk('public')->delete($service->featured_image);
         }
+        $extraFields = $this->config->serviceFormFields();
+        foreach ($extraFields as $field) {
+            if ($field->type === 'file' && ! empty($service->{$field->name})) {
+                Storage::disk('public')->delete($service->{$field->name});
+            }
+        }
         $service->delete();
 
         return redirect()->route('admin.services.index')->with('success', 'Service deleted successfully.');
@@ -372,18 +390,35 @@ class ServiceController extends Controller
     }
 
     /**
+     * Build custom attribute labels for validation errors.
+     *
+     * @param  ServiceFormField[]  $fields
+     * @return array<string, string>
+     */
+    private function extraCustomAttributes(array $fields): array
+    {
+        $attributes = [];
+
+        foreach ($fields as $field) {
+            $attributes[$field->name] = $field->label;
+        }
+
+        return $attributes;
+    }
+
+    /**
      * Copy extra field values from the request into the validated data array,
      * applying any type-specific transformations (e.g. json_encode for arrays).
      *
      * @param  array<string, mixed>  $validated  Passed by reference so callers see the mutations.
      * @param  ServiceFormField[]  $fields
      */
-    private function applyExtraFields(array &$validated, Request $request, array $fields): void
+    private function applyExtraFields(array &$validated, Request $request, array $fields, ?Service $service = null): void
     {
         foreach ($fields as $field) {
             match ($field->type) {
                 'checkbox' => $validated[$field->name] = $request->has($field->name),
-                'file' => $this->handleFileField($validated, $request, $field),
+                'file' => $this->handleFileField($validated, $request, $field, $service),
                 default => $validated[$field->name] = $request->input($field->name),
             };
         }
@@ -391,12 +426,22 @@ class ServiceController extends Controller
 
     /**
      * Handle file-type extra fields: store the upload and write the path into $validated.
+     * Also handles explicit file removal and deleting replaced files.
      *
      * @param  array<string, mixed>  $validated
      */
-    private function handleFileField(array &$validated, Request $request, ServiceFormField $field): void
+    private function handleFileField(array &$validated, Request $request, ServiceFormField $field, ?Service $service = null): void
     {
-        if ($request->hasFile($field->name)) {
+        $removeKey = 'remove_'.$field->name;
+        if ($request->boolean($removeKey)) {
+            if ($service && ! empty($service->{$field->name})) {
+                Storage::disk('public')->delete($service->{$field->name});
+            }
+            $validated[$field->name] = null;
+        } elseif ($request->hasFile($field->name)) {
+            if ($service && ! empty($service->{$field->name})) {
+                Storage::disk('public')->delete($service->{$field->name});
+            }
             $validated[$field->name] = $request->file($field->name)->store('services', 'public');
         } else {
             unset($validated[$field->name]);

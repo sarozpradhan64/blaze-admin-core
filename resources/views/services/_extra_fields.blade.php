@@ -62,9 +62,18 @@
                         />
                         @break
                     @case ('file')
+                        @php
+                            $maxSizeKb = null;
+                            if ($field->validationRule && preg_match('/max:(\d+)/', $field->validationRule, $matches)) {
+                                $maxSizeKb = (int) $matches[1];
+                            }
+                        @endphp
                         <x-ui.file-upload
                             :name="$field->name"
                             :current="old($field->name, $model?->{$field->name} ?? null)"
+                            :placeholder="$field->placeholder"
+                            :accept="$field->attributes['accept'] ?? null"
+                            :max-size-kb="$maxSizeKb"
                         />
                         @break
                     @case ('number')
