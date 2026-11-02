@@ -14,25 +14,55 @@ class MenuController extends Controller
 {
     public function index(Request $request)
     {
-        $menus = Menu::whereNull('parent_id')->orderBy('sort_order')->paginate($request->get('per_page', 50));
+        $currentLocation = $request->get('location', 'navbar');
+        if (! in_array($currentLocation, ['navbar', 'footer'])) {
+            $currentLocation = 'navbar';
+        }
 
-        return view('admin-core::menus.index', compact('menus'));
+        $navbarCount = Menu::whereNull('parent_id')->where('location', 'navbar')->count();
+        $footerCount = Menu::whereNull('parent_id')->where('location', 'footer')->count();
+
+        $menus = Menu::whereNull('parent_id')
+            ->where('location', $currentLocation)
+            ->orderBy('sort_order')
+            ->paginate($request->get('per_page', 50))
+            ->appends(['location' => $currentLocation]);
+
+        return view('admin-core::menus.index', compact('menus', 'currentLocation', 'navbarCount', 'footerCount'));
     }
 
-    public function create(AdminCoreConfiguration $config)
+    public function create(Request $request, AdminCoreConfiguration $config)
     {
         $staticRoutes = $config->staticRoutes();
+        $selectedLocation = $request->get('location', 'navbar');
+        $footerMenusFull = Menu::whereNull('parent_id')->where('location', 'footer')->count() >= 2;
 
-        return view('admin-core::menus.form', compact('staticRoutes'));
+        if ($selectedLocation === 'footer' && $footerMenusFull) {
+            return redirect()->route('admin.menus.index', ['location' => 'footer'])
+                ->with('error', 'Only 2 parent menus are allowed for the footer. You can edit existing footer menus or add sub-menu items to them.');
+        }
+
+        return view('admin-core::menus.form', compact('staticRoutes', 'selectedLocation', 'footerMenusFull'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'in:navbar,footer'],
             'url' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable'],
         ]);
+
+        if ($validated['location'] === 'footer') {
+            $footerCount = Menu::whereNull('parent_id')->where('location', 'footer')->count();
+            if ($footerCount >= 2) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['location' => 'Only 2 parent menus are allowed for the footer. You can add items inside existing footer menus.'])
+                    ->with('error', 'Only 2 parent menus are allowed for the footer.');
+            }
+        }
 
         $validated['status'] = $request->has('status');
         $validated['type'] = 'custom_url';
@@ -71,6 +101,10 @@ class MenuController extends Controller
             ->get(['id', 'title', 'service_category_id', 'slug']);
 
         $staticRoutes = $config->staticRoutes();
+        $footerMenusFull = Menu::whereNull('parent_id')
+            ->where('location', 'footer')
+            ->where('id', '!=', $menu->id)
+            ->count() >= 2;
 
         return view('admin-core::menus.form', compact(
             'menu',
@@ -79,7 +113,8 @@ class MenuController extends Controller
             'services',
             'staticRoutes',
             'usedCategoryIds',
-            'usedServiceIds'
+            'usedServiceIds',
+            'footerMenusFull'
         ));
     }
 
@@ -87,9 +122,24 @@ class MenuController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'in:navbar,footer'],
             'url' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable'],
         ]);
+
+        if ($validated['location'] === 'footer' && $menu->location !== 'footer') {
+            $otherFooterCount = Menu::whereNull('parent_id')
+                ->where('location', 'footer')
+                ->where('id', '!=', $menu->id)
+                ->count();
+
+            if ($otherFooterCount >= 2) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['location' => 'Only 2 parent menus are allowed for the footer.'])
+                    ->with('error', 'Only 2 parent menus are allowed for the footer.');
+            }
+        }
 
         $validated['status'] = $request->has('status');
         if ($request->has('url')) {
@@ -101,7 +151,7 @@ class MenuController extends Controller
 
         $menu->update($validated);
 
-        return redirect()->route('admin.menus.index')->with('success', 'Menu updated successfully.');
+        return redirect()->route('admin.menus.index', ['location' => $menu->location])->with('success', 'Menu updated successfully.');
     }
 
     public function destroy(Menu $menu)
@@ -110,8 +160,9 @@ class MenuController extends Controller
             return redirect()->route('admin.menus.index')->with('error', 'This menu cannot be deleted.');
         }
 
+        $location = $menu->location ?? 'navbar';
         $menu->delete();
 
-        return redirect()->route('admin.menus.index')->with('success', 'Menu deleted successfully.');
+        return redirect()->route('admin.menus.index', ['location' => $location])->with('success', 'Menu deleted successfully.');
     }
 }
