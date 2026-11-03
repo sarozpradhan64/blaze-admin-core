@@ -16,6 +16,7 @@ class Menu extends Model
 
     protected $fillable = [
         'title',
+        'location',
         'subtitle',
         'icon',
         'parent_id',
@@ -133,10 +134,12 @@ class Menu extends Model
      *
      * @return Collection<int, self>
      */
-    public static function cachedTree(): Collection
+    public static function cachedTree(string $location = 'navbar'): Collection
     {
-        $data = static::rememberCache('tree', function () {
+        $cacheSuffix = $location === 'navbar' ? 'tree' : 'tree_'.$location;
+        $data = static::rememberCache($cacheSuffix, function () use ($location) {
             return static::whereNull('parent_id')
+                ->where('location', $location)
                 ->where('status', true)
                 ->orderBy('sort_order')
                 ->with([
@@ -298,6 +301,6 @@ class Menu extends Model
 
     public static function getCacheSuffixes(): array
     {
-        return ['tree'];
+        return ['tree', 'tree_navbar', 'tree_footer'];
     }
 }

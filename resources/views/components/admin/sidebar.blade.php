@@ -200,8 +200,34 @@
                                 :active="request()->routeIs('admin.pages.*')"><x-lucide-file-text /><span>Pages</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
                     @endif
                     @if ($configuration->enabled('menus'))
-                        <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.menus.index') }}"
-                                :active="request()->routeIs('admin.menus.*')"><x-lucide-list /><span>Menus</span></x-ui.sidebar-menu-button></x-ui.sidebar-menu-item>
+                        @php($menusActive = request()->routeIs('admin.menus.*'))
+                        @php($navbarActive = $menusActive && request()->get('location', 'navbar') === 'navbar')
+                        @php($footerActive = $menusActive && request()->get('location') === 'footer')
+                        <x-ui.sidebar-menu-item x-data="{ expanded: {{ $menusActive ? 'true' : 'false' }} }">
+                            <x-ui.sidebar-menu-button :active="$menusActive" @click.prevent="expanded = !expanded">
+                                <x-lucide-list />
+                                <span>Menus</span>
+                                <x-lucide-chevron-down class="ml-auto transition-transform" x-bind:class="{ 'rotate-180': expanded }" />
+                            </x-ui.sidebar-menu-button>
+                            <x-ui.sidebar-menu-sub x-show="expanded" x-collapse>
+                                <x-ui.sidebar-menu-sub-item>
+                                    <x-ui.sidebar-menu-sub-button
+                                        href="{{ route('admin.menus.index', ['location' => 'navbar']) }}"
+                                        :active="$navbarActive"
+                                    >
+                                        Navbar Menus
+                                    </x-ui.sidebar-menu-sub-button>
+                                </x-ui.sidebar-menu-sub-item>
+                                <x-ui.sidebar-menu-sub-item>
+                                    <x-ui.sidebar-menu-sub-button
+                                        href="{{ route('admin.menus.index', ['location' => 'footer']) }}"
+                                        :active="$footerActive"
+                                    >
+                                        Footer Menus
+                                    </x-ui.sidebar-menu-sub-button>
+                                </x-ui.sidebar-menu-sub-item>
+                            </x-ui.sidebar-menu-sub>
+                        </x-ui.sidebar-menu-item>
                     @endif
                     @if ($configuration->enabled('tags'))
                         <x-ui.sidebar-menu-item><x-ui.sidebar-menu-button href="{{ route('admin.tags.manage') }}"

@@ -58,6 +58,7 @@ class MenuItemController extends Controller
         }
 
         $validated['sort_order'] = Menu::where('parent_id', $menu->id)->max('sort_order') + 1;
+        $validated['location'] = $rootMenu->location ?? 'navbar';
 
         $menu->children()->create($validated);
 

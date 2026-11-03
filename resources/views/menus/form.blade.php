@@ -35,6 +35,33 @@
                             @method('PUT')
                         @endif
                         <x-ui.card-content class="space-y-4">
+                            @php
+                                $selectedLocation = old('location', $menu->location ?? ($selectedLocation ?? request('location', 'navbar')));
+                            @endphp
+                            <x-ui.field>
+                                <x-ui.field-label for="location" required>Menu Placement / Location</x-ui.field-label>
+                                <select
+                                    id="location"
+                                    name="location"
+                                    class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                >
+                                    <option value="navbar" {{ $selectedLocation === 'navbar' ? 'selected' : '' }}>
+                                        Navbar Menu (Top Header)
+                                    </option>
+                                    <option
+                                        value="footer"
+                                        {{ $selectedLocation === 'footer' ? 'selected' : '' }}
+                                        {{ (!isset($menu) || $menu->location !== 'footer') && !empty($footerMenusFull) ? 'disabled' : '' }}
+                                    >
+                                        Footer Menu (Footer Column){{ (!isset($menu) || $menu->location !== 'footer') && !empty($footerMenusFull) ? ' — (Max 2 reached)' : '' }}
+                                    </option>
+                                </select>
+                                @if(!empty($footerMenusFull) && (!isset($menu) || $menu->location !== 'footer'))
+                                    <p class="text-[11px] text-muted-foreground mt-1">Maximum 2 parent footer menus reached. Edit existing footer menus or add sub-menu items to them.</p>
+                                @endif
+                                <x-ui.field-error name="location" />
+                            </x-ui.field>
+
                             <x-ui.field>
                                 <x-ui.field-label for="title" required>Title</x-ui.field-label>
                                 <x-ui.input id="title" name="title" value="{{ old('title', $menu->title ?? request('title', '')) }}" />
@@ -93,7 +120,7 @@
                             </x-ui.field>
                         </x-ui.card-content>
                         <x-ui.card-footer class="bg-muted/50 flex justify-end gap-2 border-t p-4">
-                            <x-ui.button variant="outline" href="{{ route('admin.menus.index') }}">Cancel</x-ui.button>
+                            <x-ui.button variant="outline" href="{{ route('admin.menus.index', ['location' => $selectedLocation]) }}">Cancel</x-ui.button>
                             <x-ui.button type="submit">Save Menu</x-ui.button>
                         </x-ui.card-footer>
                     </form>
