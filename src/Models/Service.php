@@ -58,6 +58,43 @@ class Service extends Model
         return $this->belongsToMany(Testimonial::class, 'service_testimonial');
     }
 
+    /**
+     * Get dynamic average rating from active testimonials.
+     */
+    public function getAverageRatingAttribute(): ?float
+    {
+        $ratings = $this->allActiveTestimonials()->pluck('rating')->filter();
+
+        return $ratings->isNotEmpty() ? round((float) $ratings->avg(), 1) : null;
+    }
+
+    /**
+     * Get dynamic review count from active testimonials.
+     */
+    public function getReviewsCountAttribute(): int
+    {
+        return $this->allActiveTestimonials()->count();
+    }
+
+    /**
+     * Helper to get active testimonials whether preloaded or queried.
+     */
+    public function allActiveTestimonials()
+    {
+        if ($this->relationLoaded('testimonials')) {
+            return $this->testimonials->where('status', true);
+        }
+
+        return Testimonial::where('status', true)
+            ->where(function ($query) {
+                $query->where('service_id', $this->id)
+                    ->orWhereHas('services', function ($sq) {
+                        $sq->where('services.id', $this->id);
+                    });
+            })
+            ->get();
+    }
+
     public function seoMetadata()
     {
         return $this->morphOne(SeoMetadata::class, 'seoable');
